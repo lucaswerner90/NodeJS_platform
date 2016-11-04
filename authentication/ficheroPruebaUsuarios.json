@@ -1,0 +1,22 @@
+[
+  {
+    "id":1,
+    "email":"prueba1@telefonicaed.com",
+    "password":"pruebapass1"
+  },
+  {
+    "id":2,
+    "email":"prueba2@telefonicaed.com",
+    "password":"pruebapass2"
+  },
+  {
+    "id":3,
+    "email":"prueba3@telefonicaed.com",
+    "password":"pruebapass3"
+  },
+  {
+    "id":4,
+    "email":"prueba4@telefonicaed.com",
+    "password":"pruebapass4"
+  }
+]
