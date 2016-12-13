@@ -10,7 +10,6 @@ let routerDB=express.Router();
 let userRouter=require('./routes/userRouter');
 let courseRouter=require('./routes/courseRouter');
 
-
 routerDB.use("/user",userRouter);
 
 routerDB.get("/course",courseRouter);

@@ -3,15 +3,12 @@
 */
 
 // Declare of the express's app
-let express=require('express');
-let app=express();
+const express = require('express');
+const app=express();
 
 
 // Inclusion of third-party middlewares
-let bodyParser=require('body-parser');
-let urlEncodedParser=bodyParser.json();
-
-
+let BODY_PARSER=require('body-parser');
 
 /*
   HERE IS WHERE WE CHARGE THE ROUTES THAT WE WILL USE IN THE SERVER APP
@@ -34,20 +31,35 @@ let files=require('./files/index');
 //   res.send("Bienvenido al servidor de nodeJS de TED");
 // });
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 
-app.use(authentication);
+app.use(BODY_PARSER.urlencoded({
+  extended: true,
+  parameterLimit: 10000,
+  limit: 1024 * 1024 * 500})
+);
+
+
+app.use(BODY_PARSER.json({limit: '500mb'}));
+
+
+
+
+// app.use(authentication);
 app.use('/bbdd',bbdd);
-app.use('/file',files);
+app.use('/file',BODY_PARSER.json(),files);
 
-app.get("/",(req,res) =>{
-  res.send("Bienvenido al server de NodeJS");
-})
+
 
 
 // Manejo de los errores 404
 app.use((req, res, next)=> {
+  console.log("Coming back...");
   res.redirect("back");
 });
 

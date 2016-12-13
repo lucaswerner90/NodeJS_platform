@@ -1,7 +1,7 @@
 {
-  "host"      : "10.102.228.81",
+  "host"      : "10.102.225.73",
   "port"      : 3306,
-  "user"      : "root",
-  "password"  : "",
-  "database"  : "test"
+  "user"      : "contenidos",
+  "password"  : "Contenid0s",
+  "database"  : "catalogo_contenidos"
 }

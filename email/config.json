@@ -1,0 +1,20 @@
+{
+  "EMAIL_OPTIONS":{
+    "from":"lucas.wernerseoane@telefonica.com",
+    "to":"lucas.wernerseoane@telefonica.com",
+    "subject":"Email example"
+  },
+  "SERVER_OPTIONS":{
+    "host": "https://outlook.office365.com/EWS/Exchange.asmx",
+    "secure": true,
+    "requiresAuth": true,
+    "auth": {
+      "user": "lucas.wernerseoane@telefonica.com",
+      "pass": "Temporal918"
+    },
+    "tls": {
+      "ciphers":"SSLv3"
+    }
+  }
+
+}

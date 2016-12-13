@@ -20,8 +20,11 @@ exports.ensureAuthenticated=function(req,res,next){
 
   console.log("Ensured user is authenticated...");
   if(req.url==='/') next();
-  
+
   if(!req.headers.authorization){
+
+    console.log("Your request has not authorization header");
+
     return res
       .status(403)
       .send(
@@ -37,6 +40,7 @@ exports.ensureAuthenticated=function(req,res,next){
   var payload=jwt.decode(token,config.TOKEN_SECRET,config.SECURITY_ALGORITHM);
 
   if(payload.exp<=moment().unix()){
+    console.log("Token has expired");
     return res
       .status(401)
       .send(
@@ -53,7 +57,7 @@ exports.ensureAuthenticated=function(req,res,next){
   req.user=payload.sub;
 
 
-
+  console.log("User logged correctly");
   //Si se da el caso de que el usuario está logueado correctamente entonces avanzamos al siguiente manejador de ruta
   next();
 }
