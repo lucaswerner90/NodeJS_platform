@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "DEBUG=express:* nodemon server.js",
     "start production": "DEBUG=express:* slc start",
     "stop production": "DEBUG=express:* slc ctl stop express-authenticate",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -35,6 +35,7 @@ We have to receive a file field in our request object where we can get
 the information of the file.
 */
 routerFile.post('/upload',(req,res)=>{
+  console.log("Request received...FILE/UPLOAD");
   console.log(req.body);
   var form = new formidable.IncomingForm();
   form.uploadDir = path.join(__dirname, '/uploads');
