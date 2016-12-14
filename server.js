@@ -49,18 +49,23 @@ app.use(BODY_PARSER.json({limit: '500mb'}));
 
 
 
+// Disable this to try function among the authentication - for develop purposes
+let middlewareAuthentication=require('./authentication/middleware');
 
-// app.use(authentication);
-app.use('/bbdd',bbdd);
-app.use('/file',BODY_PARSER.json(),files);
+
+
+
+app.use('/auth',authentication);
+app.use('/bbdd',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),bbdd);
+app.use('/file',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),files);
 
 
 
 
 // Manejo de los errores 404
 app.use((req, res, next)=> {
-  console.log("Coming back...");
-  res.redirect("back");
+  console.log("404 error");
+  res.send({status:404});
 });
 
 
