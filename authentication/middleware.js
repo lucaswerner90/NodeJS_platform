@@ -19,7 +19,7 @@ var config=require('./config');
 exports.ensureAuthenticated=function(req,res,next){
 
   console.log("Ensured user is authenticated...");
-  if(req.url==='/') next();
+  console.log(req.body);
 
   if(!req.headers.authorization){
 
@@ -50,6 +50,8 @@ exports.ensureAuthenticated=function(req,res,next){
         }
       );
   }
+
+  next();
 
 
 

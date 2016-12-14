@@ -28,7 +28,7 @@ function createToken(id){
 // Function that looks for an existing user inside the system based on the parameters specified
 function existeUsuario(params){
   for (let i = 0; i < usuariosPlataforma.length; i++) {
-    if(params.email===usuariosPlataforma[i].email && params.password===usuariosPlataforma[i].password ){
+    if(params.username===usuariosPlataforma[i].username && params.password===usuariosPlataforma[i].password ){
       return usuariosPlataforma[i];
     }
   }
@@ -39,7 +39,7 @@ function existeUsuario(params){
 function crearUsuario(params){
   usuariosPlataforma[usuariosPlataforma.length]={
     "id":usuariosPlataforma.length,
-    "email":params.email,
+    "username":params.username,
     "password":params.password
   }
 }
@@ -54,7 +54,7 @@ exports.emailSignup=function(req,res){
     crearUsuario(req.body);
     res.send({'status':true});
 
-  // Si existe devolvemos un error y un mensaje indicandolo
+    // Si existe devolvemos un error y un mensaje indicandolo
   }else{
     res.send(
       {
@@ -66,22 +66,25 @@ exports.emailSignup=function(req,res){
 }
 
 exports.emailLogin=function(req,res){
-  console.log("Aca se hace el login del usuario");
-
+  console.log('-------------------------------------');
+  console.log("LOGIN function");
+  console.log(req.body);
 
 
   // Si el usuario se encuentra dentro del sistema de la base de datos entonces
   // devolvemos el token que usará para mantener la sesion en la plataforma
   if(existeUsuario(req.body)){
-    return res
-      .status(200)
-      .send({token:createToken(Math.random())});
+    console.log("User logged");
 
-  // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
-  // indicando que no esta autorizado y el token como null.
+    res.setHeader('Content-Type', 'application/json')
+    res.send({token:createToken(Math.random())});
+
+    // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
+    // indicando que no esta autorizado y el token como null.
   }else{
-    return res
-      .status(401)
-      .send({token:null});
+
+    console.log("User not exists");
+    res.status(401)
+    .send({token:null});
   }
 }

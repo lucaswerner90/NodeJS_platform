@@ -4,7 +4,14 @@
 let config=require('./config.json');
 
 // Connect to FTP
+exports.connect=()=>{
 
+}
 // Download from FTP
+exports.downloadFile=(file)=>{
 
+}
 // Upload to FTP
+exports.uploadFile=(file)=>{
+  
+}

@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "DEBUG=express:* nodemon server.js",
     "start production": "DEBUG=express:* slc start",
     "stop production": "DEBUG=express:* slc ctl stop express-authenticate",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,7 +14,6 @@
   "dependencies": {
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
-    "formidable": "^1.0.17",
     "ftp-client": "^0.2.2",
     "jsonwebtoken": "^7.1.9",
     "jwt-simple": "^0.5.0",
