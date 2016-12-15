@@ -29,7 +29,7 @@ let files=require('./files/index');
 */
 // app.get("/",function(req,res,next){
 //   res.send("Bienvenido al servidor de nodeJS de TED");
-// });
+// })øØØØØØØØøØØ
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -56,7 +56,7 @@ let middlewareAuthentication=require('./authentication/middleware');
 
 
 app.use('/auth',authentication);
-app.use('/bbdd',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),bbdd);
+app.use('/bbdd',middlewareAuthentication.ensureAuthenticated,bbdd);
 app.use('/file',middlewareAuthentication.ensureAuthenticated,files);
 
 
