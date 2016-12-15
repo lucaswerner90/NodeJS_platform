@@ -17,10 +17,6 @@ authorizationRouter.post('/signup',urlEncodedParser, AUTHENTICATE_CORE.emailSign
 authorizationRouter.post('/login',urlEncodedParser, AUTHENTICATE_CORE.emailLogin);
 
 
-// Ruta solo accesible si estás autenticado
-// authorizationRouter.all('[!/login,!/signup]',middleware.ensureAuthenticated);
-
-
 
 
 
