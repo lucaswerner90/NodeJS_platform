@@ -33,7 +33,7 @@ let files=require('./files/index');
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "*");
   next();
 });
 
@@ -57,7 +57,7 @@ let middlewareAuthentication=require('./authentication/middleware');
 
 app.use('/auth',authentication);
 app.use('/bbdd',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),bbdd);
-app.use('/file',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),files);
+app.use('/file',middlewareAuthentication.ensureAuthenticated,files);
 
 
 

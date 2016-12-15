@@ -26,7 +26,7 @@ exports.ensureAuthenticated=function(req,res,next){
     console.log("Your request has not authorization header");
 
     return res
-      .status(403)
+      .status(200)
       .send(
         {
           accessGranted:false,
@@ -50,8 +50,6 @@ exports.ensureAuthenticated=function(req,res,next){
         }
       );
   }
-
-  next();
 
 
 
