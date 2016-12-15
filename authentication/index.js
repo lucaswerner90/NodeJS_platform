@@ -13,8 +13,8 @@ var authorizationRouter = express.Router();
 
 
 // Logging or signup operation had been sent to server
-authorizationRouter.post('/signup',urlEncodedParser, AUTHENTICATE_CORE.emailSignup);
-authorizationRouter.post('/login',urlEncodedParser, AUTHENTICATE_CORE.emailLogin);
+authorizationRouter.post('/signup', AUTHENTICATE_CORE.emailSignup);
+authorizationRouter.post('/login', AUTHENTICATE_CORE.emailLogin);
 
 
 

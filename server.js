@@ -55,7 +55,7 @@ let middlewareAuthentication=require('./authentication/middleware');
 
 
 
-app.use('/auth',authentication);
+app.use('/auth',BODY_PARSER.json({extended:true}),authentication);
 app.use('/bbdd',middlewareAuthentication.ensureAuthenticated,bbdd);
 app.use('/file',middlewareAuthentication.ensureAuthenticated,files);
 
