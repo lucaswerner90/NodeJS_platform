@@ -1,3 +1,4 @@
+"use strict";
 let CORE_DB= require('./coreFunctions');
 
 

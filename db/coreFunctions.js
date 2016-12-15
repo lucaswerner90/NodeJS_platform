@@ -2,7 +2,7 @@
   CORE.JS
   This file contains the main operations that DB has to do.
 */
-
+"use strict";
 
 
 let mysql = require('mysql');

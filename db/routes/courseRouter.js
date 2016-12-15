@@ -5,6 +5,7 @@
   /bbdd/course/*
 
 */
+"use strict";
 let COURSES_QUERIES=require('../queries/course.json');
 
 

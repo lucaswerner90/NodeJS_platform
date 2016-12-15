@@ -13,11 +13,13 @@ Example of options configuration
 "path": ""
 }
 */
+"use strict";
 let path = require('path');
 
 let ftp=require('./FTP');
 let uploadFile=require('./uploadFile');
-
+let multiparty=require('multiparty');
+let form = new multiparty.Form();
 
 
 // Needed to create the File router
@@ -31,10 +33,13 @@ We have to receive a file field in our request object where we can get
 the information of the file.
 */
 routerFile.post('/upload',(req,res)=>{
-  console.log(req.body);
-  return res
-  .status(200)
-  .send({status:"OK"});
+  form.parse(req, function(err, fields, files) {
+    // fields fields fields
+    console.log(fields);
+    console.log(files);
+  });
+
+
 });
 
 

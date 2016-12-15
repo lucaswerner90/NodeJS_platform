@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "DEBUG=express:* nodemon server.js",
+    "upload": "git add -A && git commit -m 'Automatic update from npm' && git push",
     "start production": "DEBUG=express:* slc start",
     "stop production": "DEBUG=express:* slc ctl stop express-authenticate",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +20,7 @@
     "jsonwebtoken": "^7.1.9",
     "jwt-simple": "^0.5.0",
     "moment": "^2.15.1",
+    "multiparty": "^4.1.2",
     "mysql": "^2.11.1",
     "nodemailer": "^2.6.4",
     "nodemailer-smtp-transport": "^2.7.2"
