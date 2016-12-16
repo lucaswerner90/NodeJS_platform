@@ -19,8 +19,6 @@ var config=require('./config');
 exports.ensureAuthenticated=function(req,res,next){
 
   console.log("Ensured user is authenticated...");
-  console.log(req.body);
-
   if(!req.headers.authorization){
 
     console.log("Your request has not authorization header");
@@ -29,7 +27,7 @@ exports.ensureAuthenticated=function(req,res,next){
       .status(200)
       .send(
         {
-          accessGranted:false,
+          status:false,
           message:"Your request has not authorization header"
         }
       );
@@ -40,19 +38,15 @@ exports.ensureAuthenticated=function(req,res,next){
   var payload=jwt.decode(token,config.TOKEN_SECRET,config.SECURITY_ALGORITHM);
 
   if(payload.exp<=moment().unix()){
-    console.log("Token has expired");
     return res
       .status(401)
       .send(
         {
-          accessGranted:false,
+          status:false,
           message:"Token has expired"
         }
       );
   }
-
-
-
 
   req.user=payload.sub;
 

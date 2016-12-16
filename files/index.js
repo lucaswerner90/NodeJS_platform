@@ -4,22 +4,19 @@ THIS FILE CONTROLLS THE FILEUPLOAD AND FTP FUNCTIONALITIES OF THE SERVER
 
 /*
 
-Example of options configuration
+var fs = require('fs');
+var readableStream = fs.createReadStream('file1.txt');
+var writableStream = fs.createWriteStream('file2.txt');
 
-{
-"host":"",
-"username":"",
-"password":"",
-"path": ""
-}
+readableStream.pipe(writableStream);
+
 */
 "use strict";
 let path = require('path');
-
+let fs=require('fs');
 let ftp=require('./FTP');
 let uploadFile=require('./uploadFile');
 let multiparty=require('multiparty');
-let form = new multiparty.Form();
 
 // Varibales that manage the data of the form
 let formFields={};
@@ -36,18 +33,56 @@ We have to receive a file field in our request object where we can get
 the information of the file.
 */
 routerFile.post('/upload',(req,res)=>{
-  form.parse(req, function(err, fields, files) {
 
-    for (let field in fields) {
-      formFields[field]=fields[field][0];
+  let form = new multiparty.Form();
+  let writableStream;
+  console.time("Subida de fichero");
+
+
+  form.on("error",()=>{
+    res.status(200).json({status:false})
+  })
+  // Once the form is parsed, we call the "close" function to send back the response
+  form.on("close",()=>{
+    form=null;
+
+    writableStream.on("finish",()=>{
+      console.log("Escritura del fichero correcta");
+      console.timeEnd("Subida de fichero");
+      writableStream=null;
       console.log(formFields);
-    }
-    for (let file in files) {
-      console.log(files[file][0]);
-    }
-    
-    res.status(200).send({message:'Form parsed correctly'});
+      res.json({status:true});
+    });
+
   });
+
+
+  form.on("file",(name,file)=>{
+    console.log("Fichero recibido....");
+    /*
+    Example of what file variable contains:
+    { fieldName: 'file',
+    originalFilename: 'fim_1.mp3',
+    path: '/var/folders/sj/fxs1vfbj0y5bfqy_bzc45lkh0000gn/T/lCVD6gnH4mTM9CLERgkhi9ar.mp3',
+    headers:
+    { 'content-disposition': 'form-data; name="file"; filename="fim_1.mp3"',
+    'content-type': 'audio/mp3' },
+    size: 26875 }
+
+    */
+    let readableStream = fs.createReadStream(file.path);
+    writableStream = fs.createWriteStream(`./uploads/${file.originalFilename}`);
+    readableStream.pipe(writableStream);
+  });
+
+  form.on("field",(name,value)=>{
+    formFields[name]=value;
+  });
+
+
+  form.parse(req);
+
+
 
 });
 
