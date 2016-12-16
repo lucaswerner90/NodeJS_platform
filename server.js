@@ -32,8 +32,8 @@ let files=require('./files/index');
 // })øØØØØØØØøØØ
 
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Allow-Origin","*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
 
@@ -55,7 +55,7 @@ let middlewareAuthentication=require('./authentication/middleware');
 
 
 
-app.use('/auth',authentication);
+app.use('/auth',BODY_PARSER.json({extended:true}),authentication);
 app.use('/bbdd',middlewareAuthentication.ensureAuthenticated,bbdd);
 app.use('/file',middlewareAuthentication.ensureAuthenticated,files);
 

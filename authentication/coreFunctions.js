@@ -16,7 +16,7 @@ function createToken(id){
   var payload={
     sub:id,
     iat:moment().unix(),
-    exp:moment().add(30,"minutes").unix()
+    exp:moment().add(30,"hours").unix()
   };
 
   return jwt.encode(payload,config.TOKEN_SECRET,config.SECURITY_ALGORITHM);
@@ -69,7 +69,7 @@ exports.emailSignup=function(req,res){
 exports.emailLogin=function(req,res){
   console.log('-------------------------------------');
   console.log("LOGIN function");
-  console.log(req.body);
+
 
 
   // Si el usuario se encuentra dentro del sistema de la base de datos entonces
@@ -77,7 +77,6 @@ exports.emailLogin=function(req,res){
   if(existeUsuario(req.body)){
     console.log("User logged");
 
-    res.setHeader('Content-Type', 'application/json')
     res.send({token:createToken(Math.random())});
 
     // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
