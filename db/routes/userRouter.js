@@ -33,10 +33,6 @@ userRouter.post('/getUser',(req,res)=>{
   .catch((err)=>{
     return res.send({status:false,message:'DDBB Error'});
   });
-
-
-
-  // CORE_FUNCTIONS.finishConnection();
 });
 
 

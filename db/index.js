@@ -13,7 +13,7 @@ let courseRouter=require('./routes/courseRouter');
 
 routerDB.use("/user",userRouter);
 
-routerDB.get("/course",courseRouter);
+routerDB.use("/course",courseRouter);
 
 
 

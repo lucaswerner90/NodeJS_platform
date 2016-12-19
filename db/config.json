@@ -3,5 +3,6 @@
   "port"      : 3306,
   "user"      : "contenidos",
   "password"  : "Contenid0s",
-  "database"  : "catalogo_contenidos"
+  "database"  : "catalogo_contenidos",
+  "multipleStatements":true
 }
