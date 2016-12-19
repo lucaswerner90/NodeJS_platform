@@ -1,9 +1,10 @@
 "use strict";
-var jwt=require('jwt-simple');
-var moment=require('moment');
-var config=require('./config');
+let jwt=require('jwt-simple');
+let moment=require('moment');
+let config=require('./config');
 
-
+let DDBB=require('../db/coreFunctions');
+let USER_QUERIES=require('../db/queries/user.json');
 // Simulamos una consulta a la bbdd
 var usuariosPlataforma=require('./ficheroPruebaUsuarios.json');
 
@@ -28,12 +29,9 @@ function createToken(id){
 
 // Function that looks for an existing user inside the system based on the parameters specified
 function existeUsuario(params){
-  for (let i = 0; i < usuariosPlataforma.length; i++) {
-    if(params.username===usuariosPlataforma[i].username && params.password===usuariosPlataforma[i].password ){
-      return usuariosPlataforma[i];
-    }
-  }
-  return false;
+
+
+
 }
 
 // Function that creates and insert a new user inside the platform
@@ -72,19 +70,27 @@ exports.emailLogin=function(req,res){
 
 
 
-  // Si el usuario se encuentra dentro del sistema de la base de datos entonces
-  // devolvemos el token que usará para mantener la sesion en la plataforma
-  if(existeUsuario(req.body)){
-    console.log("User logged");
 
-    res.send({token:createToken(Math.random())});
+  DDBB.sendQuery(USER_QUERIES.getUser,req.body).then((rows)=>{
 
     // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
     // indicando que no esta autorizado y el token como null.
-  }else{
+    if(rows.length===0){
+      console.log("User not exists");
+      res.status(401)
+      .send({token:null});
+    }else{
 
-    console.log("User not exists");
-    res.status(401)
-    .send({token:null});
-  }
+      // Si el usuario se encuentra dentro del sistema de la base de datos entonces
+      // devolvemos el token que usará para mantener la sesion en la plataforma
+      console.log("User logged");
+      return res
+      .status(200)
+      .send({userInfo:rows[0],token:createToken(Math.random())});
+    }
+  })
+  .catch((err)=>{
+    return null;
+  });
+
 }
