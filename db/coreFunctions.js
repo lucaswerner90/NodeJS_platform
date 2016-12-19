@@ -17,14 +17,6 @@ exports.startConnection=()=>{
   if(!connection){
     connection = mysql.createPool(CONFIGURATION_DB);
   }
-  // connection.connect((err)=> {
-  //   if (err) {
-  //     console.error('error connecting: ' + err.stack);
-  //     return;
-  //   }
-  //
-  //   console.log('connected as id ' + connection.threadId);
-  // });
 }
 
 function replaceVariablesOnQuery(query,obj){
@@ -44,7 +36,6 @@ exports.finishConnection=()=>{
 
 
 
-
 /*
 THIS METHOD SENDS A QUERY TO THE DB
 */
@@ -60,11 +51,14 @@ exports.sendQuery=(query,object)=>{
       query=replaceVariablesOnQuery(query,object);
       console.log("Query: "+query);
       dbConnection.query(query, function(err, rows) {
+
+        // In case of error
+        if(err) reject(err);
+
         // And done with the connection.
         dbConnection.release();
         // Don't use the connection here, it has been returned to the pool.!!!!!!
-        // eventosDB.emit("queryCompleted");
-        console.log('Query received!');
+        console.log('Query sended!');
         resolve(rows);
       });
     });
