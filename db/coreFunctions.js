@@ -1,6 +1,6 @@
 /*
-  CORE.JS
-  This file contains the main operations that DB has to do.
+CORE.JS
+This file contains the main operations that DB has to do.
 */
 "use strict";
 
@@ -9,11 +9,9 @@ let mysql = require('mysql');
 let CONFIGURATION_DB  = require('./config.json');
 
 let connection = null;
-let EventEmitter = require('events').EventEmitter;
-exports.eventosDB = new EventEmitter();
 
 /*
-  THIS METHOD CREATE A NEW CONNECTION TO THE DB
+THIS METHOD CREATE A NEW CONNECTION TO THE DB
 */
 exports.startConnection=()=>{
   if(!connection){
@@ -29,9 +27,16 @@ exports.startConnection=()=>{
   // });
 }
 
+function replaceVariablesOnQuery(query,obj){
+  let finalQuery=query;
+  for(let prop in obj) {
+    finalQuery=finalQuery.replace(`[${prop}]`,`"${obj[prop].toString()}"`);
+  }
+  return finalQuery;
+}
 
 /*
-  THIS METHOD FINISH A NEW CONNECTION TO THE DB
+THIS METHOD FINISH A NEW CONNECTION TO THE DB
 */
 exports.finishConnection=()=>{
   connection.end();
@@ -41,18 +46,28 @@ exports.finishConnection=()=>{
 
 
 /*
-  THIS METHOD SENDS A QUERY TO THE DB
+THIS METHOD SENDS A QUERY TO THE DB
 */
-exports.sendQuery=(query)=>{
-  connection.getConnection(function(err, dbConnection) {
+exports.sendQuery=(query,object)=>{
+  return new Promise(function(resolve,reject){
+
     // Use the connection
-    dbConnection.query( query, function(err, rows) {
-      // And done with the connection.
-      dbConnection.release();
-      // eventosDB.emit("queryCompleted");
-      console.log(rows[0]);
-      return rows;
-      // Don't use the connection here, it has been returned to the pool.
+    connection.getConnection(function(err, dbConnection) {
+
+      // In case of error
+      if(err) reject(err);
+
+      query=replaceVariablesOnQuery(query,object);
+      console.log("Query: "+query);
+      dbConnection.query(query, function(err, rows) {
+        // And done with the connection.
+        dbConnection.release();
+        // Don't use the connection here, it has been returned to the pool.!!!!!!
+        // eventosDB.emit("queryCompleted");
+        console.log('Query received!');
+        resolve(rows);
+      });
     });
-});
+  });
+
 }

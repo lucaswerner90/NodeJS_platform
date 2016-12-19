@@ -1,10 +1,10 @@
 // This file implements all the methods that are used to connect to a FTP server
 
 // Basic configuration
-const config=require('./config.json');
+const config=require('./config').ftpConnection;
 const FTPS = require("ftps");
 
-var ftp = new FTPS(config);
+// var ftp = new FTPS(config);
 // Connect to FTP
 exports.connect=()=>{
   console.log("Connecting to FTP...");

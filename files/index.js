@@ -17,6 +17,7 @@ let fs=require('fs');
 let ftp=require('./FTP');
 let uploadFile=require('./uploadFile');
 let multiparty=require('multiparty');
+const CONFIG=require('./config');
 
 // Varibales that manage the data of the form
 let formFields={};
@@ -33,14 +34,15 @@ We have to receive a file field in our request object where we can get
 the information of the file.
 */
 routerFile.post('/upload',(req,res)=>{
-
   let form = new multiparty.Form();
   let writableStream;
   console.time("Subida de fichero");
 
 
-  form.on("error",()=>{
-    res.status(200).json({status:false})
+  form.on("error",(err)=>{
+    console.log("Error on parse form...");
+    console.log(err);
+    return res.status(200).json({status:false});
   })
   // Once the form is parsed, we call the "close" function to send back the response
   form.on("close",()=>{
@@ -51,7 +53,7 @@ routerFile.post('/upload',(req,res)=>{
       console.timeEnd("Subida de fichero");
       writableStream=null;
       console.log(formFields);
-      res.json({status:true});
+      return res.status(200).json({status:true});
     });
 
   });
@@ -70,11 +72,12 @@ routerFile.post('/upload',(req,res)=>{
     size: 26875 }
     */
     let readableStream = fs.createReadStream(file.path);
-    writableStream = fs.createWriteStream(`./uploads/${file.originalFilename}`);
+    writableStream = fs.createWriteStream(`${CONFIG.fileUpload.directory}/${file.originalFilename}`);
     readableStream.pipe(writableStream);
   });
 
   form.on("field",(name,value)=>{
+    console.log("Field received..."+name);
     formFields[name]=value;
   });
 

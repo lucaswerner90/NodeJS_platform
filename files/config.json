@@ -1,8 +1,13 @@
 {
-  "host":"10.102.224.102",
-  "username":"factoria2",
-  "port":22,
-  "protocol": "sftp",
-  "password":"f4ct0r142sftp",
-  "cwd":"/"
+  "ftpConnection":
+  {
+    "host":"10.102.224.11",
+    "username":"lucas",
+    "port":21,
+    "password":"ted01",
+    "cwd":"/"
+  },
+  "fileUpload":{
+    "directory":"./uploads"
+  }
 }
