@@ -2,12 +2,19 @@
   "ftpConnection":
   {
     "host":"10.102.224.11",
-    "username":"lucas",
+    "user":"lucas",
     "port":21,
     "password":"ted01",
-    "cwd":"/"
+    "debug":true,
+    "uploadsDirectory":"uploads/"
   },
   "fileUpload":{
-    "directory":"./uploads"
+    "directory":"./uploads",
+    "extensionsAllowed":[
+      "zip"
+    ]
+  },
+  "fileDownload":{
+    "directory":"./downloads"
   }
 }

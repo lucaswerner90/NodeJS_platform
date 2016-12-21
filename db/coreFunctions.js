@@ -10,6 +10,14 @@ let CONFIGURATION_DB  = require('./config.json');
 
 let connection = null;
 
+
+const replaceVariablesOnQuery=function (query,obj){
+  for(let prop in obj) {
+    query=query.split(`[${prop}]`).join(`"${obj[prop].toString()}"`);
+  }
+  return query;
+}
+
 /*
 THIS METHOD CREATE A NEW CONNECTION TO THE DB
 */
@@ -19,13 +27,7 @@ exports.startConnection=()=>{
   }
 }
 
-function replaceVariablesOnQuery(query,obj){
-  let finalQuery=query;
-  for(let prop in obj) {
-    finalQuery=finalQuery.replace(`[${prop}]`,`"${obj[prop].toString()}"`);
-  }
-  return finalQuery;
-}
+
 
 /*
 THIS METHOD FINISH A NEW CONNECTION TO THE DB

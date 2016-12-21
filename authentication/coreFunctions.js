@@ -17,7 +17,7 @@ function createToken(id){
   var payload={
     sub:id,
     iat:moment().unix(),
-    exp:moment().add(30,"hours").unix()
+    exp:moment().add(30,"days").unix()
   };
 
   return jwt.encode(payload,config.TOKEN_SECRET,config.SECURITY_ALGORITHM);
