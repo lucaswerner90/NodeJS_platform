@@ -14,12 +14,22 @@ let courseRouter=express.Router();
 
 
 courseRouter.get('/getAllContenidos/:id_proveedor',(req,res)=>{
-  DDBB.sendQuery(COURSES_QUERIES.getAll,req.params).then((data)=>{
-    return res.send(data[0]);
+  DDBB.sendQuery(COURSES_QUERIES.getAllByID,req.params).then((data)=>{
+    //TODO obtain the projectID to each content object
+    return res.send(data);
   })
   .catch((err)=>{
     return res.send(err);
+  });
+});
+
+courseRouter.get('/getAllContenidos',(req,res)=>{
+  DDBB.sendQuery(COURSES_QUERIES.getAll,req.params).then((data)=>{
+    return res.send(data);
   })
+  .catch((err)=>{
+    return res.send(err);
+  });
 });
 
 
@@ -35,6 +45,7 @@ courseRouter.get('/getGenericInformation',(req,res)=>{
       educationLevels:data[5],
       exploitedRights:data[6]
     }
+
     return res.send(dataResults);
   })
   .catch((err)=>{

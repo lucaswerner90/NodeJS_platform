@@ -6,7 +6,6 @@
 const express = require('express');
 const app=express();
 
-
 // Inclusion of third-party middlewares
 let BODY_PARSER=require('body-parser');
 
@@ -21,7 +20,6 @@ let bbdd=require('./db/index');
 
 // Route related with the files functionality
 let files=require('./files/index');
-
 
 
 /*
