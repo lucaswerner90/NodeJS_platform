@@ -15,7 +15,6 @@ const replaceVariablesOnQuery=function (query,obj){
   for(let prop in obj) {
     query=(!obj[prop])?query:query.split(`[${prop}]`).join(`"${obj[prop]}"`);
   }
-  debugger;
   return query;
 };
 
