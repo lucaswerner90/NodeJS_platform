@@ -3,7 +3,7 @@ THIS FILE CONTROLLS THE FILEUPLOAD AND FTP FUNCTIONALITIES OF THE SERVER
 */
 
 
-"use strict";
+'use strict';
 const fs=require('fs');
 const ftp=require('./FTP');
 const multiparty=require('multiparty');

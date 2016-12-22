@@ -21,6 +21,7 @@
     "nodemailer-smtp-transport": "^2.7.2"
   },
   "devDependencies": {
+    "eslint": "^3.12.2",
     "nodemon": "^1.11.0"
   }
 }

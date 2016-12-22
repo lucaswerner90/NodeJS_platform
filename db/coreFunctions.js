@@ -2,21 +2,21 @@
 CORE.JS
 This file contains the main operations that DB has to do.
 */
-"use strict";
+'use strict';
 
 
-let mysql = require('mysql');
-let CONFIGURATION_DB  = require('./config.json');
+const mysql = require('mysql');
+const CONFIGURATION_DB  = require('./config.json');
 
 let connection = null;
 
 
 const replaceVariablesOnQuery=function (query,obj){
   for(let prop in obj) {
-    query=query.split(`[${prop}]`).join(`"${obj[prop].toString()}"`);
+    query=(!obj[prop])?query:query.split(`[${prop}]`).join(`"${obj[prop].toString()}"`);
   }
   return query;
-}
+};
 
 /*
 THIS METHOD CREATE A NEW CONNECTION TO THE DB
@@ -25,7 +25,7 @@ exports.startConnection=()=>{
   if(!connection){
     connection = mysql.createPool(CONFIGURATION_DB);
   }
-}
+};
 
 
 
@@ -34,7 +34,7 @@ THIS METHOD FINISH A NEW CONNECTION TO THE DB
 */
 exports.finishConnection=()=>{
   connection.end();
-}
+};
 
 
 
@@ -49,7 +49,6 @@ exports.sendQuery=(query,object)=>{
 
       // In case of error
       if(err) reject(err);
-
       query=replaceVariablesOnQuery(query,object);
       console.log("Query: "+query);
       dbConnection.query(query, function(err, rows) {
@@ -66,4 +65,4 @@ exports.sendQuery=(query,object)=>{
     });
   });
 
-}
+};

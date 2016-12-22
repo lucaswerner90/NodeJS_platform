@@ -1,5 +1,5 @@
 // This file implements all the methods that are used to connect to a FTP server
-"use strict";
+'use strict';
 // Basic configuration
 const CONFIG=require('./config');
 const ftpClient = require('ftp');
