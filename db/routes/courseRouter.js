@@ -1,8 +1,8 @@
 /*
-  THIS FILE MANAGE ALL THE QUERYS RELATED WITH COURSES
+THIS FILE MANAGE ALL THE QUERYS RELATED WITH COURSES
 
 
-  /bbdd/course/*
+/bbdd/course/*
 
 */
 'use strict';
@@ -13,37 +13,18 @@ const express=require('express');
 const courseRouter=express.Router();
 
 
-courseRouter.post('/getAllContenidos/:id_proveedor',(req,res)=>{
-  DDBB.sendQuery(COURSES_QUERIES.getAllByID,req.params).then((data)=>{
-    //TODO obtain the projectID to each content object
-    return res.send(data);
-  })
-  .catch((err)=>{
-    return res.send(err);
-  });
-});
-
-
 courseRouter.get('/getAllContenidos/:id_proveedor',(req,res)=>{
   DDBB.sendQuery(COURSES_QUERIES.getAllByID,req.params).then((data)=>{
-    //TODO obtain the projectID to each content object
     return res.send(data);
   })
   .catch((err)=>{
     return res.send(err);
   });
 });
+
 
 courseRouter.get('/getAllContenidos',(req,res)=>{
   DDBB.sendQuery(COURSES_QUERIES.getAll,req.params).then((data)=>{
-
-    // DDBB.sendQuery(COURSES_QUERIES.getProjectIDOfContent,data[0]).then((results)=>{
-    //   return res.send(results);
-    // })
-    // .catch((err)=>{
-    //   return res.send(err);
-    // })
-
     return res.send(data);
   })
   .catch((err)=>{
@@ -62,14 +43,15 @@ courseRouter.get('/getGenericInformation',(req,res)=>{
       states:data[3],
       technologies:data[4],
       educationLevels:data[5],
-      exploitedRights:data[6]
-    }
+      exploitedRights:data[6],
+      tipoProveedores:data[7]
+    };
 
     return res.send(dataResults);
   })
   .catch((err)=>{
     return res.send(err);
-  })
+  });
 });
 
 

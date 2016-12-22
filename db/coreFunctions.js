@@ -13,8 +13,9 @@ let connection = null;
 
 const replaceVariablesOnQuery=function (query,obj){
   for(let prop in obj) {
-    query=(!obj[prop])?query:query.split(`[${prop}]`).join(`"${obj[prop].toString()}"`);
+    query=(!obj[prop])?query:query.split(`[${prop}]`).join(`"${obj[prop]}"`);
   }
+  debugger;
   return query;
 };
 
@@ -50,7 +51,7 @@ exports.sendQuery=(query,object)=>{
       // In case of error
       if(err) reject(err);
       query=replaceVariablesOnQuery(query,object);
-      console.log("Query: "+query);
+      console.log('Query: '+query);
       dbConnection.query(query, function(err, rows) {
 
         // In case of error
@@ -59,7 +60,6 @@ exports.sendQuery=(query,object)=>{
         // And done with the connection.
         dbConnection.release();
         // Don't use the connection here, it has been returned to the pool.!!!!!!
-        console.log('Query sended!');
         resolve(rows);
       });
     });
