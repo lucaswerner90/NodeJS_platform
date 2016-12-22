@@ -1,7 +1,7 @@
 /*
   MAIN FILE NODE SERVER
 */
-"use strict";
+'use strict';
 // Declare of the express's app
 const express = require('express');
 const app=express();

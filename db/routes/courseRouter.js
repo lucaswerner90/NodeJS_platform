@@ -5,12 +5,23 @@
   /bbdd/course/*
 
 */
-"use strict";
-let COURSES_QUERIES=require('../queries/course.json');
-let DDBB=require('../coreFunctions');
+'use strict';
+const COURSES_QUERIES=require('../queries/course.json');
+const DDBB=require('../coreFunctions');
 
-let express=require('express');
-let courseRouter=express.Router();
+const express=require('express');
+const courseRouter=express.Router();
+
+
+courseRouter.post('/getAllContenidos/:id_proveedor',(req,res)=>{
+  DDBB.sendQuery(COURSES_QUERIES.getAllByID,req.params).then((data)=>{
+    //TODO obtain the projectID to each content object
+    return res.send(data);
+  })
+  .catch((err)=>{
+    return res.send(err);
+  });
+});
 
 
 courseRouter.get('/getAllContenidos/:id_proveedor',(req,res)=>{
@@ -25,6 +36,14 @@ courseRouter.get('/getAllContenidos/:id_proveedor',(req,res)=>{
 
 courseRouter.get('/getAllContenidos',(req,res)=>{
   DDBB.sendQuery(COURSES_QUERIES.getAll,req.params).then((data)=>{
+
+    // DDBB.sendQuery(COURSES_QUERIES.getProjectIDOfContent,data[0]).then((results)=>{
+    //   return res.send(results);
+    // })
+    // .catch((err)=>{
+    //   return res.send(err);
+    // })
+
     return res.send(data);
   })
   .catch((err)=>{
