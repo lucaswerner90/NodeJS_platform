@@ -1,15 +1,15 @@
 'use strict';
-let CORE_DB= require('./coreFunctions');
-
+const CORE_DB= require('./coreFunctions');
 
 // Needed to create the DB router
-let express=require('express');
+const express=require('express');
 
 let routerDB=express.Router();
 
 // Import of the secondary routers to manage the db operations
-let userRouter=require('./routes/userRouter');
-let courseRouter=require('./routes/courseRouter');
+const userRouter=require('./routes/userRouter');
+const courseRouter=require('./routes/courseRouter');
+CORE_DB.startConnection();
 
 routerDB.use("/user",userRouter);
 

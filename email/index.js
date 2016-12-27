@@ -1,19 +1,29 @@
 const NODE_MAILER=require('nodemailer');
 const EMAIL_CONFIG=require('./config.json');
-const SMTP_TRANSPORT = require('nodemailer-smtp-transport');
 
+// Needed to create the File router
+const express=require('express');
 
-EMAIL_CONFIG.EMAIL_OPTIONS.text='Prueba de contenido de texto del email';
+let pruebaEmail=express.Router();
 
-var transporter = NODE_MAILER.createTransport(SMTP_TRANSPORT(EMAIL_CONFIG.SERVER_OPTIONS));
+let smtpTransport = NODE_MAILER.createTransport(EMAIL_CONFIG.EMAIL_OPTIONS);
 
-
-exports.sendEmail=function(){
-  transporter.sendMail(EMAIL_CONFIG, function(error, info){
-      if(error){
-          console.log(error);
-      }else{
-          console.log('Message sent: ' + info.response);
-      };
+function sendEmail(){
+  smtpTransport.sendMail(EMAIL_CONFIG.EMAIL_FIELDS, function(error, response){
+    if(error){
+      console.log(error);
+    }else{
+      console.log('Email sended....');
+      console.log(response);
+    }
   });
 }
+
+pruebaEmail.get('/email',function(req,res){
+  sendEmail();
+  return res.send({status:"Todo bien??"});
+});
+
+
+
+module.exports=pruebaEmail;

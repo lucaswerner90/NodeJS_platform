@@ -42,8 +42,8 @@ function existeUsuario(params){
         resolve({userInfo:rows[0]});
 
       }
-    })
-  })
+    });
+  });
 
 
 }
@@ -54,7 +54,7 @@ function crearUsuario(params){
     "id":usuariosPlataforma.length,
     "username":params.username,
     "password":params.password
-  }
+  };
 }
 
 
@@ -62,7 +62,7 @@ function crearUsuario(params){
 exports.emailSignup=function(req,res){
   console.log("Aca se hace el registro de usuario");
 
-  existeUsuario(req.body).then((data)=>{
+  existeUsuario(req.body).then(()=>{
     // Si existe devolvemos un error y un mensaje indicandolo
     console.log("User already exists in the platform");
     return res.send({
@@ -70,15 +70,15 @@ exports.emailSignup=function(req,res){
       'error':'User already exists in the platform'
     });
   })
-  .catch((err)=>{
+  .catch(()=>{
     // Si el usuario no existe lo creamos
     console.log("Creating new user...");
     crearUsuario(req.body);
     return res.send({'status':true});
 
-  })
+  });
 
-}
+};
 
 exports.emailLogin=function(req,res){
 
@@ -91,12 +91,12 @@ exports.emailLogin=function(req,res){
     .status(200)
     .send(data);
   })
-  .catch((err)=>{
+  .catch(()=>{
     // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
     // indicando que no esta autorizado y el token como null.
     console.log("User not logged");
     res.status(401)
     .send({userInfo:null,token:null});
-  })
+  });
 
-}
+};

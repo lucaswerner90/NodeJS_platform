@@ -46,7 +46,7 @@ exports.sendQuery=(query,object)=>{
 
     // Use the connection
     connection.getConnection(function(err, dbConnection) {
-
+      
       // In case of error
       if(err) reject(err);
       query=replaceVariablesOnQuery(query,object);

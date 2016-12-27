@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "DEBUG=express:* nodemon --inspect server.js"
+    "start": "nodemon --inspect server.js"
   },
   "author": "Lucas Werner",
   "license": "ISC",
@@ -17,7 +17,7 @@
     "moment": "^2.15.1",
     "multiparty": "^4.1.2",
     "mysql": "^2.11.1",
-    "nodemailer": "^2.6.4",
+    "nodemailer": "^2.7.0",
     "nodemailer-smtp-transport": "^2.7.2"
   },
   "devDependencies": {

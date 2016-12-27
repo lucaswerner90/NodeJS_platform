@@ -1,8 +1,6 @@
 var express=require('express');
 
 // Inclusion of third-party middlewares
-var bodyParser=require('body-parser');
-var urlEncodedParser=bodyParser.json({extended:true});
 var AUTHENTICATE_CORE=require('./coreFunctions');
 
 // Creacion de un router para la aplicacion

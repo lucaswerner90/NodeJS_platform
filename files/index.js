@@ -7,11 +7,9 @@ THIS FILE CONTROLLS THE FILEUPLOAD AND FTP FUNCTIONALITIES OF THE SERVER
 const fs=require('fs');
 const ftp=require('./FTP');
 const multiparty=require('multiparty');
-const CONFIG=require('./config');
 
 // Varibales that manage the data of the form
 let formFields={};
-let formFiles={};
 
 
 // Needed to create the File router

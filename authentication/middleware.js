@@ -55,4 +55,4 @@ exports.ensureAuthenticated=function(req,res,next){
   console.log("User logged correctly");
   //Si se da el caso de que el usuario está logueado correctamente entonces avanzamos al siguiente manejador de ruta
   next();
-}
+};

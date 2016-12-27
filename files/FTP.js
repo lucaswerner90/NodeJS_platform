@@ -12,7 +12,7 @@ const checkIfDirExists=function (dir,path=[]){
     if(path[i].name===dir) return true;
   }
   return false;
-}
+};
 
 // Creates a dir specifying the path on the server
 const createDir=function (path){
@@ -26,7 +26,7 @@ const createDir=function (path){
       resolve(true);
     });
   });
-}
+};
 
 
 const createFile=function (path,remotePath){
@@ -40,7 +40,7 @@ const createFile=function (path,remotePath){
       }
     });
   });
-}
+};
 
 
 // Download from FTP
@@ -58,7 +58,7 @@ exports.downloadFile=(file)=>{
 
     });
   });
-}
+};
 // Upload to FTP
 exports.uploadFile=(file,remotePath)=>{
 
@@ -108,7 +108,7 @@ exports.uploadFile=(file,remotePath)=>{
             .catch((err)=>{
               FTP.end();
               reject(err);
-            })
+            });
           }
 
         });
@@ -117,4 +117,4 @@ exports.uploadFile=(file,remotePath)=>{
     });
 
   });
-}
+};

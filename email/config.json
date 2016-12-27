@@ -1,8 +1,17 @@
 {
+
   "EMAIL_OPTIONS":{
-    "from":"lucas.wernerseoane@telefonica.com",
-    "to":"lucas.wernerseoane@telefonica.com",
-    "subject":"Email example"
+    "service":"Gmail",
+    "auth": {
+      "user": "wernerlucas12@gmail.com",
+      "pass": "lucas.Werner.1990"
+    }
+  },
+  "EMAIL_FIELDS":{
+    "from":"wernerlucas12@gmail.com",
+    "to" : "lucas.wernerseoane@telefonica.com",
+    "subject" : "Prueba",
+    "text" : "Prueba de contenido de texto del email"
   },
   "SERVER_OPTIONS":{
     "host": "https://outlook.office365.com/EWS/Exchange.asmx",

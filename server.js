@@ -2,24 +2,26 @@
   MAIN FILE NODE SERVER
 */
 'use strict';
+
 // Declare of the express's app
 const express = require('express');
 const app=express();
 
 // Inclusion of third-party middlewares
-let BODY_PARSER=require('body-parser');
+const BODY_PARSER=require('body-parser');
 
 /*
   HERE IS WHERE WE CHARGE THE ROUTES THAT WE WILL USE IN THE SERVER APP
 */
 // Inclusion of the routes
-let authentication=require('./authentication/index');
+const authentication=require('./authentication/index');
 
 // Route related with the DB manage
-let bbdd=require('./db/index');
+const bbdd=require('./db/index');
 
 // Route related with the files functionality
-let files=require('./files/index');
+const files=require('./files/index');
+
 
 
 /*
@@ -48,7 +50,7 @@ app.use(BODY_PARSER.json({limit: '500mb'}));
 
 
 // Disable this to try function among the authentication - for develop purposes
-let middlewareAuthentication=require('./authentication/middleware');
+const middlewareAuthentication=require('./authentication/middleware');
 
 
 
@@ -56,6 +58,7 @@ let middlewareAuthentication=require('./authentication/middleware');
 app.use('/auth',BODY_PARSER.json({extended:true}),authentication);
 app.use('/bbdd',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),bbdd);
 app.use('/file',middlewareAuthentication.ensureAuthenticated,files);
+
 
 
 
