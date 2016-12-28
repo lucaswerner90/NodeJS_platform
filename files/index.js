@@ -26,11 +26,13 @@ routerFile.get('/download/filepath=:filepath',(req,res)=>{
 
     // In case of error during the transference we've to inform it to the client
     data.once("error",(err)=>{
+      ftp.disconnect();
       res.send({error:err});
     });
 
     // Once the transference has finished...
     data.once("end",()=>{
+      ftp.disconnect();
       console.log(`Fichero ${req.params.filepath} descargado correctamente`);
     });
 

@@ -45,6 +45,12 @@ function createFile(path,remotePath){
 }
 
 
+exports.disconnect=()=>{
+  FTP.end();
+};
+
+
+
 // Download from FTP
 exports.downloadFile=(filePath)=>{
 
@@ -76,7 +82,6 @@ exports.downloadFile=(filePath)=>{
             }
 
             // We returned a readableStream to pass it to the response
-            FTP.end();
             resolve(fileStream);
 
           });
