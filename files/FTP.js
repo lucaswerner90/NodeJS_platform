@@ -131,8 +131,6 @@ exports.uploadFile=(file,remotePath)=>{
           // If the user's directory doesn't exist we have to create it first, and upload the file later that.
         }else{
           createDir(CONFIG.ftpConnection.uploadsDirectory+pruebaDirUser).then(()=>{
-            console.log("File: "+file);
-            console.log("FTPPath: "+FTPPath);
             createFile(file,FTPPath).then(()=>{
               console.log("Created file on FTP");
               FTP.end();
