@@ -80,6 +80,16 @@ exports.downloadFile=(filePath)=>{
               FTP.end();
               reject(err);
             }
+            fileStream.once("end",()=>{
+              FTP.end();
+              console.log(`Fichero ${filePath} descargado correctamente`);
+            });
+
+            fileStream.once("error",()=>{
+              FTP.end();
+              reject(`Error transmitting the file...`);
+              console.log(`Error transmitting the file...`);
+            });
 
             // We returned a readableStream to pass it to the response
             resolve(fileStream);

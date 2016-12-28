@@ -24,18 +24,7 @@ routerFile.get('/download/filepath=:filepath',(req,res)=>{
   // The filepath param has to be passed after it had been encoded through the encodeURIComponent
   ftp.downloadFile(req.params.filepath).then((data)=>{
 
-    // In case of error during the transference we've to inform it to the client
-    data.once("error",(err)=>{
-      ftp.disconnect();
-      res.send({error:err});
-    });
-
     // Once the transference has finished...
-    data.once("end",()=>{
-      ftp.disconnect();
-      console.log(`Fichero ${req.params.filepath} descargado correctamente`);
-    });
-
     // We set the appropiate headers to inform the client that it needs to download a file
     res.attachment(req.params.filepath);
 
