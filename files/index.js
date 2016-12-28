@@ -7,6 +7,7 @@ THIS FILE CONTROLLS THE FILEUPLOAD AND FTP FUNCTIONALITIES OF THE SERVER
 const fs=require('fs');
 const ftp=require('./FTP');
 const multiparty=require('multiparty');
+const CONFIG=require('./config.json');
 
 // Varibales that manage the data of the form
 let formFields={};
@@ -23,11 +24,12 @@ routerFile.get('/download/filepath=:filepath',(req,res)=>{
   // The filepath param has to be passed after it had been encoded through the encodeURIComponent
   ftp.downloadFile(req.params.filepath).then((data)=>{
 
-
+    // In case of error during the transference we've to inform it to the client
     data.once("error",(err)=>{
       res.send({error:err});
     });
 
+    // Once the transference has finished...
     data.once("end",()=>{
       console.log(`Fichero ${req.params.filepath} descargado correctamente`);
     });
@@ -87,7 +89,8 @@ routerFile.post('/upload',(req,res)=>{
   size: 26875
 }
 */
-if(file.originalFilename.split(".").indexOf("zip")>-1){
+
+if(file.originalFilename.split(".").indexOf(CONFIG.fileUpload.extensionsAllowed[0])>-1){
   let readableStream = fs.createReadStream(file.path);
   ftp.uploadFile(readableStream,file.originalFilename).then(()=>{
     console.log("Escritura del fichero correcta");

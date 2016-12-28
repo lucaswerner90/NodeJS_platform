@@ -60,16 +60,23 @@ exports.downloadFile=(filePath)=>{
       FTP.list(PATH.dirname(filePath),function(err, list) {
 
         // If there is an error listing on the FTP we reject the promise
-        if(err) reject(err);
+        if(err) {
+          FTP.end();
+          reject(err);
+        }
 
         // If the file does not exists in the FTP we return a message advising it
         if(checkIfDirExists(PATH.basename(filePath),list)){
 
           // If the file exists...
           FTP.get(filePath,(err,fileStream)=>{
-            if(err) reject(err);
+            if(err) {
+              FTP.end();
+              reject(err);
+            }
 
             // We returned a readableStream to pass it to the response
+            FTP.end();
             resolve(fileStream);
 
           });
