@@ -15,7 +15,39 @@ let formFields={};
 // Needed to create the File router
 const express=require('express');
 
-let routerFile=express.Router();
+const routerFile=express.Router();
+
+
+
+routerFile.get('/download/filepath=:filepath',(req,res)=>{
+  // The filepath param has to be passed after it had been encoded through the encodeURIComponent
+  ftp.downloadFile(req.params.filepath).then((data)=>{
+
+
+    data.once("error",(err)=>{
+      res.send({error:err});
+    });
+
+    data.once("end",()=>{
+      console.log(`Fichero ${req.params.filepath} descargado correctamente`);
+    });
+
+    // We set the appropiate headers to inform the client that it needs to download a file
+    res.attachment(req.params.filepath);
+
+    // We pipe the file throught the readableStream object to the response
+    data.pipe(res);
+
+
+  })
+  .catch((err)=>{
+    res.send({error:err});
+  });
+});
+
+
+
+
 
 /*
 We have to receive a file field in our request object where we can get
@@ -24,8 +56,7 @@ the information of the file.
 routerFile.post('/upload',(req,res)=>{
 
   let form = new multiparty.Form();
-
-
+  formFields={};
 
 
   form.once("error",(err)=>{
@@ -37,6 +68,7 @@ routerFile.post('/upload',(req,res)=>{
   // Once the form is parsed, we call the "close" function to send back the response
   form.once("close",()=>{
     form=null;
+    formFields=null;
   });
 
 
@@ -44,39 +76,41 @@ routerFile.post('/upload',(req,res)=>{
     /*
     Example of what file variable contains:
     {
-      fieldName: 'file',
-      originalFilename: 'fim_1.mp3',
-      path: '/var/folders/sj/fxs1vfbj0y5bfqy_bzc45lkh0000gn/T/lCVD6gnH4mTM9CLERgkhi9ar.mp3',
-      headers:
-        {
-          'content-disposition': 'form-data; name="file"; filename="fim_1.mp3"',
-          'content-type': 'audio/mp3'
-        },
-        size: 26875
-    }
-    */
-    if(file.originalFilename.split(".").indexOf("zip")>-1){
-      let readableStream = fs.createReadStream(file.path);
-      ftp.uploadFile(readableStream,file.originalFilename).then(()=>{
-        console.log("Escritura del fichero correcta");
-        readableStream=null;
-        return res.status(200).json({status:true});
-      })
-      .catch((err)=>{
-        readableStream=null;
-        return res.status(200).json({error:err});
-      });
-    }else{
-      return res.status(200).json({error:"No file extension allowed"});
-    }
+    fieldName: 'file',
+    originalFilename: 'fim_1.mp3',
+    path: '/var/folders/sj/fxs1vfbj0y5bfqy_bzc45lkh0000gn/T/lCVD6gnH4mTM9CLERgkhi9ar.mp3',
+    headers:
+    {
+    'content-disposition': 'form-data; name="file"; filename="fim_1.mp3"',
+    'content-type': 'audio/mp3'
+  },
+  size: 26875
+}
+*/
+if(file.originalFilename.split(".").indexOf("zip")>-1){
+  let readableStream = fs.createReadStream(file.path);
+  ftp.uploadFile(readableStream,file.originalFilename).then(()=>{
+    console.log("Escritura del fichero correcta");
+    readableStream=null;
+    return res.status(200).json({status:true});
+  })
+  .catch((err)=>{
+    readableStream=null;
+    return res.status(200).json({error:err});
   });
+}else{
+  return res.status(200).json({error:"No file extension allowed"});
+}
+});
 
-  form.on("field",(name,value)=>{
-    formFields[name]=value;
-  });
 
 
-  form.parse(req);
+form.on("field",(name,value)=>{
+  formFields[name]=value;
+});
+
+
+form.parse(req);
 
 
 

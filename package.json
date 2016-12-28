@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon --inspect server.js"
+    "start": "DEBUG=express* nodemon --inspect server.js"
   },
   "author": "Lucas Werner",
   "license": "ISC",

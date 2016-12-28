@@ -23,6 +23,8 @@ const bbdd=require('./db/index');
 const files=require('./files/index');
 
 
+// Disable this to try function among the authentication - for develop purposes
+const middlewareAuthentication=require('./authentication/middleware');
 
 /*
   EXAMPLE TEST
@@ -30,6 +32,8 @@ const files=require('./files/index');
 // app.get("/",function(req,res,next){
 //   res.send("Bienvenido al servidor de nodeJS de TED");
 // })
+
+
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin","*");
@@ -49,17 +53,15 @@ app.use(BODY_PARSER.json({limit: '500mb'}));
 
 
 
-// Disable this to try function among the authentication - for develop purposes
-const middlewareAuthentication=require('./authentication/middleware');
+
 
 
 
 
 app.use('/auth',BODY_PARSER.json({extended:true}),authentication);
 app.use('/bbdd',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),bbdd);
-app.use('/file',middlewareAuthentication.ensureAuthenticated,files);
-
-
+// app.use('/file',middlewareAuthentication.ensureAuthenticated,files);
+app.use('/file',files);
 
 
 
@@ -68,6 +70,7 @@ app.use((req, res, next)=> {
   console.log("404 error");
   res.send({status:404});
 });
+
 
 
 
