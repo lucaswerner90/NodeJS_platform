@@ -88,7 +88,6 @@ exports.downloadFile=(filePath)=>{
             fileStream.once("error",()=>{
               FTP.end();
               reject(`Error transmitting the file...`);
-              console.log(`Error transmitting the file...`);
             });
 
             // We returned a readableStream to pass it to the response
@@ -131,7 +130,6 @@ exports.uploadFile=(file,remotePath)=>{
           console.log(FTPPath);
           createFile(file,FTPPath).then(()=>{
             FTP.end();
-
             resolve(true);
           })
           .catch((err)=>{
@@ -142,7 +140,7 @@ exports.uploadFile=(file,remotePath)=>{
         }else{
           createDir(CONFIG.ftpConnection.uploadsDirectory+pruebaDirUser).then(()=>{
             createFile(file,FTPPath).then(()=>{
-              console.log("Created file on FTP");
+              console.log("File created on FTP");
               FTP.end();
               resolve(true);
             })
