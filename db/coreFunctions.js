@@ -13,7 +13,7 @@ let connection = null;
 
 const replaceVariablesOnQuery=function (query,obj){
   for(let prop in obj) {
-    query=(!obj[prop])?query:query.split(`[${prop}]`).join(`"${obj[prop]}"`);
+    query=(!obj[prop])?query:query.split(`[${prop}]`).join((isNaN(obj[prop]))?`"${obj[prop]}"`:`${obj[prop]}`);
   }
   return query;
 };
@@ -49,6 +49,7 @@ exports.sendQuery=(query,object)=>{
 
       // In case of error
       if(err) reject(err);
+
       query=replaceVariablesOnQuery(query,object);
 
       dbConnection.query(query, function(err, rows) {

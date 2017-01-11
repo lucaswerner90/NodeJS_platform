@@ -110,8 +110,7 @@ exports.downloadFile=(filePath)=>{
 // Upload to FTP
 exports.uploadFile=(file,remotePath)=>{
 
-  let pruebaDirUser="otraPruebaDeUsuario";
-  let FTPPath=CONFIG.ftpConnection.uploadsDirectory+pruebaDirUser+"/"+remotePath;
+  let FTPPath=CONFIG.ftpConnection.uploadsDirectory+remotePath;
 
   // Connect to the FTP server with the CONFIG object setted on the config.json file
   FTP.connect(CONFIG.ftpConnection);
@@ -125,7 +124,7 @@ exports.uploadFile=(file,remotePath)=>{
         if (err) reject(err);
 
         // If the user's directory exists, we only need to upload the file...
-        if(checkIfDirExists(pruebaDirUser,list)){
+        if(checkIfDirExists(PATH.dirname(FTPPath),list)){
           console.log("Directory exists..");
           console.log(FTPPath);
           createFile(file,FTPPath).then(()=>{
@@ -138,7 +137,7 @@ exports.uploadFile=(file,remotePath)=>{
           });
           // If the user's directory doesn't exist we have to create it first, and upload the file later that.
         }else{
-          createDir(CONFIG.ftpConnection.uploadsDirectory+pruebaDirUser).then(()=>{
+          createDir(PATH.dirname(FTPPath)).then(()=>{
             createFile(file,FTPPath).then(()=>{
               console.log("File created on FTP");
               FTP.end();
@@ -159,6 +158,9 @@ exports.uploadFile=(file,remotePath)=>{
       });
 
 
+    });
+    FTP.once('error',(err)=>{
+      reject(err);
     });
 
   });

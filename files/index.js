@@ -56,6 +56,7 @@ routerFile.post('/upload',(req,res)=>{
     console.log("Error on parse form...");
     console.log(err);
     form=null;
+    formFields=null;
     return res.status(200).json({status:false});
   });
 
@@ -65,7 +66,7 @@ routerFile.post('/upload',(req,res)=>{
     /*
     INSERT INTO catalogo_contenidos.contenidos (id_proveedor, titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado) VALUES ([id_proveedor], [titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado]);
     */
-    DB.sendQuery(DBCourseQueries.insertContent,formFields).then(()=>{
+    DB.sendQuery(DBCourseQueries.insertContent,formFields).then((data)=>{
       form=null;
       formFields=null;
       return res.status(200).json({status:true});
@@ -79,9 +80,16 @@ routerFile.post('/upload',(req,res)=>{
 
 
   form.once("file",(name,file)=>{
+
+
+
+
     if(file.originalFilename.split(".").indexOf(CONFIG.fileUpload.extensionsAllowed[0])>-1){
+
+      formFields["ruta_zip"]=formFields["id_proveedor"]+"/"+formFields["id_proyecto"]+"/"+file.originalFilename;
+
       let readableStream = fs.createReadStream(file.path);
-      ftp.uploadFile(readableStream,file.originalFilename).then(()=>{
+      ftp.uploadFile(readableStream,formFields["ruta_zip"]).then(()=>{
         readableStream=null;
       })
       .catch((err)=>{
