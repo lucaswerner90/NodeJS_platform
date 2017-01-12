@@ -5,8 +5,6 @@ let config=require('./config');
 
 let DDBB=require('../db/coreFunctions');
 let USER_QUERIES=require('../db/queries/user.json');
-// Simulamos una consulta a la bbdd
-var usuariosPlataforma=require('./ficheroPruebaUsuarios.json');
 
 
 
@@ -30,7 +28,7 @@ function createToken(id){
 // Function that looks for an existing user inside the system based on the parameters specified
 function existeUsuario(params){
   return new Promise(function(resolve,reject){
-    DDBB.sendQuery(USER_QUERIES.getUser,params).then((rows)=>{
+    DDBB.sendQuery(USER_QUERIES.GET.user,params).then((rows)=>{
 
       if(rows.length===0){
         // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
@@ -48,16 +46,6 @@ function existeUsuario(params){
 
 }
 
-// Function that creates and insert a new user inside the platform
-function crearUsuario(params){
-  usuariosPlataforma[usuariosPlataforma.length]={
-    "id":usuariosPlataforma.length,
-    "username":params.username,
-    "password":params.password
-  };
-}
-
-
 
 exports.emailSignup=function(req,res){
   console.log("Aca se hace el registro de usuario");
@@ -73,7 +61,6 @@ exports.emailSignup=function(req,res){
   .catch(()=>{
     // Si el usuario no existe lo creamos
     console.log("Creating new user...");
-    crearUsuario(req.body);
     return res.send({'status':true});
 
   });

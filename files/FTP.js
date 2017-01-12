@@ -54,6 +54,8 @@ exports.disconnect=()=>{
 // Download from FTP
 exports.downloadFile=(filePath)=>{
 
+  let rutaFile=CONFIG.fileUpload.directory+"/"+filePath;
+
   // Connect to the FTP server with the CONFIG object setted on the config.json file
   FTP.connect(CONFIG.ftpConnection);
 
@@ -63,7 +65,7 @@ exports.downloadFile=(filePath)=>{
     FTP.once('ready', function() {
 
       // We look for the files/dirs inside the specified filepath
-      FTP.list(PATH.dirname(filePath),function(err, list) {
+      FTP.list(PATH.dirname(rutaFile),function(err, list) {
 
         // If there is an error listing on the FTP we reject the promise
         if(err) {
@@ -72,17 +74,17 @@ exports.downloadFile=(filePath)=>{
         }
 
         // If the file does not exists in the FTP we return a message advising it
-        if(checkIfDirExists(PATH.basename(filePath),list)){
+        if(checkIfDirExists(PATH.basename(rutaFile),list)){
 
           // If the file exists...
-          FTP.get(filePath,(err,fileStream)=>{
+          FTP.get(rutaFile,(err,fileStream)=>{
             if(err) {
               FTP.end();
               reject(err);
             }
             fileStream.once("end",()=>{
               FTP.end();
-              console.log(`Fichero ${filePath} descargado correctamente`);
+              console.log(`Fichero ${rutaFile} descargado correctamente`);
             });
 
             fileStream.once("error",()=>{

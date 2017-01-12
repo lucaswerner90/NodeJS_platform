@@ -4,6 +4,7 @@ THIS FILE CONTROLLS THE FILEUPLOAD AND FTP FUNCTIONALITIES OF THE SERVER
 
 
 'use strict';
+const PATH=require('path');
 const fs=require('fs');
 const ftp=require('./FTP');
 const multiparty=require('multiparty');
@@ -18,6 +19,15 @@ let formFields={};
 const express=require('express');
 
 const routerFile=express.Router();
+
+
+// This function creates the date's info to append to the filename
+const appendDate=function(){
+  let fecha=new Date();
+  let month=(fecha.getMonth()+1<10)?`0${fecha.getMonth()+1}`:fecha.getMonth()+1;
+  return `${fecha.getFullYear()}_${month}_${fecha.getDate()}_${fecha.getHours()}_${fecha.getMinutes()}`;
+};
+
 
 
 routerFile.get('/download/filepath=:filepath',(req,res)=>{
@@ -66,10 +76,22 @@ routerFile.post('/upload',(req,res)=>{
     /*
     INSERT INTO catalogo_contenidos.contenidos (id_proveedor, titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado) VALUES ([id_proveedor], [titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado]);
     */
-    DB.sendQuery(DBCourseQueries.insertContent,formFields).then((data)=>{
-      form=null;
-      formFields=null;
-      return res.status(200).json({status:true});
+    DB.sendQuery(DBCourseQueries.insertContent,formFields).then((row)=>{
+
+      // After insert the basic info about the content we need to populate the relations
+      formFields["id_contenido"]=row.insertId;
+
+      // So we send the query for that, managing both the success and the fail option.
+      DB.sendQuery(DBCourseQueries.insertContentRelation,formFields).then(()=>{
+        form=null;
+        formFields=null;
+        return res.status(200).json({status:true});
+      }).catch((err)=>{
+        form=null;
+        formFields=null;
+        return res.status(200).json({error:err});
+      });
+
     }).catch((err)=>{
       form=null;
       formFields=null;
@@ -79,15 +101,27 @@ routerFile.post('/upload',(req,res)=>{
   });
 
 
+
   form.once("file",(name,file)=>{
-
-
-
-
     if(file.originalFilename.split(".").indexOf(CONFIG.fileUpload.extensionsAllowed[0])>-1){
 
-      formFields["ruta_zip"]=formFields["id_proveedor"]+"/"+formFields["id_proyecto"]+"/"+file.originalFilename;
+      // We assign the path where the file will be located on the FTP server
+      /*
+      path.parse('/home/user/dir/file.txt')
+      // Returns:
+      // {
+      //    root : "/",
+      //    dir : "/home/user/dir",
+      //    base : "file.txt",
+      //    ext : ".txt",
+      //    name : "file"
+      // }
+      */
+      let newFilename=PATH.parse(file.originalFilename);
+      newFilename.name=appendDate()+"_"+newFilename.name;
+      formFields["ruta_zip"]=formFields["id_proveedor"]+"/"+formFields["id_proyecto"]+"/"+newFilename.name+newFilename.ext;
 
+      // Create the readableStream to upload the file physically
       let readableStream = fs.createReadStream(file.path);
       ftp.uploadFile(readableStream,formFields["ruta_zip"]).then(()=>{
         readableStream=null;

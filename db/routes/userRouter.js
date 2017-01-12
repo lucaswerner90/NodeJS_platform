@@ -16,12 +16,11 @@ const CORE_FUNCTIONS=require('../coreFunctions');
 
 userRouter.post('/getUser',(req,res)=>{
   /*
-  Usuario prueba:
   userEmail: javier1.rodriguezandres@telefonica.com
   userPassword: 7878
   */
 
-  CORE_FUNCTIONS.sendQuery(USER_QUERIES.getUser,req.body).then((rows)=>{
+  CORE_FUNCTIONS.sendQuery(USER_QUERIES.GET.user,req.body).then((rows)=>{
     return res.status(200).send(rows);
   })
   .catch(()=>{

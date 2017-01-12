@@ -1,3 +1,5 @@
 {
-  "getUser":"Select * From usuarios where email=[userEmail] and password=[userPassword] and id_estado=1"
+  "GET":{
+    "user":"Select * From usuarios where email=[userEmail] and password=[userPassword] and id_estado=1"
+  }
 }
