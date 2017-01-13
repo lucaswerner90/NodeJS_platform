@@ -1,10 +1,10 @@
 'use strict';
-let jwt=require('jwt-simple');
-let moment=require('moment');
-let config=require('./config');
+const jwt=require('jwt-simple');
+const moment=require('moment');
+const config=require('./config');
 
-let DDBB=require('../db/coreFunctions');
-let USER_QUERIES=require('../db/queries/user.json');
+const DDBB=require('../db/coreFunctions');
+const USER_QUERIES=require('../db/queries/user.json');
 
 
 

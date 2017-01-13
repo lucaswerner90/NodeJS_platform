@@ -4,7 +4,7 @@ const CORE_DB= require('./coreFunctions');
 // Needed to create the DB router
 const express=require('express');
 
-let routerDB=express.Router();
+const routerDB=express.Router();
 
 // Import of the secondary routers to manage the db operations
 const userRouter=require('./routes/userRouter');

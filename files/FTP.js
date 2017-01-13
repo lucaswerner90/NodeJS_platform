@@ -10,7 +10,9 @@ const FTP = new ftpClient();
 
 function checkIfDirExists(dir,path=[]){
   for (let i = 0; i < path.length; i++) {
-    if(path[i].name===dir) return true;
+    if(path[i].name===dir){
+      return true;
+    }
   }
   return false;
 }
@@ -54,7 +56,7 @@ exports.disconnect=()=>{
 // Download from FTP
 exports.downloadFile=(filePath)=>{
 
-  let rutaFile=CONFIG.fileUpload.directory+"/"+filePath;
+  const rutaFile=CONFIG.fileUpload.directory+"/"+filePath;
 
   // Connect to the FTP server with the CONFIG object setted on the config.json file
   FTP.connect(CONFIG.ftpConnection);
@@ -112,7 +114,7 @@ exports.downloadFile=(filePath)=>{
 // Upload to FTP
 exports.uploadFile=(file,remotePath)=>{
 
-  let FTPPath=CONFIG.ftpConnection.uploadsDirectory+remotePath;
+  const FTPPath=CONFIG.ftpConnection.uploadsDirectory+remotePath;
 
   // Connect to the FTP server with the CONFIG object setted on the config.json file
   FTP.connect(CONFIG.ftpConnection);
@@ -123,7 +125,9 @@ exports.uploadFile=(file,remotePath)=>{
       // First of all we have to list the cwd to check if the user's directory exists.
       FTP.list(function(err, list) {
         // If there is any error firing the ls command
-        if (err) reject(err);
+        if (err) {
+          reject(err);
+        }
 
         // If the user's directory exists, we only need to upload the file...
         if(checkIfDirExists(PATH.dirname(FTPPath),list)){

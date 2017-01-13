@@ -23,9 +23,12 @@ const routerFile=express.Router();
 
 // This function creates the date's info to append to the filename
 const appendDate=function(){
-  let fecha=new Date();
-  let month=(fecha.getMonth()+1<10)?`0${fecha.getMonth()+1}`:fecha.getMonth()+1;
-  return `${fecha.getFullYear()}_${month}_${fecha.getDate()}_${fecha.getHours()}_${fecha.getMinutes()}`;
+  const fecha=new Date();
+  const month=(fecha.getMonth()+1<10)?`0${fecha.getMonth()+1}`:fecha.getMonth()+1;
+  const day=(fecha.getDate()+1<10)?`0${fecha.getDate()+1}`:fecha.getDate()+1;
+  const hours=(fecha.getHours()+1<10)?`0${fecha.getHours()+1}`:fecha.getHours()+1;
+  const minutes=(fecha.getMinutes()<10)?`0${fecha.getMinutes()+1}`:fecha.getMinutes()+1;
+  return `${fecha.getFullYear()}_${month}_${day}_${hours}_${minutes}`;
 };
 
 
@@ -36,7 +39,11 @@ routerFile.get('/download/filepath=:filepath',(req,res)=>{
 
     // Once the transference has finished...
     // We set the appropiate headers to inform the client that it needs to download a file
+    req.params.filepath=req.params.filepath.split("_").splice(5,req.params.filepath.split("_").length).join("_");
+
+
     res.attachment(req.params.filepath);
+
 
     // We pipe the file throught the readableStream object to the response
     data.pipe(res);
@@ -76,13 +83,14 @@ routerFile.post('/upload',(req,res)=>{
     /*
     INSERT INTO catalogo_contenidos.contenidos (id_proveedor, titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado) VALUES ([id_proveedor], [titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado]);
     */
-    DB.sendQuery(DBCourseQueries.insertContent,formFields).then((row)=>{
+
+    DB.sendQuery(DBCourseQueries.INSERT.content,formFields).then((row)=>{
 
       // After insert the basic info about the content we need to populate the relations
       formFields["id_contenido"]=row.insertId;
 
       // So we send the query for that, managing both the success and the fail option.
-      DB.sendQuery(DBCourseQueries.insertContentRelation,formFields).then(()=>{
+      DB.sendQuery(DBCourseQueries.INSERT.contentRelation,formFields).then(()=>{
         form=null;
         formFields=null;
         return res.status(200).json({status:true});
@@ -119,7 +127,12 @@ routerFile.post('/upload',(req,res)=>{
       */
       let newFilename=PATH.parse(file.originalFilename);
       newFilename.name=appendDate()+"_"+newFilename.name;
+
       formFields["ruta_zip"]=formFields["id_proveedor"]+"/"+formFields["id_proyecto"]+"/"+newFilename.name+newFilename.ext;
+
+
+      formFields["fecha_alta"]=new Date().toISOString().slice(0, 19).replace('T', ' ');
+
 
       // Create the readableStream to upload the file physically
       let readableStream = fs.createReadStream(file.path);

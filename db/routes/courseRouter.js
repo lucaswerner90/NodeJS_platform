@@ -14,7 +14,7 @@ const courseRouter=express.Router();
 
 
 courseRouter.get('/getAllContenidos/:id_proveedor',(req,res)=>{
-  DDBB.sendQuery(COURSES_QUERIES.getAllByID,req.params).then((data)=>{
+  DDBB.sendQuery(COURSES_QUERIES.GET.allByID,req.params).then((data)=>{
     return res.send(data);
   })
   .catch((err)=>{
@@ -24,7 +24,7 @@ courseRouter.get('/getAllContenidos/:id_proveedor',(req,res)=>{
 
 
 courseRouter.get('/getAllContenidos',(req,res)=>{
-  DDBB.sendQuery(COURSES_QUERIES.getAll,req.params).then((data)=>{
+  DDBB.sendQuery(COURSES_QUERIES.GET.all,req.params).then((data)=>{
     return res.send(data);
   })
   .catch((err)=>{
@@ -34,9 +34,9 @@ courseRouter.get('/getAllContenidos',(req,res)=>{
 
 
 courseRouter.get('/getGenericInformation',(req,res)=>{
-  DDBB.sendQuery(COURSES_QUERIES.getGenericInformation,null).then((data)=>{
+  DDBB.sendQuery(COURSES_QUERIES.GET.genericInformation,null).then((data)=>{
 
-    let dataResults={
+    const dataResults={
       platforms:data[0],
       evaluationSystems:data[1],
       contentTypes:data[2],

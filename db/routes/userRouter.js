@@ -7,7 +7,7 @@
 */
 'use strict';
 const express=require('express');
-let userRouter=express.Router();
+const userRouter=express.Router();
 
 
 const USER_QUERIES=require('../queries/user');

@@ -12,8 +12,11 @@ let connection = null;
 
 
 const replaceVariablesOnQuery=function (query,obj){
-  for(let prop in obj) {
-    query=(!obj[prop])?query:query.split(`[${prop}]`).join((isNaN(obj[prop]))?`"${obj[prop]}"`:`${obj[prop]}`);
+  for(const prop in obj) {
+    if (obj.hasOwnProperty(prop)){
+      query=(!obj[prop])?query:query.split(`[${prop}]`).join((isNaN(obj[prop]))?`"${obj[prop]}"`:`${obj[prop]}`);
+    }
+
   }
   return query;
 };
@@ -48,14 +51,18 @@ exports.sendQuery=(query,object)=>{
     connection.getConnection(function(err, dbConnection) {
 
       // In case of error
-      if(err) reject(err);
+      if(err){
+        reject(err);
+      }
 
       query=replaceVariablesOnQuery(query,object);
 
       dbConnection.query(query, function(err, rows) {
 
         // In case of error
-        if(err) reject(err);
+        if(err){
+          reject(err);
+        } 
 
         // And done with the connection.
         dbConnection.release();

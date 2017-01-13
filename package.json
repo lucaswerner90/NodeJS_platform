@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "DEBUG=express* nodemon --inspect server.js"
+    "start": "DEBUG=express* nodemon --inspect server.js",
+    "test":"sudo /etc/sonar-scanner/bin/sonar-scanner -X"
   },
   "author": "Lucas Werner",
   "license": "ISC",

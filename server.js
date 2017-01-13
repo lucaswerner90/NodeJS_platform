@@ -26,13 +26,6 @@ const files=require('./files/index');
 // Disable this to try function among the authentication - for develop purposes
 const middlewareAuthentication=require('./authentication/middleware');
 
-/*
-  EXAMPLE TEST
-*/
-// app.get("/",function(req,res,next){
-//   res.send("Bienvenido al servidor de nodeJS de TED");
-// })
-
 
 
 app.use(function(req, res, next) {
@@ -61,7 +54,6 @@ app.use(BODY_PARSER.json({limit: '500mb'}));
 app.use('/auth',BODY_PARSER.json({extended:true}),authentication);
 app.use('/bbdd',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),bbdd);
 app.use('/file',middlewareAuthentication.ensureAuthenticated,files);
-// app.use('/file',files);
 
 
 
