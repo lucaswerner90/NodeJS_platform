@@ -51,9 +51,10 @@ exports.sendQuery=(query,object)=>{
     connection.getConnection(function(err, dbConnection) {
 
       // In case of error
-      if(err){
-        reject(err);
+      if(err || !dbConnection){
+        reject(err || 'Impossible to connect to the database at this moment...');
       }
+
 
       query=replaceVariablesOnQuery(query,object);
 
@@ -62,10 +63,11 @@ exports.sendQuery=(query,object)=>{
         // In case of error
         if(err){
           reject(err);
-        } 
+        }
 
         // And done with the connection.
         dbConnection.release();
+        
         // Don't use the connection here, it has been returned to the pool.!!!!!!
         resolve(rows);
       });

@@ -20,7 +20,7 @@ const authentication=require('./authentication/index');
 const bbdd=require('./db/index');
 
 // Route related with the files functionality
-const files=require('./files/index');
+const user=require('./files/index');
 
 
 // Disable this to try function among the authentication - for develop purposes
@@ -53,7 +53,7 @@ app.use(BODY_PARSER.json({limit: '500mb'}));
 
 app.use('/auth',BODY_PARSER.json({extended:true}),authentication);
 app.use('/bbdd',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),bbdd);
-app.use('/file',middlewareAuthentication.ensureAuthenticated,files);
+app.use('/user',middlewareAuthentication.ensureAuthenticated,user);
 
 
 

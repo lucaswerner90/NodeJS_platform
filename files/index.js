@@ -4,13 +4,11 @@ THIS FILE CONTROLLS THE FILEUPLOAD AND FTP FUNCTIONALITIES OF THE SERVER
 
 
 'use strict';
-const PATH=require('path');
-const fs=require('fs');
-const ftp=require('./FTP');
 const multiparty=require('multiparty');
-const CONFIG=require('./config.json');
 const DB=require('../db/coreFunctions');
 const DBCourseQueries=require('../db/queries/course.json');
+const FILE=require('./fileFunctions');
+const CONFIG=require('./config.json');
 // Varibales that manage the data of the form
 let formFields={};
 
@@ -18,44 +16,39 @@ let formFields={};
 // Needed to create the File router
 const express=require('express');
 
-const routerFile=express.Router();
+const router=express.Router();
 
 
-// This function creates the date's info to append to the filename
-const appendDate=function(){
-  const fecha=new Date();
-  const month=(fecha.getMonth()+1<10)?`0${fecha.getMonth()+1}`:fecha.getMonth()+1;
-  const day=(fecha.getDate()+1<10)?`0${fecha.getDate()+1}`:fecha.getDate()+1;
-  const hours=(fecha.getHours()+1<10)?`0${fecha.getHours()+1}`:fecha.getHours()+1;
-  const minutes=(fecha.getMinutes()<10)?`0${fecha.getMinutes()+1}`:fecha.getMinutes()+1;
-  return `${fecha.getFullYear()}_${month}_${day}_${hours}_${minutes}`;
+const insertNewContentToDB=(form,camposFormulario,response)=>{
+  DB.sendQuery(DBCourseQueries.INSERT.content,camposFormulario).then((row)=>{
+
+    // After insert the basic info about the content we need to populate the relations
+    camposFormulario["id_contenido"]=row.insertId;
+
+    // So we send the query for that, managing both the success and the fail option.
+    DB.sendQuery(DBCourseQueries.INSERT.contentRelation,camposFormulario).then(()=>{
+      form=null;
+      camposFormulario=null;
+      return response.status(200).json({status:true});
+    }).catch((err)=>{
+      form=null;
+      camposFormulario=null;
+      return response.status(200).json({error:err});
+    });
+
+  }).catch((err)=>{
+    form=null;
+    camposFormulario=null;
+    return response.status(200).json({error:err});
+  });
 };
 
 
 
-routerFile.get('/download/filepath=:filepath',(req,res)=>{
+router.get('/download/filepath=:filepath',(req,res)=>{
   // The filepath param has to be passed after it had been encoded through the encodeURIComponent
-  ftp.downloadFile(req.params.filepath).then((data)=>{
-
-    // Once the transference has finished...
-    // We set the appropiate headers to inform the client that it needs to download a file
-    req.params.filepath=req.params.filepath.split("_").splice(5,req.params.filepath.split("_").length).join("_");
-
-
-    res.attachment(req.params.filepath);
-
-
-    // We pipe the file throught the readableStream object to the response
-    data.pipe(res);
-
-
-  })
-  .catch((err)=>{
-    res.send({error:err});
-  });
+  FILE.downloadFile(req.params.filepath,res);
 });
-
-
 
 
 
@@ -63,11 +56,10 @@ routerFile.get('/download/filepath=:filepath',(req,res)=>{
 We have to receive a file field in our request object where we can get
 the information of the file.
 */
-routerFile.post('/upload',(req,res)=>{
+router.post('/intern/create/course',(req,res)=>{
 
   let form = new multiparty.Form();
   formFields={};
-
 
   form.once("error",(err)=>{
     console.log("Error on parse form...");
@@ -79,73 +71,13 @@ routerFile.post('/upload',(req,res)=>{
 
   // Once the form is parsed, we call the "close" function to send back the response
   form.once("close",()=>{
-
-    /*
-    INSERT INTO catalogo_contenidos.contenidos (id_proveedor, titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado) VALUES ([id_proveedor], [titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado]);
-    */
-
-    DB.sendQuery(DBCourseQueries.INSERT.content,formFields).then((row)=>{
-
-      // After insert the basic info about the content we need to populate the relations
-      formFields["id_contenido"]=row.insertId;
-
-      // So we send the query for that, managing both the success and the fail option.
-      DB.sendQuery(DBCourseQueries.INSERT.contentRelation,formFields).then(()=>{
-        form=null;
-        formFields=null;
-        return res.status(200).json({status:true});
-      }).catch((err)=>{
-        form=null;
-        formFields=null;
-        return res.status(200).json({error:err});
-      });
-
-    }).catch((err)=>{
-      form=null;
-      formFields=null;
-      return res.status(200).json({error:err});
-    });
-
+    insertNewContentToDB(form,formFields,res);
   });
 
 
 
   form.once("file",(name,file)=>{
-    if(file.originalFilename.split(".").indexOf(CONFIG.fileUpload.extensionsAllowed[0])>-1){
-
-      // We assign the path where the file will be located on the FTP server
-      /*
-      path.parse('/home/user/dir/file.txt')
-      // Returns:
-      // {
-      //    root : "/",
-      //    dir : "/home/user/dir",
-      //    base : "file.txt",
-      //    ext : ".txt",
-      //    name : "file"
-      // }
-      */
-      let newFilename=PATH.parse(file.originalFilename);
-      newFilename.name=appendDate()+"_"+newFilename.name;
-
-      formFields["ruta_zip"]=formFields["id_proveedor"]+"/"+formFields["id_proyecto"]+"/"+newFilename.name+newFilename.ext;
-
-
-      formFields["fecha_alta"]=new Date().toISOString().slice(0, 19).replace('T', ' ');
-
-
-      // Create the readableStream to upload the file physically
-      let readableStream = fs.createReadStream(file.path);
-      ftp.uploadFile(readableStream,formFields["ruta_zip"]).then(()=>{
-        readableStream=null;
-      })
-      .catch((err)=>{
-        readableStream=null;
-        return res.status(200).json({error:err});
-      });
-    }else{
-      return res.status(200).json({error:"No file extension allowed"});
-    }
+    FILE.uploadContentFile(file,formFields,res,CONFIG.fileUpload.directory);
   });
 
 
@@ -165,4 +97,4 @@ routerFile.post('/upload',(req,res)=>{
 
 
 
-module.exports=routerFile;
+module.exports=router;

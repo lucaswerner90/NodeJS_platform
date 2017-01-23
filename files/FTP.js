@@ -56,7 +56,7 @@ exports.disconnect=()=>{
 // Download from FTP
 exports.downloadFile=(filePath)=>{
 
-  const rutaFile=CONFIG.fileUpload.directory+"/"+filePath;
+  const rutaFile=filePath;
 
   // Connect to the FTP server with the CONFIG object setted on the config.json file
   FTP.connect(CONFIG.ftpConnection);
@@ -114,7 +114,7 @@ exports.downloadFile=(filePath)=>{
 // Upload to FTP
 exports.uploadFile=(file,remotePath)=>{
 
-  const FTPPath=CONFIG.ftpConnection.uploadsDirectory+remotePath;
+  const FTPPath=remotePath;
 
   // Connect to the FTP server with the CONFIG object setted on the config.json file
   FTP.connect(CONFIG.ftpConnection);
