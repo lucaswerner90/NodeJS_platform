@@ -1,9 +1,11 @@
 
 
 const FTP=require('./FTP');
+
+
 const PATH=require('path');
-const CONFIG=require('./config.json');
 const fs=require('fs');
+const base64 = require('base64-stream');
 
 
 const returnActualDate=()=>{
@@ -34,62 +36,109 @@ const checkFileExtension=(extensions,fileExtension)=>{
 };
 
 
-// Upload file from user request
-const uploadContentFile=(file,formFields,res,uploadDirectory)=>{
-  if(checkFileExtension(CONFIG.fileUpload.extensionsAllowed,PATH.parse(file.originalFilename).ext)){
+const fileRoute=(contentType,formFields,uploadDirectory,filename)=>{
 
-    // We assign the path where the file will be located on the FTP server
-    /*
-    path.parse('/home/user/dir/file.txt')
-    // Returns:
-    // {
-    //    root : "/",
-    //    dir : "/home/user/dir",
-    //    base : "file.txt",
-    //    ext : ".txt",
-    //    name : "file"
-    // }
-    */
-    let newFilename=PATH.parse(file.originalFilename);
+  switch (contentType) {
+    case "avatar":
+      return uploadDirectory+"/"+formFields['id_usuario']+"/avatar"+filename.ext;
+    case "zip":
+      return uploadDirectory+"/"+formFields["id_proveedor"]+"/"+formFields["id_proyecto"]+"/"+filename.name+filename.ext;
+  }
+};
+
+
+// Upload file from user request
+const uploadContentFile=(file,formFields,res,uploadDirectory,extensionsAllowed,avatar=false)=>{
+
+  let newFilename;
+  let ruta_file='';
+  let readableStream;
+
+  function removeVariables(){
+    newFilename=null;
+    ruta_file=null;
+    readableStream=null;
+  }
+
+  if(checkFileExtension(extensionsAllowed,PATH.parse(file.originalFilename).ext)){
+
+    newFilename=PATH.parse(file.originalFilename);
     newFilename.name=appendDateToFilename()+"_"+newFilename.name;
 
-    formFields["ruta_zip"]=uploadDirectory+"/"+formFields["id_proveedor"]+"/"+formFields["id_proyecto"]+"/"+newFilename.name+newFilename.ext;
 
 
-    formFields["fecha_alta"]=returnActualDate();
+    // If the file is a content, we've to manage it in a different way that if it is an image or something else.
+    if(!avatar){
+
+      formFields["fecha_alta"]=returnActualDate();
+      formFields["ruta_zip"]=fileRoute("zip",formFields,uploadDirectory,newFilename);
+      ruta_file=formFields['ruta_zip'];
+
+    // If it's an avatar we have to set the route properly on it
+    }else{
+      formFields['urlAvatar']=fileRoute("avatar",formFields,uploadDirectory,newFilename);
+      ruta_file=formFields['urlAvatar'];
+    }
 
 
     // Create the readableStream to upload the file physically
-    let readableStream = fs.createReadStream(file.path);
-    FTP.uploadFile(readableStream,formFields["ruta_zip"]).then(()=>{
-      readableStream=null;
+    readableStream = fs.createReadStream(file.path);
+    FTP.uploadFile(readableStream,ruta_file).then(()=>{
+      removeVariables();
     })
     .catch((err)=>{
-      readableStream=null;
+      removeVariables();
       return res.status(200).json({error:err});
     });
   }else{
+    removeVariables();
     return res.status(200).json({error:"No file extension allowed"});
   }
 };
+
+
+
+
+const downloadImageInBase64=(filepath)=>{
+
+  return new Promise((resolve,reject)=>{
+    FTP.downloadFile(filepath).then((data)=>{
+
+        let imageData=`data:image/${PATH.parse(filepath).ext.slice(1)};base64,`;
+
+        data.pipe(base64.encode()).on("data",(buf)=>{
+          imageData+=buf;
+        })
+        .on("error",(err)=>{
+          reject(err);
+        })
+        .on("end",()=>{
+          resolve(imageData);
+        });
+
+      })
+    .catch((err)=>{
+      reject(err);
+    });
+  });
+
+};
+
+
 
 // Download the file from the FTP server
 const downloadFile=(filepath,response)=>{
 
   FTP.downloadFile(filepath).then((data)=>{
 
-    // Once the transference has finished...
-    // We set the appropiate headers to inform the client that it needs to download a file
-    filepath=filepath.split("_").splice(5,filepath.split("_").length).join("_");
+      // Once the transference has finished...
+      // We set the appropiate headers to inform the client that it needs to download a file
+      filepath=filepath.split("_").splice(5,filepath.split("_").length).join("_");
 
+      response.attachment(filepath);
 
-    response.attachment(filepath);
-
-
-    // We pipe the file throught the readableStream object to the response
-    data.pipe(response);
-
-
+      // We pipe the file throught the readableStream object to the response
+      data.pipe(response);
   })
   .catch((err)=>{
     response.send({error:err});
@@ -102,6 +151,7 @@ const downloadFile=(filepath,response)=>{
 
 module.exports={
   "downloadFile":downloadFile,
+  "downloadImageInBase64":downloadImageInBase64,
   "uploadContentFile":uploadContentFile,
   "appendDateToFilename":appendDateToFilename,
   "checkFileExtension":checkFileExtension

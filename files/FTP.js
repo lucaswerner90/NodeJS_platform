@@ -84,6 +84,8 @@ exports.downloadFile=(filePath)=>{
               FTP.end();
               reject(err);
             }
+
+
             fileStream.once("end",()=>{
               FTP.end();
               console.log(`Fichero ${rutaFile} descargado correctamente`);

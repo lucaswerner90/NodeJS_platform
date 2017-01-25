@@ -6,7 +6,7 @@ const config=require('./config');
 const DDBB=require('../db/coreFunctions');
 const USER_QUERIES=require('../db/queries/user.json');
 
-
+const FILE_FUNCTIONS = require('../files/fileFunctions');
 
 
 // Function that creates a token that the user will keep and send to the platform to check
@@ -35,9 +35,21 @@ function existeUsuario(params){
         // indicando que no esta autorizado y el token como null.
         reject({token:null});
       }else{
-        // Si el usuario se encuentra dentro del sistema de la base de datos entonces
-        // devolvemos el token que usará para mantener la sesion en la plataforma
-        resolve({userInfo:rows[0]});
+        if(rows[0].urlAvatar!==null){
+          FILE_FUNCTIONS.downloadImageInBase64(rows[0].urlAvatar).then((data)=>{
+            rows[0].imgAvatar=data;
+            resolve({userInfo:rows[0]});
+          })
+          .catch((err)=>{
+            reject(err);
+          });
+        }else{
+          // Si el usuario se encuentra dentro del sistema de la base de datos entonces
+          // devolvemos el token que usará para mantener la sesion en la plataforma
+          resolve({userInfo:rows[0]});
+        }
+
+
 
       }
     });

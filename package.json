@@ -5,11 +5,12 @@
   "main": "server.js",
   "scripts": {
     "start": "DEBUG=express* nodemon --inspect server.js",
-    "test":"sudo /etc/sonar-scanner/bin/sonar-scanner -X"
+    "test": "sudo /etc/sonar-scanner/bin/sonar-scanner -X"
   },
   "author": "Lucas Werner",
   "license": "ISC",
   "dependencies": {
+    "base64-stream": "^0.1.3",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "ftp": "^0.3.10",

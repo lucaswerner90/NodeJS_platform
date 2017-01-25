@@ -30,5 +30,17 @@ userRouter.post('/getUser',(req,res)=>{
 
 
 
+userRouter.get('/getProveedor/:id_proveedor',(req,res)=>{
+
+  CORE_FUNCTIONS.sendQuery(USER_QUERIES.GET.proveedor,req.params).then((rows)=>{
+    return res.status(200).send(rows[0]);
+  })
+  .catch(()=>{
+    return res.send({status:false,message:'DDBB Error'});
+  });
+});
+
+
+
 // Export the user router object
 module.exports=userRouter;

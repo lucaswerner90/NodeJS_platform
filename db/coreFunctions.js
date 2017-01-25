@@ -67,7 +67,7 @@ exports.sendQuery=(query,object)=>{
 
         // And done with the connection.
         dbConnection.release();
-        
+
         // Don't use the connection here, it has been returned to the pool.!!!!!!
         resolve(rows);
       });

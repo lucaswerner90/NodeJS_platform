@@ -8,6 +8,13 @@
     "debug":true,
     "uploadsDirectory":"uploads/"
   },
+  "screenshotsUpload":{
+    "directory":"./content_screenshots",
+    "extensionsAllowed":[
+      "jpg",
+      "png"
+    ]
+  },
   "fileUpload":{
     "directory":"./uploads",
     "extensionsAllowed":[
@@ -15,9 +22,10 @@
     ]
   },
   "avatarUpload":{
-    "directory":"./avatar",
+    "directory":"./user_avatar",
     "extensionsAllowed":[
-      "jpg"
+      "jpg",
+      "png"
     ]
   },
   "fileDownload":{
