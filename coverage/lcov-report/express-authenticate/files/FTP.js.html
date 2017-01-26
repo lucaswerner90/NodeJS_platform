@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for express-authenticate/files/FTP.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">express-authenticate/files/</a> FTP.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">39.19% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>29/74</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">31.25% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>5/16</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">41.67% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>5/12</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">39.19% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>29/74</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// This file implements all the methods that are used to connect to a FTP server
+'use strict';
+// Basic configuration
+const CONFIG=require('./config');
+const PATH=require('path');
+const ftpClient = require('ftp');
+const FTP = new ftpClient();
+&nbsp;
+&nbsp;
+&nbsp;
+function checkIfDirExists(dir,path=[]){
+  for (let i = 0; i &lt; path.length; i++) {
+    if(path[i].name===dir){
+      return true;
+    }
+  }
+<span class="cstat-no" title="statement not covered" >  return false;</span>
+}
+&nbsp;
+// Creates a dir specifying the path on the server
+<span class="fstat-no" title="function not covered" >function createDir(path){</span>
+<span class="cstat-no" title="statement not covered" >  return new Promise((resolve,reject)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >    FTP.mkdir(path,true,(err)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >      console.log("Creating the dir..."+path);</span>
+<span class="cstat-no" title="statement not covered" >      if(err){</span>
+<span class="cstat-no" title="statement not covered" >        console.log("Error creating the dir on createDir()");</span>
+<span class="cstat-no" title="statement not covered" >        reject(err);</span>
+      }
+<span class="cstat-no" title="statement not covered" >      resolve(true);</span>
+    });
+  });
+}
+&nbsp;
+&nbsp;
+&nbsp;
+<span class="fstat-no" title="function not covered" >function createFile(path,remotePath){</span>
+<span class="cstat-no" title="statement not covered" >  return new Promise((resolve,reject)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >    FTP.put(path, remotePath, <span class="fstat-no" title="function not covered" >function(err) {</span></span>
+<span class="cstat-no" title="statement not covered" >      if (err){</span>
+<span class="cstat-no" title="statement not covered" >        console.log(err);</span>
+<span class="cstat-no" title="statement not covered" >        reject(err);</span>
+      } else{
+<span class="cstat-no" title="statement not covered" >        resolve(true);</span>
+      }
+    });
+  });
+}
+&nbsp;
+&nbsp;
+function FTPDisconnect(){
+  FTP.end();
+  FTP.removeAllListeners();
+}
+&nbsp;
+&nbsp;
+&nbsp;
+// Download from FTP
+exports.downloadFile=function(filePath){
+&nbsp;
+  const rutaFile=filePath;
+&nbsp;
+  // Connect to the FTP server with the CONFIG object setted on the config.json file
+  FTP.connect(CONFIG.ftpConnection);
+&nbsp;
+  return new Promise((resolve,reject)=&gt;{
+&nbsp;
+    // Once the connection is established
+    FTP.once('greeting', function() {
+&nbsp;
+      // We look for the files/dirs inside the specified filepath
+      FTP.list(PATH.dirname(rutaFile),function(err, list) {
+&nbsp;
+        // If there is an error listing on the FTP we reject the promise
+        <span class="missing-if-branch" title="if path not taken" >I</span>if(err) {
+<span class="cstat-no" title="statement not covered" >          FTPDisconnect();</span>
+<span class="cstat-no" title="statement not covered" >          reject(err);</span>
+        }
+&nbsp;
+        // If the file does not exists in the FTP we return a message advising it
+        <span class="missing-if-branch" title="else path not taken" >E</span>if(checkIfDirExists(PATH.basename(rutaFile),list)){
+&nbsp;
+          // If the file exists...
+          FTP.get(rutaFile,(err,fileStream)=&gt;{
+            <span class="missing-if-branch" title="if path not taken" >I</span>if(err) {
+<span class="cstat-no" title="statement not covered" >              FTPDisconnect();</span>
+<span class="cstat-no" title="statement not covered" >              reject(err);</span>
+            }
+&nbsp;
+&nbsp;
+            fileStream.once("end",()=&gt;{
+              FTPDisconnect();
+              console.log(`Fichero ${rutaFile} descargado correctamente`);
+            });
+&nbsp;
+            fileStream.once("error",()=&gt;{
+<span class="cstat-no" title="statement not covered" >              FTPDisconnect();</span>
+<span class="cstat-no" title="statement not covered" >              reject(`Error transmitting the file...`);</span>
+            });
+&nbsp;
+            // We returned a readableStream to pass it to the response
+            resolve(fileStream);
+&nbsp;
+          });
+        }else{
+<span class="cstat-no" title="statement not covered" >          reject(`File doesn't exist on the specified path`);</span>
+        }
+      });
+&nbsp;
+&nbsp;
+    });
+&nbsp;
+  });
+};
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+// Upload to FTP
+exports.uploadFile=<span class="fstat-no" title="function not covered" >function(file,FTPPath){</span>
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  FTP.connect(CONFIG.ftpConnection);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return new Promise(<span class="fstat-no" title="function not covered" >function(resolve,reject){</span></span>
+&nbsp;
+    // Connect to the FTP server with the CONFIG object setted on the config.json file
+&nbsp;
+    // When the connection is ready....
+<span class="cstat-no" title="statement not covered" >    FTP.once('ready', <span class="fstat-no" title="function not covered" >function() {</span></span>
+      // First of all we have to list the cwd to check if the user's directory exists.
+<span class="cstat-no" title="statement not covered" >      FTP.list(<span class="fstat-no" title="function not covered" >function(err, list) {</span></span>
+        // If there is any error firing the ls command
+<span class="cstat-no" title="statement not covered" >        if (err) {</span>
+<span class="cstat-no" title="statement not covered" >          reject(err);</span>
+        }
+        // If the user's directory exists, we only need to upload the file...
+<span class="cstat-no" title="statement not covered" >        if(checkIfDirExists(PATH.dirname(FTPPath),list)){</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          createFile(file,FTPPath).then(()=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >            FTPDisconnect();</span>
+<span class="cstat-no" title="statement not covered" >            resolve(true);</span>
+          })
+          .catch((err)=&gt;{
+<span class="cstat-no" title="statement not covered" >            FTPDisconnect();</span>
+<span class="cstat-no" title="statement not covered" >            reject(err);</span>
+          });
+          // If the user's directory doesn't exist we have to create it first, and upload the file later that.
+        }else{
+<span class="cstat-no" title="statement not covered" >          createDir(PATH.dirname(FTPPath)).then(()=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >            createFile(file,FTPPath).then(()=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >              console.log("File created on FTP");</span>
+<span class="cstat-no" title="statement not covered" >              FTPDisconnect();</span>
+<span class="cstat-no" title="statement not covered" >              resolve(true);</span>
+            })
+            .catch((err)=&gt;{
+<span class="cstat-no" title="statement not covered" >              console.log("Error creating file on FTP");</span>
+<span class="cstat-no" title="statement not covered" >              FTPDisconnect();</span>
+<span class="cstat-no" title="statement not covered" >              reject(err);</span>
+            });
+          })
+          .catch((err)=&gt;{
+<span class="cstat-no" title="statement not covered" >            FTPDisconnect();</span>
+<span class="cstat-no" title="statement not covered" >            reject(err);</span>
+          });
+        }
+&nbsp;
+      });
+&nbsp;
+&nbsp;
+    });
+<span class="cstat-no" title="statement not covered" >    FTP.once('error',(err)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >      reject(err);</span>
+    });
+&nbsp;
+  });
+};
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Jan 26 2017 18:42:44 GMT+0100 (CET)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

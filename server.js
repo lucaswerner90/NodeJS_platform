@@ -2,11 +2,10 @@
   MAIN FILE NODE SERVER
 */
 'use strict';
-
 // Declare of the express's app
 const express = require('express');
 const app=express();
-
+const PORT = process.env.PORT || 5000;
 // Inclusion of third-party middlewares
 const BODY_PARSER=require('body-parser');
 
@@ -53,18 +52,20 @@ app.use(BODY_PARSER.json({limit: '500mb'}));
 
 app.use('/auth',BODY_PARSER.json({extended:true}),authentication);
 app.use('/bbdd',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),bbdd);
-app.use('/user',middlewareAuthentication.ensureAuthenticated,user);
+app.use('/user',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),user);
 
 
 
 // Manejo de los errores 404
 app.use((req, res, next)=> {
   console.log("404 error");
-  res.send({status:404});
+  res.status(404).send({status:404});
 });
 
 
 
 
 
-app.listen(5000);
+
+
+module.exports=app.listen(PORT);

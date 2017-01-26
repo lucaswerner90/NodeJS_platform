@@ -13,7 +13,6 @@ const DBUserQueries=require('../db/queries/user.json');
 
 
 
-
 router.post('/personal_info',(req,res)=>{
   /*
   UPDATE usuarios SET Nombre=[nombre],Apellidos=[apellidos],email=[email] WHERE id_usuario=[id_usuario]
@@ -29,7 +28,7 @@ router.post('/personal_info',(req,res)=>{
 
 
 router.post('/change_password',(req,res)=>{
-
+  console.log(req.body);
   /*
   UPDATE usuarios SET password=[password] WHERE id_usuario=[id_usuario]
   */
@@ -50,8 +49,10 @@ router.post('/avatar',(req,res)=>{
   // This function is usefull to clear data from local variables.
   function deleteReferences(){
     formData=null;
-    form=null;
     fieldFile=null;
+    form.removeAllListeners();
+    form=null;
+
   }
 
 
@@ -68,7 +69,6 @@ router.post('/avatar',(req,res)=>{
   form.once("close",()=>{
     console.log(formData);
     FILE_FUNCTIONS.uploadContentFile(formData[fieldFile],formData,res,FILE_CONFIG.avatarUpload.directory,FILE_CONFIG.avatarUpload.extensionsAllowed,true);
-
     DB.sendQuery(DBUserQueries.UPDATE.avatar,formData).then(()=>{
       deleteReferences();
       res.send({status:true});

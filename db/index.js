@@ -11,7 +11,7 @@ const userRouter=require('./routes/userRouter');
 const courseRouter=require('./routes/courseRouter');
 CORE_DB.startConnection();
 
-routerDB.use("/user",userRouter);
+// routerDB.use("/user",userRouter);
 
 routerDB.use("/course",courseRouter);
 

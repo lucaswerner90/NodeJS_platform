@@ -44,7 +44,8 @@ courseRouter.get('/getGenericInformation',(req,res)=>{
       technologies:data[4],
       educationLevels:data[5],
       exploitedRights:data[6],
-      tipoProveedores:data[7]
+      tipoProveedores:data[7],
+      proyectos:data[8]
     };
 
     return res.send(dataResults);

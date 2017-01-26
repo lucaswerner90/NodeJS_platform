@@ -29,8 +29,8 @@ function createToken(id){
 function existeUsuario(params){
   return new Promise(function(resolve,reject){
     DDBB.sendQuery(USER_QUERIES.GET.user,params).then((rows)=>{
-
       if(rows.length===0){
+        console.log("No se encuentra el usuario¿?¿?¿?¿?");
         // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
         // indicando que no esta autorizado y el token como null.
         reject({token:null});
@@ -58,27 +58,6 @@ function existeUsuario(params){
 
 }
 
-
-exports.emailSignup=function(req,res){
-  console.log("Aca se hace el registro de usuario");
-
-  existeUsuario(req.body).then(()=>{
-    // Si existe devolvemos un error y un mensaje indicandolo
-    console.log("User already exists in the platform");
-    return res.send({
-      'status':false,
-      'error':'User already exists in the platform'
-    });
-  })
-  .catch(()=>{
-    // Si el usuario no existe lo creamos
-    console.log("Creating new user...");
-    return res.send({'status':true});
-
-  });
-
-};
-
 exports.emailLogin=function(req,res){
 
   existeUsuario(req.body).then((data)=>{
@@ -90,10 +69,10 @@ exports.emailLogin=function(req,res){
     .status(200)
     .send(data);
   })
-  .catch(()=>{
+  .catch((err)=>{
     // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
     // indicando que no esta autorizado y el token como null.
-    console.log("User not logged");
+    console.log("coreFunctions Error "+err);
     res.status(401)
     .send({userInfo:null,token:null});
   });

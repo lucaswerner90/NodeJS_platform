@@ -5,7 +5,7 @@ const FTP=require('./FTP');
 
 const PATH=require('path');
 const fs=require('fs');
-const base64 = require('base64-stream');
+const BASE_64_ENCODER = require('base64-stream');
 
 
 const returnActualDate=()=>{
@@ -106,17 +106,17 @@ const downloadImageInBase64=(filepath)=>{
 
         let imageData=`data:image/${PATH.parse(filepath).ext.slice(1)};base64,`;
 
-        data.pipe(base64.encode()).on("data",(buf)=>{
+        data.pipe(BASE_64_ENCODER.encode()).on("data",(buf)=>{
           imageData+=buf;
         })
-        .on("error",(err)=>{
+        .once("error",(err)=>{
           reject(err);
         })
-        .on("end",()=>{
+        .once("end",()=>{
           resolve(imageData);
         });
 
-      })
+    })
     .catch((err)=>{
       reject(err);
     });

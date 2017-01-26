@@ -47,14 +47,15 @@ function createFile(path,remotePath){
 }
 
 
-exports.disconnect=()=>{
+function FTPDisconnect(){
   FTP.end();
-};
+  FTP.removeAllListeners();
+}
 
 
 
 // Download from FTP
-exports.downloadFile=(filePath)=>{
+exports.downloadFile=function(filePath){
 
   const rutaFile=filePath;
 
@@ -64,14 +65,14 @@ exports.downloadFile=(filePath)=>{
   return new Promise((resolve,reject)=>{
 
     // Once the connection is established
-    FTP.once('ready', function() {
+    FTP.once('greeting', function() {
 
       // We look for the files/dirs inside the specified filepath
       FTP.list(PATH.dirname(rutaFile),function(err, list) {
 
         // If there is an error listing on the FTP we reject the promise
         if(err) {
-          FTP.end();
+          FTPDisconnect();
           reject(err);
         }
 
@@ -81,18 +82,18 @@ exports.downloadFile=(filePath)=>{
           // If the file exists...
           FTP.get(rutaFile,(err,fileStream)=>{
             if(err) {
-              FTP.end();
+              FTPDisconnect();
               reject(err);
             }
 
 
             fileStream.once("end",()=>{
-              FTP.end();
+              FTPDisconnect();
               console.log(`Fichero ${rutaFile} descargado correctamente`);
             });
 
             fileStream.once("error",()=>{
-              FTP.end();
+              FTPDisconnect();
               reject(`Error transmitting the file...`);
             });
 
@@ -107,6 +108,7 @@ exports.downloadFile=(filePath)=>{
 
 
     });
+
   });
 };
 
@@ -114,14 +116,15 @@ exports.downloadFile=(filePath)=>{
 
 
 // Upload to FTP
-exports.uploadFile=(file,remotePath)=>{
+exports.uploadFile=function(file,FTPPath){
 
-  const FTPPath=remotePath;
 
-  // Connect to the FTP server with the CONFIG object setted on the config.json file
   FTP.connect(CONFIG.ftpConnection);
 
-  return new Promise((resolve,reject)=>{
+  return new Promise(function(resolve,reject){
+
+    // Connect to the FTP server with the CONFIG object setted on the config.json file
+
     // When the connection is ready....
     FTP.once('ready', function() {
       // First of all we have to list the cwd to check if the user's directory exists.
@@ -130,17 +133,15 @@ exports.uploadFile=(file,remotePath)=>{
         if (err) {
           reject(err);
         }
-
         // If the user's directory exists, we only need to upload the file...
         if(checkIfDirExists(PATH.dirname(FTPPath),list)){
-          console.log("Directory exists..");
-          console.log(FTPPath);
+
           createFile(file,FTPPath).then(()=>{
-            FTP.end();
+            FTPDisconnect();
             resolve(true);
           })
           .catch((err)=>{
-            FTP.end();
+            FTPDisconnect();
             reject(err);
           });
           // If the user's directory doesn't exist we have to create it first, and upload the file later that.
@@ -148,17 +149,17 @@ exports.uploadFile=(file,remotePath)=>{
           createDir(PATH.dirname(FTPPath)).then(()=>{
             createFile(file,FTPPath).then(()=>{
               console.log("File created on FTP");
-              FTP.end();
+              FTPDisconnect();
               resolve(true);
             })
             .catch((err)=>{
               console.log("Error creating file on FTP");
-              FTP.end();
+              FTPDisconnect();
               reject(err);
             });
           })
           .catch((err)=>{
-            FTP.end();
+            FTPDisconnect();
             reject(err);
           });
         }

@@ -6,6 +6,6 @@
   "UPDATE":{
     "avatar":"UPDATE usuarios SET urlAvatar=[urlAvatar] WHERE id_usuario=[id_usuario];",
     "personalInfo":"UPDATE usuarios SET Nombre=[nombre],Apellidos=[apellidos],email=[email] WHERE id_usuario=[id_usuario]",
-    "password":"UPDATE usuarios SET password=[password] WHERE id_usuario=[id_usuario]"
+    "password":"UPDATE usuarios SET password=[password] WHERE id_usuario=[id_usuario];"
   }
 }

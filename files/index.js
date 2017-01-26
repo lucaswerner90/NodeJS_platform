@@ -78,6 +78,7 @@ router.post('/intern/create/course',(req,res)=>{
   });
 
   form.on("field",(name,value)=>{
+    console.log(name+"      "+value);
     formFields[name]=value;
   });
 
