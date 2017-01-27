@@ -5,6 +5,9 @@ THIS FILE MANAGE ALL THE QUERYS RELATED WITH COURSES
 /bbdd/course/*
 
 */
+
+// TODO: Reestructurar el fichero mandandolo a uno nuevo en una nueva carpeta de cursos
+
 'use strict';
 const COURSES_QUERIES=require('../queries/course.json');
 const DDBB=require('../coreFunctions');

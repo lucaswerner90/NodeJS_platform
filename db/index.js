@@ -7,11 +7,10 @@ const express=require('express');
 const routerDB=express.Router();
 
 // Import of the secondary routers to manage the db operations
-const userRouter=require('./routes/userRouter');
 const courseRouter=require('./routes/courseRouter');
 CORE_DB.startConnection();
 
-// routerDB.use("/user",userRouter);
+
 
 routerDB.use("/course",courseRouter);
 

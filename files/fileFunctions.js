@@ -60,40 +60,48 @@ const uploadContentFile=(file,formFields,res,uploadDirectory,extensionsAllowed,a
     readableStream=null;
   }
 
-  if(checkFileExtension(extensionsAllowed,PATH.parse(file.originalFilename).ext)){
+  return new Promise((resolve,reject)=>{
+    if(checkFileExtension(extensionsAllowed,PATH.parse(file.originalFilename).ext)){
 
-    newFilename=PATH.parse(file.originalFilename);
-    newFilename.name=appendDateToFilename()+"_"+newFilename.name;
+      newFilename=PATH.parse(file.originalFilename);
+      newFilename.name=appendDateToFilename()+"_"+newFilename.name;
 
 
 
-    // If the file is a content, we've to manage it in a different way that if it is an image or something else.
-    if(!avatar){
+      // If the file is a content, we've to manage it in a different way that if it is an image or something else.
+      if(!avatar){
 
-      formFields["fecha_alta"]=returnActualDate();
-      formFields["ruta_zip"]=fileRoute("zip",formFields,uploadDirectory,newFilename);
-      ruta_file=formFields['ruta_zip'];
+        formFields["fecha_alta"]=returnActualDate();
+        formFields["ruta_zip"]=fileRoute("zip",formFields,uploadDirectory,newFilename);
+        ruta_file=formFields['ruta_zip'];
 
-    // If it's an avatar we have to set the route properly on it
+      // If it's an avatar we have to set the route properly on it
+      }else{
+        formFields['urlAvatar']=fileRoute("avatar",formFields,uploadDirectory,newFilename);
+        ruta_file=formFields['urlAvatar'];
+      }
+
+
+      // Create the readableStream to upload the file physically
+      readableStream = fs.createReadStream(file.path);
+      FTP.uploadFile(readableStream,ruta_file).then(()=>{
+        removeVariables();
+        resolve(true);
+      })
+      .catch((err)=>{
+        removeVariables();
+        reject(err);
+      });
     }else{
-      formFields['urlAvatar']=fileRoute("avatar",formFields,uploadDirectory,newFilename);
-      ruta_file=formFields['urlAvatar'];
+      removeVariables();
+      reject({error:"No file extension allowed"});
     }
+  });
 
 
-    // Create the readableStream to upload the file physically
-    readableStream = fs.createReadStream(file.path);
-    FTP.uploadFile(readableStream,ruta_file).then(()=>{
-      removeVariables();
-    })
-    .catch((err)=>{
-      removeVariables();
-      return res.status(200).json({error:err});
-    });
-  }else{
-    removeVariables();
-    return res.status(200).json({error:"No file extension allowed"});
-  }
+
+
+
 };
 
 
@@ -153,6 +161,7 @@ module.exports={
   "downloadFile":downloadFile,
   "downloadImageInBase64":downloadImageInBase64,
   "uploadContentFile":uploadContentFile,
+  "returnActualDate":returnActualDate,
   "appendDateToFilename":appendDateToFilename,
   "checkFileExtension":checkFileExtension
 };

@@ -67,7 +67,6 @@ router.post('/avatar',(req,res)=>{
 
 
   form.once("close",()=>{
-    console.log(formData);
     FILE_FUNCTIONS.uploadContentFile(formData[fieldFile],formData,res,FILE_CONFIG.avatarUpload.directory,FILE_CONFIG.avatarUpload.extensionsAllowed,true);
     DB.sendQuery(DBUserQueries.UPDATE.avatar,formData).then(()=>{
       deleteReferences();

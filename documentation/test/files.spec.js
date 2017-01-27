@@ -22,7 +22,7 @@ describe("UPLOAD course",function(){
     .set({
       authorization: 'prueba eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOjAuNTY4NjA0MzA2ODk5Nzg0OCwiaWF0IjoxNDg1MjQ0NTMzLCJleHAiOjE0ODc4MzY1MzN9.NgtYONse-_iTqCHlM3Cof-b1BxDuxL46PC-mxe0AHGo-C3lrjjcFZ8fuf448av3ODIKWmLsooAZy_jfQnJDlNw',
       'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
-      body:
+      formData:
       {
         id_proveedor: '1',
         titulo: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',

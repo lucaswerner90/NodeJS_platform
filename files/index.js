@@ -18,12 +18,38 @@ const express=require('express');
 const router=express.Router();
 
 
+/********************************************************************************************************************/
+/********************************************************************************************************************/
+const updateContentInDB=(camposFormulario,updateFile=false)=>{
+
+
+  function removeVariables(){
+    camposFormulario=null;
+  }
+
+  return new Promise((resolve,reject)=>{
+    DB.sendQuery((updateFile)?DBCourseQueries.UPDATE.content:DBCourseQueries.UPDATE.contentNoFile,camposFormulario).then(()=>{
+      removeVariables();
+      // After insert the basic info about the content we need to populate the relations
+      resolve(true);
+    }).catch((err)=>{
+      removeVariables();
+      reject(err);
+    });
+  });
+
+
+
+};
+/********************************************************************************************************************/
+
 const insertNewContentToDB=(form,camposFormulario,response)=>{
 
   function removeVariables(){
     form=null;
     camposFormulario=null;
   }
+
   DB.sendQuery(DBCourseQueries.INSERT.content,camposFormulario).then((row)=>{
 
     // After insert the basic info about the content we need to populate the relations
@@ -44,18 +70,20 @@ const insertNewContentToDB=(form,camposFormulario,response)=>{
   });
 };
 
-
+/********************************************************************************************************************/
+/********************************************************************************************************************/
 
 router.get('/download/filepath=:filepath',(req,res)=>{
   // The filepath param has to be passed after it had been encoded through the encodeURIComponent
   FILE.downloadFile(req.params.filepath,res);
 });
 
-
+/********************************************************************************************************************/
 /*
 We have to receive a file field in our request object where we can get
 the information of the file.
 */
+// TODO: Reestructurar las diferentes funciones para los diferentes tipos de usuarios.
 router.post('/intern/create/course',(req,res)=>{
 
   let form = new multiparty.Form();
@@ -70,11 +98,18 @@ router.post('/intern/create/course',(req,res)=>{
 
   // Once the form is parsed, we call the "close" function to send back the response
   form.once("close",()=>{
-    insertNewContentToDB(form,formFields,res);
+    console.log(formFields);
+    FILE.uploadContentFile(formFields['file_to_upload'],formFields,res,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
+      insertNewContentToDB(form,formFields,res);
+    })
+    .catch((err)=>{
+      return res.status(200).send({error:err});
+    });
+
   });
 
   form.once("file",(name,file)=>{
-    FILE.uploadContentFile(file,formFields,res,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed);
+    formFields['file_to_upload']=file;
   });
 
   form.on("field",(name,value)=>{
@@ -89,11 +124,70 @@ router.post('/intern/create/course',(req,res)=>{
 
 });
 
+/********************************************************************************************************************/
+router.post('/intern/modify/course',(req,res)=>{
 
+  let form = new multiparty.Form();
+  formFields={};
+
+  form.once("error",()=>{
+    console.log("Error on parse form...");
+    form=null;
+    formFields=null;
+    return res.status(200).json({status:false});
+  });
+
+
+  // Once the form is parsed, we call the "close" function to send back the response
+  form.once("close",()=>{
+
+    formFields["fecha_alta"]=FILE.returnActualDate();
+    // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
+    if(formFields['file_to_upload']){
+      FILE.uploadContentFile(formFields['file_to_upload'],formFields,res,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
+        updateContentInDB(formFields,true);
+      })
+      .catch((err)=>{
+        return res.status(200).send({error:err});
+      });
+    }else{
+
+      // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
+      updateContentInDB(formFields).then(()=>{
+        return res.status(200).send({status:true});
+      })
+      .catch((err)=>{
+        return res.status(200).send({error:err});
+      });
+    }
+  });
+
+
+  form.once("file",(name,file)=>{
+    if(file.originalFilename){
+    formFields['file_to_upload']=file;
+    }
+
+  });
+
+  form.on("field",(name,value)=>{
+    formFields[name]=value;
+  });
+
+
+  form.parse(req);
+
+
+
+});
+
+/********************************************************************************************************************/
 
 
 router.use('/modify',modifyInfoUser);
 router.use('/get',getInfoUser);
-
+/********************************************************************************************************************/
+/********************************************************************************************************************/
 
 module.exports=router;
+/********************************************************************************************************************/

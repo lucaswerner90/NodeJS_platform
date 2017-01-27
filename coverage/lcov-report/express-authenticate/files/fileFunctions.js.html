@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">30.65% </span>
+        <span class="strong">29.69% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>19/62</span>
+        <span class='fraction'>19/64</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>0/1</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">30.65% </span>
+        <span class="strong">29.69% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>19/62</span>
+        <span class='fraction'>19/64</span>
       </div>
     </div>
   </div>
@@ -201,7 +201,15 @@
 156
 157
 158
-159</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+159
+160
+161
+162
+163
+164
+165
+166
+167</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -264,20 +272,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -286,6 +281,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -296,6 +306,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -421,40 +437,48 @@ const uploadContentFile=(file,formFields,res,uploadDirectory,extensionsAllowed,a
 <span class="cstat-no" title="statement not covered" >    readableStream=null;</span>
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  if(checkFileExtension(extensionsAllowed,PATH.parse(file.originalFilename).ext)){</span>
+<span class="cstat-no" title="statement not covered" >  return new Promise((resolve,reject)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >    if(checkFileExtension(extensionsAllowed,PATH.parse(file.originalFilename).ext)){</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    newFilename=PATH.parse(file.originalFilename);</span>
-<span class="cstat-no" title="statement not covered" >    newFilename.name=appendDateToFilename()+"_"+newFilename.name;</span>
+<span class="cstat-no" title="statement not covered" >      newFilename=PATH.parse(file.originalFilename);</span>
+<span class="cstat-no" title="statement not covered" >      newFilename.name=appendDateToFilename()+"_"+newFilename.name;</span>
 &nbsp;
 &nbsp;
 &nbsp;
-    // If the file is a content, we've to manage it in a different way that if it is an image or something else.
-<span class="cstat-no" title="statement not covered" >    if(!avatar){</span>
+      // If the file is a content, we've to manage it in a different way that if it is an image or something else.
+<span class="cstat-no" title="statement not covered" >      if(!avatar){</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >      formFields["fecha_alta"]=returnActualDate();</span>
-<span class="cstat-no" title="statement not covered" >      formFields["ruta_zip"]=fileRoute("zip",formFields,uploadDirectory,newFilename);</span>
-<span class="cstat-no" title="statement not covered" >      ruta_file=formFields['ruta_zip'];</span>
+<span class="cstat-no" title="statement not covered" >        formFields["fecha_alta"]=returnActualDate();</span>
+<span class="cstat-no" title="statement not covered" >        formFields["ruta_zip"]=fileRoute("zip",formFields,uploadDirectory,newFilename);</span>
+<span class="cstat-no" title="statement not covered" >        ruta_file=formFields['ruta_zip'];</span>
 &nbsp;
-    // If it's an avatar we have to set the route properly on it
+      // If it's an avatar we have to set the route properly on it
+      }else{
+<span class="cstat-no" title="statement not covered" >        formFields['urlAvatar']=fileRoute("avatar",formFields,uploadDirectory,newFilename);</span>
+<span class="cstat-no" title="statement not covered" >        ruta_file=formFields['urlAvatar'];</span>
+      }
+&nbsp;
+&nbsp;
+      // Create the readableStream to upload the file physically
+<span class="cstat-no" title="statement not covered" >      readableStream = fs.createReadStream(file.path);</span>
+<span class="cstat-no" title="statement not covered" >      FTP.uploadFile(readableStream,ruta_file).then(()=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >        removeVariables();</span>
+<span class="cstat-no" title="statement not covered" >        resolve(true);</span>
+      })
+      .catch((err)=&gt;{
+<span class="cstat-no" title="statement not covered" >        removeVariables();</span>
+<span class="cstat-no" title="statement not covered" >        reject(err);</span>
+      });
     }else{
-<span class="cstat-no" title="statement not covered" >      formFields['urlAvatar']=fileRoute("avatar",formFields,uploadDirectory,newFilename);</span>
-<span class="cstat-no" title="statement not covered" >      ruta_file=formFields['urlAvatar'];</span>
+<span class="cstat-no" title="statement not covered" >      removeVariables();</span>
+<span class="cstat-no" title="statement not covered" >      reject({error:"No file extension allowed"});</span>
     }
+  });
 &nbsp;
 &nbsp;
-    // Create the readableStream to upload the file physically
-<span class="cstat-no" title="statement not covered" >    readableStream = fs.createReadStream(file.path);</span>
-<span class="cstat-no" title="statement not covered" >    FTP.uploadFile(readableStream,ruta_file).then(()=&gt;{</span>
-<span class="cstat-no" title="statement not covered" >      removeVariables();</span>
-    })
-    .catch((err)=&gt;{
-<span class="cstat-no" title="statement not covered" >      removeVariables();</span>
-<span class="cstat-no" title="statement not covered" >      return res.status(200).json({error:err});</span>
-    });
-  }else{
-<span class="cstat-no" title="statement not covered" >    removeVariables();</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(200).json({error:"No file extension allowed"});</span>
-  }
+&nbsp;
+&nbsp;
+&nbsp;
 };
 &nbsp;
 &nbsp;
@@ -523,7 +547,7 @@ module.exports={
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Jan 26 2017 18:42:44 GMT+0100 (CET)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Jan 27 2017 10:38:22 GMT+0100 (CET)
 </div>
 </div>
 <script src="../../prettify.js"></script>
