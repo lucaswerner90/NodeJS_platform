@@ -48,8 +48,7 @@ const fileRoute=(contentType,formFields,uploadDirectory,filename)=>{
 
 
 // Upload file from user request
-const uploadContentFile=(file,formFields,res,uploadDirectory,extensionsAllowed,avatar=false)=>{
-
+const uploadContentFile=(file,formFields,uploadDirectory,extensionsAllowed,avatar=false)=>{
   let newFilename;
   let ruta_file='';
   let readableStream;

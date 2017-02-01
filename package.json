@@ -6,7 +6,7 @@
   "scripts": {
     "start": "DEBUG=express* PORT=5000 ENVIROMENT=dev nodemon --inspect server.js",
     "test": "PORT=3000 mocha  --watch ./**/*.spec.js -R list",
-    "coverage": "PORT=3000 istanbul cover _mocha -- -u exports -R spec ./**/*.spec.js",
+    "coverage": "PORT=3000 istanbul cover _mocha -- -u  exports -R spec ./**/*.spec.js",
     "test_code": "sudo /etc/sonar-scanner/bin/sonar-scanner -X"
   },
   "author": "Lucas Werner",

@@ -48,10 +48,25 @@ courseRouter.get('/getGenericInformation',(req,res)=>{
       educationLevels:data[5],
       exploitedRights:data[6],
       tipoProveedores:data[7],
-      proyectos:data[8]
+      proyectos:data[8],
+      idiomas:data[9]
     };
 
     return res.send(dataResults);
+  })
+  .catch((err)=>{
+    return res.send(err);
+  });
+});
+
+
+
+courseRouter.post('/search',(req,res)=>{
+  console.log(req.body);
+  console.log("DENTRO DEL SEARCH");
+  DDBB.sendQuery(COURSES_QUERIES.GET.search,req.body,true).then((data)=>{
+    console.log(data.length);
+    return res.send(data);
   })
   .catch((err)=>{
     return res.send(err);

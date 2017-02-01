@@ -43,31 +43,33 @@ const updateContentInDB=(camposFormulario,updateFile=false)=>{
 };
 /********************************************************************************************************************/
 
-const insertNewContentToDB=(form,camposFormulario,response)=>{
+const insertNewContentToDB=(form,camposFormulario)=>{
 
   function removeVariables(){
     form=null;
     camposFormulario=null;
   }
+  return new Promise(function(resolve, reject) {
+    DB.sendQuery(DBCourseQueries.INSERT.content,camposFormulario).then((row)=>{
 
-  DB.sendQuery(DBCourseQueries.INSERT.content,camposFormulario).then((row)=>{
+      // After insert the basic info about the content we need to populate the relations
+      camposFormulario["id_contenido"]=row.insertId;
 
-    // After insert the basic info about the content we need to populate the relations
-    camposFormulario["id_contenido"]=row.insertId;
+      // So we send the query for that, managing both the success and the fail option.
+      DB.sendQuery(DBCourseQueries.INSERT.contentRelation,camposFormulario).then(()=>{
+        removeVariables();
+        resolve({status:true});
+      }).catch((err)=>{
+        removeVariables();
+        reject({error:err});
+      });
 
-    // So we send the query for that, managing both the success and the fail option.
-    DB.sendQuery(DBCourseQueries.INSERT.contentRelation,camposFormulario).then(()=>{
-      removeVariables();
-      return response.status(200).json({status:true});
     }).catch((err)=>{
       removeVariables();
-      return response.status(200).json({error:err});
+      reject({error:err});
     });
-
-  }).catch((err)=>{
-    removeVariables();
-    return response.status(200).json({error:err});
   });
+
 };
 
 /********************************************************************************************************************/
@@ -98,9 +100,13 @@ router.post('/intern/create/course',(req,res)=>{
 
   // Once the form is parsed, we call the "close" function to send back the response
   form.once("close",()=>{
-    console.log(formFields);
-    FILE.uploadContentFile(formFields['file_to_upload'],formFields,res,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
-      insertNewContentToDB(form,formFields,res);
+    FILE.uploadContentFile(formFields['file_to_upload'],formFields,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
+      insertNewContentToDB(form,formFields).then(()=>{
+        return res.send({status:true});
+      })
+      .catch((err)=>{
+        return res.send({error:err});
+      });
     })
     .catch((err)=>{
       return res.status(200).send({error:err});
@@ -113,7 +119,6 @@ router.post('/intern/create/course',(req,res)=>{
   });
 
   form.on("field",(name,value)=>{
-    console.log(name+"      "+value);
     formFields[name]=value;
   });
 
@@ -144,8 +149,14 @@ router.post('/intern/modify/course',(req,res)=>{
     formFields["fecha_alta"]=FILE.returnActualDate();
     // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
     if(formFields['file_to_upload']){
-      FILE.uploadContentFile(formFields['file_to_upload'],formFields,res,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
-        updateContentInDB(formFields,true);
+      FILE.uploadContentFile(formFields['file_to_upload'],formFields,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
+        updateContentInDB(formFields,true).then(()=>{
+          console.log("Sending the modified course response.......................");
+          return res.status(200).send({status:true});
+        })
+        .catch((err)=>{
+          return res.status(200).send({error:err});
+        });
       })
       .catch((err)=>{
         return res.status(200).send({error:err});

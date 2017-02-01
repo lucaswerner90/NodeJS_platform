@@ -8,6 +8,7 @@ This file contains the main operations that DB has to do.
 const mysql = require('mysql');
 const CONFIGURATION_DB  = require('./config.json');
 
+
 let connection = null;
 
 
@@ -21,6 +22,22 @@ const replaceVariablesOnQuery=function (query,obj){
   return query;
 };
 
+const createSearchQuery=function(query,obj){
+  let index=0;
+  let searchQuery="";
+  for(const prop in obj) {
+    index++;
+    if (index>1) {
+        searchQuery+=" AND ";
+    }
+    searchQuery+=`${prop} LIKE "%${obj[prop]}%"`;
+  }
+  searchQuery+=';';
+  searchQuery=query.split(`[search_query]`).join(searchQuery);
+
+  return searchQuery;
+
+};
 /*
 THIS METHOD CREATE A NEW CONNECTION TO THE DB
 */
@@ -44,7 +61,7 @@ exports.finishConnection=()=>{
 /*
 THIS METHOD SENDS A QUERY TO THE DB
 */
-exports.sendQuery=(query,object)=>{
+exports.sendQuery=(query,object,searchContent=false)=>{
   return new Promise(function(resolve,reject){
 
     // Use the connection
@@ -55,9 +72,12 @@ exports.sendQuery=(query,object)=>{
         reject(err || 'Impossible to connect to the database at this moment...');
       }
 
-
-      query=replaceVariablesOnQuery(query,object);
-
+      if(searchContent){
+        query=replaceVariablesOnQuery(query,object);
+        query=createSearchQuery(query,object);
+      }else{
+        query=replaceVariablesOnQuery(query,object);
+      }
       dbConnection.query(query, function(err, rows) {
 
         // In case of error

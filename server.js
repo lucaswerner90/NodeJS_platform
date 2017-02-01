@@ -5,10 +5,11 @@
 // Declare of the express's app
 const express = require('express');
 const app=express();
-const PORT = process.env.PORT || 5000;
+const CONFIG_SERVER=require('./CONFIG_SERVER.json');
+const PORT = process.env.PORT || CONFIG_SERVER.PORT;
 // Inclusion of third-party middlewares
 const BODY_PARSER=require('body-parser');
-
+const path=require('path');
 /*
   HERE IS WHERE WE CHARGE THE ROUTES THAT WE WILL USE IN THE SERVER APP
 */
@@ -24,6 +25,8 @@ const user=require('./files/index');
 
 // Disable this to try function among the authentication - for develop purposes
 const middlewareAuthentication=require('./authentication/middleware');
+
+
 
 
 
@@ -44,22 +47,27 @@ app.use(BODY_PARSER.urlencoded({
 app.use(BODY_PARSER.json({limit: '500mb'}));
 
 
+// app.use(express.static('public'));
+app.use("/",express.static('public'));
+app.use("/login",express.static('public'));
+app.use("/contenidos",express.static('public'));
+app.use("/busqueda",express.static('public'));
+app.use("/perfil",express.static('public'));
+app.use("/soporte",express.static('public'));
+app.use("/anadir-contenido",express.static('public'));
+//
 
 
-
-
-
-
-app.use('/auth',BODY_PARSER.json({extended:true}),authentication);
-app.use('/bbdd',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),bbdd);
-app.use('/user',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),user);
+app.use('/api/auth',BODY_PARSER.json({extended:true}),authentication);
+app.use('/api/bbdd',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),bbdd);
+app.use('/api/user',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),user);
 
 
 
 // Manejo de los errores 404
 app.use((req, res, next)=> {
-  console.log("404 error");
   res.status(404).send({status:404});
+
 });
 
 

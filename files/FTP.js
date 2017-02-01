@@ -1,5 +1,7 @@
 // This file implements all the methods that are used to connect to a FTP server
 'use strict';
+
+
 // Basic configuration
 const CONFIG=require('./config');
 const PATH=require('path');
@@ -21,9 +23,7 @@ function checkIfDirExists(dir,path=[]){
 function createDir(path){
   return new Promise((resolve,reject)=>{
     FTP.mkdir(path,true,(err)=>{
-      console.log("Creating the dir..."+path);
       if(err){
-        console.log("Error creating the dir on createDir()");
         reject(err);
       }
       resolve(true);
@@ -148,7 +148,6 @@ exports.uploadFile=function(file,FTPPath){
         }else{
           createDir(PATH.dirname(FTPPath)).then(()=>{
             createFile(file,FTPPath).then(()=>{
-              console.log("File created on FTP");
               FTPDisconnect();
               resolve(true);
             })

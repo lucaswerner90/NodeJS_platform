@@ -1,11 +1,12 @@
 {
   "GET":{
+    "search":"select contenidos.*,proyectos.codigo_proyecto from contenidos, proyectos, relacion_contenidos_proyectos as relacion where contenidos.id_proveedor=[id_proveedor] and relacion.id_contenido=contenidos.id_contenido and proyectos.id_proyecto=relacion.id_proyecto AND [search_query]",
     "all":"Select * From contenidos",
     "allByID":"select contenidos.*,proyectos.codigo_proyecto from contenidos, proyectos, relacion_contenidos_proyectos as relacion where contenidos.id_proveedor=[id_proveedor] and relacion.id_contenido=contenidos.id_contenido and proyectos.id_proyecto=relacion.id_proyecto;",
-    "genericInformation":"Select * From plataformas where id_estado=1;Select * From sistema_evaluacion where id_estado=1;Select * From tipo_contenidos where id_estado=1;Select * From estados;Select * From tabla_compatibilidades where id_estado=1;Select * from nivel_educacional where id_estado=1;Select * From derechos_explotacion;SELECT descripcion from perfil;SELECT * FROM proyectos"
+    "genericInformation":"Select * From plataformas where id_estado=1;Select * From sistema_evaluacion where id_estado=1;Select * From tipo_contenidos where id_estado=1;Select * From estados;Select * From tabla_compatibilidades where id_estado=1;Select * from nivel_educacional where id_estado=1;Select * From derechos_explotacion;SELECT descripcion from perfil;SELECT * FROM proyectos;SELECT * FROM pais"
   },
   "INSERT":{
-    "content":"INSERT INTO catalogo_contenidos.contenidos (id_proveedor,notas,fecha_alta,titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado) VALUES ([id_proveedor],[notas],[fecha_alta],[titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado]);",
+    "content":"INSERT INTO catalogo_contenidos.contenidos (,id_proveedor,notas,fecha_alta,titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado) VALUES ([],[id_proveedor],[notas],[fecha_alta],[titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado]);",
     "contentRelation":"INSERT INTO relacion_contenidos_proyectos (id_contenido,id_proyecto) VALUES ([id_contenido], [id_proyecto]);"
   },
   "UPDATE":{
