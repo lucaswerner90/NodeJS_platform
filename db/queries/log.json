@@ -1,0 +1,15 @@
+{
+  "course":{
+    "upload":"INSERT INTO auditlog (id_usuario, id_contenido, fecha_modificacion, Accion, observaciones) VALUES ([id_usuario],[id_contenido],[fecha_modificacion], 'Course upload' , NULL);",
+    "modify":"INSERT INTO auditlog (id_usuario, id_contenido, fecha_modificacion, Accion, observaciones) VALUES ([id_usuario],[id_contenido],[fecha_modificacion], 'Course modify', NULL);",
+    "create":"INSERT INTO auditlog (id_usuario, id_contenido, fecha_modificacion, Accion, observaciones) VALUES ([id_usuario],[id_contenido],[fecha_modificacion], 'Course create', NULL);"
+  },
+  "user":{
+    "login":"INSERT INTO auditlog (id_usuario, id_contenido, fecha_modificacion, Accion, observaciones) VALUES ([id_usuario],[id_contenido],[fecha_modificacion], 'User login', NULL);",
+    "modify_info":"INSERT INTO auditlog (id_usuario, id_contenido, fecha_modificacion, Accion, observaciones) VALUES ([id_usuario],[id_contenido],[fecha_modificacion], 'User modify info', NULL);",
+    "modify_password":"INSERT INTO auditlog (id_usuario, id_contenido, fecha_modificacion, Accion, observaciones) VALUES ([id_usuario],[id_contenido],[fecha_modificacion], 'User modify password', NULL);",
+    "modify_avatar":"INSERT INTO auditlog (id_usuario, id_contenido, fecha_modificacion, Accion, observaciones) VALUES ([id_usuario],[id_contenido],[fecha_modificacion], 'User modify avatar', NULL);"
+  }
+
+
+}

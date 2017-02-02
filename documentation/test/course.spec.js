@@ -48,7 +48,7 @@ describe("UPLOAD course",function(){
   it("New course",function(done){
     this.timeout(30000);
     server
-    .post("/user/intern/create/course")
+    .post("api/user/intern/create/course")
     // Attach the form information to upload a course
     .attach('file',path.join(__dirname, "360-video-example-master.zip"))
     .field('id_proveedor', '1')
@@ -66,10 +66,9 @@ describe("UPLOAD course",function(){
       "postman-token": "eb15588d-c0f3-11f8-6739-3ba63bbf86ea"
     })
     .send()
-    .expect(200)
-    .end(function(err, res) {
+    .then(function(res) {
       assert.equal(res.body.status,true);
-      done();
+      done();  // call the done callback when all is resolved
     });
   });
 
@@ -89,7 +88,7 @@ describe("MODIFY course",function(){
   it("With file",function(done){
     this.timeout(30000);
     server
-    .post("/user/intern/modify/course")
+    .post("api/user/intern/modify/course")
     // Attach the form information to upload a course
     .attach('file',path.join(__dirname, "360-video-example-master.zip"))
     .field('id_proveedor', '1')
@@ -111,15 +110,16 @@ describe("MODIFY course",function(){
     .expect(200)
     .end(function(err, res) {
       assert.equal(res.body.status,true);
-      done();
+
     });
+    done();
   });
 
 
   it("Without file",function(done){
     this.timeout(30000);
     server
-    .post("/user/intern/modify/course")
+    .post("api/user/intern/modify/course")
     // Attach the form information to upload a course
     .field('id_proveedor', '1')
     .field('titulo', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua')
@@ -140,8 +140,8 @@ describe("MODIFY course",function(){
     .expect(200)
     .end(function(err, res) {
       assert.equal(res.body.status,true);
-      done();
     });
+    done();
   });
 
 

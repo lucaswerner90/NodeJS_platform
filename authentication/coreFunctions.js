@@ -38,6 +38,7 @@ function existeUsuario(params){
           FILE_FUNCTIONS.downloadImageInBase64(rows[0].urlAvatar).then((data)=>{
             rows[0].imgAvatar=data;
             resolve({userInfo:rows[0]});
+
           })
           .catch((err)=>{
             reject(err);
@@ -63,6 +64,18 @@ exports.emailLogin=function(req,res){
     // Si el usuario se encuentra dentro del sistema de la base de datos entonces
     // devolvemos el token que usará para mantener la sesion en la plataforma
     data.token=createToken(Math.random());
+
+
+    // Record the user's login
+    DDBB.logActions("user.login",
+    {
+      id_usuario:data.userInfo.id_usuario,
+      id_contenido:'0',
+      fecha_modificacion:new Date().toISOString().slice(0, 19).replace('T', ' ')
+    });
+
+
+
     return res
     .status(200)
     .send(data);

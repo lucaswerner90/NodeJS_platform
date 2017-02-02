@@ -48,14 +48,10 @@ app.use(BODY_PARSER.json({limit: '500mb'}));
 
 
 // app.use(express.static('public'));
-app.use("/",express.static('public'));
-app.use("/login",express.static('public'));
-app.use("/contenidos",express.static('public'));
-app.use("/busqueda",express.static('public'));
-app.use("/perfil",express.static('public'));
-app.use("/soporte",express.static('public'));
-app.use("/anadir-contenido",express.static('public'));
-//
+for (let i = 0; i < CONFIG_SERVER.STATIC_ROUTES.length; i++) {
+  app.use(CONFIG_SERVER.STATIC_ROUTES[i],express.static(CONFIG_SERVER.STATIC_DIR));
+}
+
 
 
 app.use('/api/auth',BODY_PARSER.json({extended:true}),authentication);
@@ -66,8 +62,7 @@ app.use('/api/user',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.jso
 
 // Manejo de los errores 404
 app.use((req, res, next)=> {
-  res.status(404).send({status:404});
-
+  res.status(404).send();
 });
 
 

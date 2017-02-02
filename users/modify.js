@@ -11,13 +11,24 @@ const FILE_CONFIG= require('../files/config.json');
 const DB=require('../db/coreFunctions');
 const DBUserQueries=require('../db/queries/user.json');
 
-
+const recordOnLog=function(action,id_usuario){
+  // Record the user's login
+  DB.logActions(action,
+  {
+    id_usuario:id_usuario,
+    id_contenido:'0',
+    fecha_modificacion:new Date().toISOString().slice(0, 19).replace('T', ' ')
+  });
+};
 
 router.post('/personal_info',(req,res)=>{
   /*
   UPDATE usuarios SET Nombre=[nombre],Apellidos=[apellidos],email=[email] WHERE id_usuario=[id_usuario]
   */
   DB.sendQuery(DBUserQueries.UPDATE.personalInfo,req.body).then(()=>{
+
+    recordOnLog("user.modify_info",req.body.id_usuario);
+
     res.send({status:true});
   })
   .catch((err)=>{
@@ -28,11 +39,13 @@ router.post('/personal_info',(req,res)=>{
 
 
 router.post('/change_password',(req,res)=>{
-  console.log(req.body);
   /*
   UPDATE usuarios SET password=[password] WHERE id_usuario=[id_usuario]
   */
   DB.sendQuery(DBUserQueries.UPDATE.password,req.body).then(()=>{
+
+    recordOnLog("user.modify_password",req.body.id_usuario);
+
     res.send({status:true});
   })
   .catch((err)=>{
@@ -67,9 +80,12 @@ router.post('/avatar',(req,res)=>{
 
 
   form.once("close",()=>{
-    FILE_FUNCTIONS.uploadContentFile(formData[fieldFile],formData,res,FILE_CONFIG.avatarUpload.directory,FILE_CONFIG.avatarUpload.extensionsAllowed,true);
+    FILE_FUNCTIONS.uploadContentFile(formData[fieldFile],formData,FILE_CONFIG.avatarUpload.directory,FILE_CONFIG.avatarUpload.extensionsAllowed,true);
     DB.sendQuery(DBUserQueries.UPDATE.avatar,formData).then(()=>{
       deleteReferences();
+
+      recordOnLog("user.modify_avatar",formData["id_usuario"]);
+
       res.send({status:true});
     })
     .catch((err)=>{

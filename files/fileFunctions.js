@@ -76,6 +76,7 @@ const uploadContentFile=(file,formFields,uploadDirectory,extensionsAllowed,avata
 
       // If it's an avatar we have to set the route properly on it
       }else{
+        debugger;
         formFields['urlAvatar']=fileRoute("avatar",formFields,uploadDirectory,newFilename);
         ruta_file=formFields['urlAvatar'];
       }
@@ -96,11 +97,6 @@ const uploadContentFile=(file,formFields,uploadDirectory,extensionsAllowed,avata
       reject({error:"No file extension allowed"});
     }
   });
-
-
-
-
-
 };
 
 

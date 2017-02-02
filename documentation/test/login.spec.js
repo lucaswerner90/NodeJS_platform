@@ -19,7 +19,7 @@ describe("Login test",function(){
 
     // calling home page api
     server
-    .post("/auth/login")
+    .post("api/auth/login")
     .set({'content-type': 'application/x-www-form-urlencoded'})
     .send({userEmail: 'javier1.rodriguezandres@telefonica.com', userPassword: '2121'})
     .expect("Content-type",/json/)
@@ -38,7 +38,7 @@ describe("Login test",function(){
 
     // calling home page api
     server
-    .post("/auth/login")
+    .post("api/auth/login")
     .set({'content-type': 'application/x-www-form-urlencoded'})
     .send({userEmail: 'javier1.rodriguezandres@telefonica.com', userPassword: '2121111111'})
     .end(function(err,res){
