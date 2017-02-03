@@ -43,13 +43,16 @@ const createSearchQuery=function(query,obj){
 const replaceVariablesOnQuery=function (query,obj){
   for(const prop in obj) {
     if (obj.hasOwnProperty(prop)){
-      query=(!obj[prop])?query:query.split(`[${prop}]`).join((isNaN(obj[prop]))?`"${obj[prop]}"`:`${obj[prop]}`);
+      query=(!obj[prop])?query:query.split(`[${prop}]`).join((isNaN(obj[prop]) && prop!=="multiple_insert_query")?`"${obj[prop]}"`:`${obj[prop]}`);
     }
 
   }
   return query;
 };
 
+const returnActualDate=()=>{
+  return new Date().toISOString().slice(0, 19).replace('T', ' ');
+};
 
 function logActions(action,obj){
   let action_sentence=action.split(".");
@@ -64,13 +67,13 @@ function logActions(action,obj){
 }
 
 
-function createCompatibilityTableForInsertCourseQuery(query,obj){
+function createCompatibilityTableForInsertCourseQuery(obj,id_contenido,id_usuario){
   let finalQuery="";
   for (let i = 0; i < obj.length; i++) {
     // id_contenido,id_usuario,id_punto_control,id_tc,valor,fecha_validacion_proveedor,fecha_validacion_CQA
-    if(i>1) finalQuery+=`, `;
+    if(i>0) finalQuery+=`, `;
 
-      finalQuery+=`(${obj[i].id_contenido},${obj[i].id_punto_control},${obj[i].id_tc},${obj[i].valor},${obj[i].fecha_validacion_proveedor},${obj[i].fecha_validacion_CQA})`;
+      finalQuery+=`(${id_contenido},${parseInt(id_usuario)},${parseInt(obj[i].id_punto_control)},${parseInt(obj[i].id_tc)},${parseInt(obj[i].id_valor)})`;
   }
   return {multiple_insert_query:finalQuery};
 }
@@ -109,7 +112,7 @@ function sendQuery(query,object,searchContent=false){
       if(err || !dbConnection){
         reject(err || 'Impossible to connect to the database at this moment...');
       }
-
+      console.log(query);
       if(searchContent){
         query=replaceVariablesOnQuery(query,object);
         query=createSearchQuery(query,object);

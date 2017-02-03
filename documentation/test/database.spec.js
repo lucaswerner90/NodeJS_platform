@@ -26,7 +26,8 @@ describe("GET contents test",function(){
     .expect(200)
     .end(function(err,res){
 
-      assert.notEqual(res.body,null);
+      assert(res.body.userInfo!== null);
+      assert(res.body.token!== null);
       done();
     });
 

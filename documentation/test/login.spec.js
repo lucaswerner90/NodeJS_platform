@@ -28,7 +28,9 @@ describe("Login test",function(){
     .expect(200) // THis is HTTP response
     .end(function(err,res){
 
-      assert.notEqual(res.body.userInfo,false);
+      assert(res.body.userInfo!==null);
+      assert(res.body.token!==null);
+
       done();
 
     });
@@ -42,10 +44,12 @@ describe("Login test",function(){
     .set({'content-type': 'application/x-www-form-urlencoded'})
     .send(CONFIG.data.user_incorrect)
     .end(function(err,res){
-      // HTTP status should be 200
+
+
       assert.equal(res.body.userInfo,null);
       assert.equal(res.status,401);
       done();
+
     });
   });
 

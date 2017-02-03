@@ -57,8 +57,17 @@ const insertNewContentToDB=(form,camposFormulario)=>{
 
       // So we send the query for that, managing both the success and the fail option.
       DB.sendQuery(DBCourseQueries.INSERT.contentRelation,camposFormulario).then(()=>{
-        removeVariables();
-        resolve({status:true});
+
+        debugger;
+        DB.sendQuery(DBCourseQueries.INSERT.tableOfCompatibilities,DB.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario)).then(()=>{
+          removeVariables();
+          resolve({status:true});
+        })
+        .catch((err)=>{
+          removeVariables();
+          reject({error:err});
+        })
+
       }).catch((err)=>{
         removeVariables();
         reject({error:err});
@@ -99,6 +108,7 @@ router.post('/intern/create/course',(req,res)=>{
 
   // Once the form is parsed, we call the "close" function to send back the response
   form.once("close",()=>{
+    formFields["multiple_insert_query"]=eval("["+ formFields.tableTechnologies +"]");
     FILE.uploadContentFile(formFields['file_to_upload'],formFields,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
       insertNewContentToDB(form,formFields).then(()=>{
 

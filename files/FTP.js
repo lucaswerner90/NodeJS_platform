@@ -27,12 +27,49 @@ function createDir(path){
       if(err){
         reject(err);
       }
+      console.log("DIR....."+path);
       resolve(true);
     });
   });
 }
 
+function extractZIP(path,remotePath){
+  return new Promise((resolve,reject)=>{
+    let uploadPipe=fs.createReadStream(path.path).pipe(unzip.Parse());
+    let arrayDirectories=[];
+    let arrayFiles=[];
 
+    uploadPipe.on("entry",function (entry) {
+      let type = entry.type; // 'Directory' or 'File'
+
+      console.log("Reading..."+entry.path);
+
+      if(type==='Directory'){
+        arrayDirectories.push(createDir(PATH.dirname(remotePath)+"/"+entry.path));
+      }else{
+        arrayFiles[arrayFiles.length]=FTP.put(entry.path,PATH.dirname(remotePath)+"/"+entry.path, function(err) { });
+      }
+      entry.autodrain();
+    })
+    uploadPipe.on("close",function(){
+
+      Promise.all(arrayDirectories).then(()=>{
+        Promise.all(arrayFiles).then(()=>{
+          console.log("Vamosssssssss!");
+          resolve(true);
+        })
+        .catch((err)=>{
+          reject(err);
+        });
+      }).catch((err)=>{
+        reject(err);
+      });
+
+    })
+  });
+
+
+}
 
 function createFile(path,remotePath){
   return new Promise((resolve,reject)=>{
@@ -44,6 +81,7 @@ function createFile(path,remotePath){
       } else{
         resolve(true);
       }
+
     });
   });
 }
@@ -57,7 +95,7 @@ function FTPDisconnect(){
 
 
 // Download from FTP
-exports.downloadFile=function(filePath){
+function downloadFile(filePath){
 
   const rutaFile=filePath;
 
@@ -112,13 +150,13 @@ exports.downloadFile=function(filePath){
     });
 
   });
-};
+}
 
 
 
 
 // Upload to FTP
-exports.uploadFile=function(file,FTPPath){
+function uploadFile(file,FTPPath,extract=true){
 
 
   FTP.connect(CONFIG.ftpConnection);
@@ -137,9 +175,13 @@ exports.uploadFile=function(file,FTPPath){
         }
         // If the user's directory exists, we only need to upload the file...
         if(checkIfDirExists(PATH.dirname(FTPPath),list)){
-
           createFile(file,FTPPath).then(()=>{
-            FTPDisconnect();
+            if(extract){
+              extractZIP(file,FTPPath);
+            }
+
+
+            // FTPDisconnect();
             resolve(true);
           })
           .catch((err)=>{
@@ -150,7 +192,10 @@ exports.uploadFile=function(file,FTPPath){
         }else{
           createDir(PATH.dirname(FTPPath)).then(()=>{
             createFile(file,FTPPath).then(()=>{
-              FTPDisconnect();
+              if(extract){
+                extractZIP(file,FTPPath);
+              }
+              // FTPDisconnect();
               resolve(true);
             })
             .catch((err)=>{
@@ -174,4 +219,10 @@ exports.uploadFile=function(file,FTPPath){
     });
 
   });
+}
+
+
+module.exports={
+  "uploadFile":uploadFile,
+  "downloadFile":downloadFile
 };

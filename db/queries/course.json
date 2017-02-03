@@ -9,7 +9,7 @@
   "INSERT":{
     "content":"INSERT INTO catalogo_contenidos.contenidos (id_proveedor,notas,fecha_alta,titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado) VALUES ([id_proveedor],[notas],[fecha_alta],[titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado]);",
     "contentRelation":"INSERT INTO relacion_contenidos_proyectos (id_contenido,id_proyecto) VALUES ([id_contenido], [id_proyecto]);",
-    "tableOfCompatibilities":"INSERT INTO resultado_certificacion_contenido (id_contenido,id_usuario,id_punto_control,id_tc,valor,fecha_validacion_proveedor,fecha_validacion_CQA) VALUES [multiple_insert_query];"
+    "tableOfCompatibilities":"INSERT INTO resultado_certificacion_contenido (id_contenido,id_usuario,id_punto_control,id_tc,valor) VALUES [multiple_insert_query];"
   },
   "UPDATE":{
     "content":"UPDATE contenidos SET id_proveedor=[id_proveedor],notas=[notas],fecha_alta=[fecha_alta],titulo=[titulo], descripcion=[descripcion], ruta_zip=[ruta_zip], id_tipo_contenido=[id_tipo_contenido], duracion=[duracion], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado] WHERE id_contenido=[id_contenido];",
