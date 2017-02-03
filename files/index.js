@@ -87,7 +87,6 @@ the information of the file.
 */
 // TODO: Reestructurar las diferentes funciones para los diferentes tipos de usuarios.
 router.post('/intern/create/course',(req,res)=>{
-
   let form = new multiparty.Form();
   formFields={};
 
@@ -102,6 +101,7 @@ router.post('/intern/create/course',(req,res)=>{
   form.once("close",()=>{
     FILE.uploadContentFile(formFields['file_to_upload'],formFields,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
       insertNewContentToDB(form,formFields).then(()=>{
+
         return res.send({status:true});
       })
       .catch((err)=>{
@@ -151,7 +151,6 @@ router.post('/intern/modify/course',(req,res)=>{
     if(formFields['file_to_upload']){
       FILE.uploadContentFile(formFields['file_to_upload'],formFields,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
         updateContentInDB(formFields,true).then(()=>{
-          console.log("Sending the modified course response.......................");
           return res.status(200).send({status:true});
         })
         .catch((err)=>{

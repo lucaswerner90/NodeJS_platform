@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">38.46% </span>
+        <span class="strong">75.76% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>10/26</span>
+        <span class='fraction'>25/33</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
@@ -35,13 +35,13 @@
         <span class='fraction'>0/0</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">38.46% </span>
+        <span class="strong">75.76% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>10/26</span>
+        <span class='fraction'>25/33</span>
       </div>
     </div>
   </div>
-  <div class='status-line low'></div>
+  <div class='status-line medium'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -134,7 +134,24 @@
 89
 90
 91
-92</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -153,8 +170,23 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -163,8 +195,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -173,11 +205,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -188,7 +218,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -198,8 +232,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -244,8 +278,23 @@ const courseRouter=express.Router();
 &nbsp;
 &nbsp;
 courseRouter.get('/getAllContenidos/:id_proveedor',(req,res)=&gt;{
-<span class="cstat-no" title="statement not covered" >  DDBB.sendQuery(COURSES_QUERIES.GET.allByID,req.params).then((data)=&gt;{</span>
-<span class="cstat-no" title="statement not covered" >    return res.send(data);</span>
+  DDBB.sendQuery(COURSES_QUERIES.GET.allByID,req.params).then((data)=&gt;{
+&nbsp;
+    let arrayPromises=[];
+    for (let i = 0; i &lt; data.length; i++) {
+      arrayPromises[i]=DDBB.sendQuery(COURSES_QUERIES.GET.tableOfCompatibilities,data[i]);
+    }
+&nbsp;
+    Promise.all(arrayPromises).then((values)=&gt;{
+      for (let i = 0; i &lt; data.length; i++) {
+        data[i].compatibilities_table=values[i];
+      }
+      return res.send(data);
+&nbsp;
+    })
+    .catch((err)=&gt;{
+<span class="cstat-no" title="statement not covered" >      return res.send(err);</span>
+    });
   })
   .catch((err)=&gt;{
 <span class="cstat-no" title="statement not covered" >    return res.send(err);</span>
@@ -254,8 +303,8 @@ courseRouter.get('/getAllContenidos/:id_proveedor',(req,res)=&gt;{
 &nbsp;
 &nbsp;
 courseRouter.get('/getAllContenidos',(req,res)=&gt;{
-<span class="cstat-no" title="statement not covered" >  DDBB.sendQuery(COURSES_QUERIES.GET.all,req.params).then((data)=&gt;{</span>
-<span class="cstat-no" title="statement not covered" >    return res.send(data);</span>
+  DDBB.sendQuery(COURSES_QUERIES.GET.all,req.params).then((data)=&gt;{
+    return res.send(data);
   })
   .catch((err)=&gt;{
 <span class="cstat-no" title="statement not covered" >    return res.send(err);</span>
@@ -264,9 +313,9 @@ courseRouter.get('/getAllContenidos',(req,res)=&gt;{
 &nbsp;
 &nbsp;
 courseRouter.get('/getGenericInformation',(req,res)=&gt;{
-<span class="cstat-no" title="statement not covered" >  DDBB.sendQuery(COURSES_QUERIES.GET.genericInformation,null).then((data)=&gt;{</span>
+  DDBB.sendQuery(COURSES_QUERIES.GET.genericInformation,null).then((data)=&gt;{
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    const dataResults={</span>
+    const dataResults={
       platforms:data[0],
       evaluationSystems:data[1],
       contentTypes:data[2],
@@ -276,10 +325,12 @@ courseRouter.get('/getGenericInformation',(req,res)=&gt;{
       exploitedRights:data[6],
       tipoProveedores:data[7],
       proyectos:data[8],
-      idiomas:data[9]
+      idiomas:data[9],
+      puntos_control:data[10],
+      valores_certificacion:data[11]
     };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return res.send(dataResults);</span>
+    return res.send(dataResults);
   })
   .catch((err)=&gt;{
 <span class="cstat-no" title="statement not covered" >    return res.send(err);</span>
@@ -289,8 +340,8 @@ courseRouter.get('/getGenericInformation',(req,res)=&gt;{
 &nbsp;
 &nbsp;
 courseRouter.post('/search',(req,res)=&gt;{
-<span class="cstat-no" title="statement not covered" >  DDBB.sendQuery(COURSES_QUERIES.GET.search,req.body,true).then((data)=&gt;{</span>
-<span class="cstat-no" title="statement not covered" >    return res.send(data);</span>
+  DDBB.sendQuery(COURSES_QUERIES.GET.search,req.body,true).then((data)=&gt;{
+    return res.send(data);
   })
   .catch((err)=&gt;{
 <span class="cstat-no" title="statement not covered" >    return res.send(err);</span>
@@ -322,7 +373,7 @@ module.exports=courseRouter;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Feb 01 2017 12:54:11 GMT+0100 (CET)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Feb 03 2017 10:18:57 GMT+0100 (CET)
 </div>
 </div>
 <script src="../../../prettify.js"></script>

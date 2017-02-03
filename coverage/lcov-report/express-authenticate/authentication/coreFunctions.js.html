@@ -20,28 +20,28 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">36% </span>
+        <span class="strong">57.69% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>9/25</span>
+        <span class='fraction'>15/26</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">0% </span>
+        <span class="strong">25% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>0/4</span>
+        <span class='fraction'>1/4</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">0% </span>
+        <span class="strong">75% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>0/4</span>
+        <span class='fraction'>3/4</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">36% </span>
+        <span class="strong">57.69% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>9/25</span>
+        <span class='fraction'>15/26</span>
       </div>
     </div>
   </div>
-  <div class='status-line low'></div>
+  <div class='status-line medium'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -120,7 +120,20 @@
 75
 76
 77
-78</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
@@ -149,17 +162,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -181,18 +195,30 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -225,18 +251,19 @@ const FILE_FUNCTIONS = require('../files/fileFunctions');
 &nbsp;
 &nbsp;
 // Function that looks for an existing user inside the system based on the parameters specified
-<span class="fstat-no" title="function not covered" >function existeUsuario(params){</span>
-<span class="cstat-no" title="statement not covered" >  return new Promise(<span class="fstat-no" title="function not covered" >function(resolve,reject){</span></span>
-<span class="cstat-no" title="statement not covered" >    DDBB.sendQuery(USER_QUERIES.GET.user,params).then((rows)=&gt;{</span>
-<span class="cstat-no" title="statement not covered" >      if(rows.length===0){</span>
+function existeUsuario(params){
+  return new Promise(function(resolve,reject){
+    DDBB.sendQuery(USER_QUERIES.GET.user,params).then((rows)=&gt;{
+      <span class="missing-if-branch" title="else path not taken" >E</span>if(rows.length===0){
         // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
         // indicando que no esta autorizado y el token como null.
-<span class="cstat-no" title="statement not covered" >        reject({token:null});</span>
+        reject({token:null});
       }else{
 <span class="cstat-no" title="statement not covered" >        if(rows[0].urlAvatar!==null){</span>
 <span class="cstat-no" title="statement not covered" >          FILE_FUNCTIONS.downloadImageInBase64(rows[0].urlAvatar).then((data)=&gt;{</span>
 <span class="cstat-no" title="statement not covered" >            rows[0].imgAvatar=data;</span>
 <span class="cstat-no" title="statement not covered" >            resolve({userInfo:rows[0]});</span>
+&nbsp;
           })
           .catch((err)=&gt;{
 <span class="cstat-no" title="statement not covered" >            reject(err);</span>
@@ -256,12 +283,24 @@ const FILE_FUNCTIONS = require('../files/fileFunctions');
 &nbsp;
 }
 &nbsp;
-exports.emailLogin=<span class="fstat-no" title="function not covered" >function(req,res){</span>
+exports.emailLogin=function(req,res){
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  existeUsuario(req.body).then((data)=&gt;{</span>
+  existeUsuario(req.body).then((data)=&gt;{
     // Si el usuario se encuentra dentro del sistema de la base de datos entonces
     // devolvemos el token que usará para mantener la sesion en la plataforma
 <span class="cstat-no" title="statement not covered" >    data.token=createToken(Math.random());</span>
+&nbsp;
+&nbsp;
+    // Record the user's login
+<span class="cstat-no" title="statement not covered" >    DDBB.logActions("user.login",</span>
+    {
+      id_usuario:data.userInfo.id_usuario,
+      id_contenido:'0',
+      fecha_modificacion:new Date().toISOString().slice(0, 19).replace('T', ' ')
+    });
+&nbsp;
+&nbsp;
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    return res</span>
     .status(200)
     .send(data);
@@ -269,7 +308,7 @@ exports.emailLogin=<span class="fstat-no" title="function not covered" >function
   .catch((err)=&gt;{
     // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
     // indicando que no esta autorizado y el token como null.
-<span class="cstat-no" title="statement not covered" >    res.status(401)</span>
+    res.status(401)
     .send({userInfo:null,token:null});
   });
 &nbsp;
@@ -280,7 +319,7 @@ exports.emailLogin=<span class="fstat-no" title="function not covered" >function
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Feb 01 2017 12:54:11 GMT+0100 (CET)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Feb 03 2017 10:18:57 GMT+0100 (CET)
 </div>
 </div>
 <script src="../../prettify.js"></script>

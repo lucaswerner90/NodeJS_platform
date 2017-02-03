@@ -7,7 +7,8 @@ const CONFIG=require('./config');
 const PATH=require('path');
 const ftpClient = require('ftp');
 const FTP = new ftpClient();
-
+const unzip=require('unzip');
+const fs=require('fs');
 
 
 function checkIfDirExists(dir,path=[]){
@@ -35,6 +36,7 @@ function createDir(path){
 
 function createFile(path,remotePath){
   return new Promise((resolve,reject)=>{
+
     FTP.put(path, remotePath, function(err) {
       if (err){
         console.log(err);

@@ -2,7 +2,8 @@ var assert = require("assert");
 var supertest = require("supertest");
 var app;
 var server;
-// This agent refers to PORT where program is runninng.
+
+const CONFIG=require('./config_test.json');
 
 
 
@@ -10,56 +11,60 @@ var server;
 describe("GET contents test",function(){
 
   before(()=>{
-    app= require('../../server');
+    app= require(CONFIG.server.dir);
     server = supertest.agent(app);
   });
 
   it("Get generic information",function(done){
 
+    this.timeout(CONFIG.server.max_timeout);
 
     server
-    .get("api/bbdd/course/getGenericInformation")
-    .set({authorization: 'prueba eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOjAuNTY4NjA0MzA2ODk5Nzg0OCwiaWF0IjoxNDg1MjQ0NTMzLCJleHAiOjE0ODc4MzY1MzN9.NgtYONse-_iTqCHlM3Cof-b1BxDuxL46PC-mxe0AHGo-C3lrjjcFZ8fuf448av3ODIKWmLsooAZy_jfQnJDlNw'})
+    .get(CONFIG.routes.bbdd.get_generic_information)
+    .set(CONFIG.headers)
     .send()
-    .expect(200) // THis is HTTP response
+    .expect(200)
     .end(function(err,res){
-      // HTTP status should be 200
+
       assert.notEqual(res.body,null);
-      
+      done();
     });
-    done();
+
   });
 
   it("Get contents of provider 1",function(done){
 
-    // calling home page api
+    this.timeout(CONFIG.server.max_timeout);
     server
-    .get("api/bbdd/course/getAllContenidos/1")
-    .set({authorization: 'prueba eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOjAuNTY4NjA0MzA2ODk5Nzg0OCwiaWF0IjoxNDg1MjQ0NTMzLCJleHAiOjE0ODc4MzY1MzN9.NgtYONse-_iTqCHlM3Cof-b1BxDuxL46PC-mxe0AHGo-C3lrjjcFZ8fuf448av3ODIKWmLsooAZy_jfQnJDlNw'})
+    .get(CONFIG.routes.bbdd.get_contents_of_specified_provider)
+    .set(CONFIG.headers)
     .send()
     .expect(200) // THis is HTTP response
     .end(function(err,res){
-      // HTTP status should be 200
+
       assert.notEqual(res.body,null);
 
+      done();
 
     });
-    done();
+
   });
 
   it("Get all contents",function(done){
 
+    this.timeout(CONFIG.server.max_timeout);
     server
-    .get("api/bbdd/course/getAllContenidos")
-    .set({authorization: 'prueba eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOjAuNTY4NjA0MzA2ODk5Nzg0OCwiaWF0IjoxNDg1MjQ0NTMzLCJleHAiOjE0ODc4MzY1MzN9.NgtYONse-_iTqCHlM3Cof-b1BxDuxL46PC-mxe0AHGo-C3lrjjcFZ8fuf448av3ODIKWmLsooAZy_jfQnJDlNw'})
+    .get(CONFIG.routes.bbdd.get_all_contents)
+    .set(CONFIG.headers)
     .send()
     .expect(200) // THis is HTTP response
     .end(function(err,res){
 
       assert.notEqual(res.body,null);
 
+      done();
+
     });
-    done();
   });
 
 
