@@ -3,6 +3,7 @@ const multiparty=require('multiparty');
 const DB=require('../db/coreFunctions');
 const DBCourseQueries=require('../db/queries/course.json');
 const FILE=require('./fileFunctions');
+const FTP=require('./FTP');
 const CONFIG=require('./config.json');
 const modifyInfoUser=require('../users/modify');
 const getInfoUser=require('../users/get');
@@ -58,24 +59,23 @@ const insertNewContentToDB=(form,camposFormulario)=>{
       // So we send the query for that, managing both the success and the fail option.
       DB.sendQuery(DBCourseQueries.INSERT.contentRelation,camposFormulario).then(()=>{
 
-        debugger;
         DB.sendQuery(DBCourseQueries.INSERT.tableOfCompatibilities,DB.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario)).then(()=>{
           removeVariables();
           resolve({status:true});
         })
         .catch((err)=>{
           removeVariables();
-          reject({error:err});
-        })
+          reject(err);
+        });
 
       }).catch((err)=>{
         removeVariables();
-        reject({error:err});
+        reject(err);
       });
 
     }).catch((err)=>{
       removeVariables();
-      reject({error:err});
+      reject(err);
     });
   });
 
@@ -112,7 +112,16 @@ router.post('/intern/create/course',(req,res)=>{
     FILE.uploadContentFile(formFields['file_to_upload'],formFields,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
       insertNewContentToDB(form,formFields).then(()=>{
 
+        FTP.extractZIP(formFields['file_to_upload'],formFields['ruta_zip']).then(()=>{
+          console.log("ZIP EXTRACTED CORRECTLY....");
+
+        })
+        .catch((err)=>{
+          console.error("*****  ERROR EXTRACTING ZIP  *****");
+          console.error(err);
+        })
         return res.send({status:true});
+
       })
       .catch((err)=>{
         return res.send({error:err});

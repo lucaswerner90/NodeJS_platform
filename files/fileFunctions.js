@@ -37,12 +37,11 @@ const checkFileExtension=(extensions,fileExtension)=>{
 
 
 const fileRoute=(contentType,formFields,uploadDirectory,filename)=>{
-
   switch (contentType) {
     case "avatar":
       return uploadDirectory+"/"+formFields['id_usuario']+"/avatar"+filename.ext;
     case "zip":
-      return uploadDirectory+"/"+formFields["id_proveedor"]+"/"+formFields["id_proyecto"]+"/"+filename.name+filename.ext;
+      return uploadDirectory+"/"+formFields["id_proveedor"]+"/"+formFields["id_proyecto"]+"/"+filename.name+"/"+filename.name+filename.ext;
   }
 };
 
@@ -63,8 +62,6 @@ const uploadContentFile=(file,formFields,uploadDirectory,extensionsAllowed,avata
     if(checkFileExtension(extensionsAllowed,PATH.parse(file.originalFilename).ext)){
 
       newFilename=PATH.parse(file.originalFilename);
-      newFilename.name=appendDateToFilename()+"_"+newFilename.name;
-
 
 
       // If the file is a content, we've to manage it in a different way that if it is an image or something else.
@@ -84,6 +81,7 @@ const uploadContentFile=(file,formFields,uploadDirectory,extensionsAllowed,avata
       // Create the readableStream to upload the file physically
       readableStream = fs.createReadStream(file.path);
       FTP.uploadFile(readableStream,ruta_file).then(()=>{
+
         removeVariables();
         resolve(true);
       })
