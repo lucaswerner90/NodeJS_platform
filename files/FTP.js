@@ -13,11 +13,12 @@ const fs=require('fs');
 const appendDateToFilename=()=>{
   const fecha=new Date();
   const month=(fecha.getMonth()+1<10)?`0${fecha.getMonth()+1}`:fecha.getMonth()+1;
-  const day=(fecha.getDate()+1<10)?`0${fecha.getDate()+1}`:fecha.getDate()+1;
+  const day=(fecha.getDate()+1<10)?`0${fecha.getDate()}`:fecha.getDate();
   const hours=(fecha.getHours()+1<10)?`0${fecha.getHours()+1}`:fecha.getHours()+1;
   const minutes=(fecha.getMinutes()<10)?`0${fecha.getMinutes()+1}`:fecha.getMinutes()+1;
   return `${fecha.getFullYear()}_${month}_${day}_${hours}_${minutes}`;
 };
+
 
 function checkIfDirExists(dir,path=[]){
   for (let i = 0; i < path.length; i++) {
@@ -35,24 +36,34 @@ function createDir(path){
       if(err){
         reject(err);
       }
-      console.log("DIR....."+path);
+      console.info("DIR..... "+path);
       resolve(true);
     });
   });
 }
+
 
 function extractZIP(path,remotePath){
   return new Promise((resolve,reject)=>{
     let uploadPipe=fs.createReadStream(path.path).pipe(unzip.Parse());
     let arrayDirectories=[];
     let arrayFiles=[];
+    let directory="";
+    let type="";
+    let filename="";
+
+
     const pathToFTP=PATH.dirname(remotePath)+"/";
+
     uploadPipe.on("entry",function (entry) {
-      let type = entry.type; // 'Directory' or 'File'
-      let filename=entry.path;
+      type = entry.type; // 'Directory' or 'File'
+      filename=entry.path;
+      filename.replace(" ","\s");
 
       if(type==='Directory'){
-        arrayDirectories.push(createDir(pathToFTP+filename));
+        directory=pathToFTP+filename;
+        directory.replace(" ","\s");
+        arrayDirectories.push(createDir(directory));
       }else{
         arrayFiles.push(filename);
       }
@@ -61,17 +72,27 @@ function extractZIP(path,remotePath){
 
 
     uploadPipe.on("close",function(){
+        Promise.all(arrayDirectories).then(()=>{
+          setTimeout(()=>{
 
-      FTP.connect(CONFIG.ftpConnection);
-      Promise.all(arrayDirectories).then(()=>{
-        let arrayFilesPromises=[];
-        for (let i = 0; i < arrayFiles.length; i++) {
-          arrayFilesPromises.push(createFile(arrayFiles[i],pathToFTP+arrayFiles[i]));
-        }
-        Promise.all(arrayFilesPromises).then(()=>{
-          uploadPipe.removeAllListeners();
-          FTPDisconnect();
-          resolve(true);
+            let arrayFilesPromises=[];
+            for (let i = 0; i < arrayFiles.length; i++) {
+              arrayFilesPromises.push(createFile(arrayFiles[i],pathToFTP+arrayFiles[i]));
+            }
+            Promise.all(arrayFilesPromises).then(()=>{
+              uploadPipe.removeAllListeners();
+              FTPDisconnect();
+              resolve(true);
+            })
+            .catch((err)=>{
+              uploadPipe.removeAllListeners();
+              FTPDisconnect();
+              reject(err);
+            });
+          },3000);
+
+
+
         })
         .catch((err)=>{
           uploadPipe.removeAllListeners();
@@ -79,11 +100,6 @@ function extractZIP(path,remotePath){
           reject(err);
         });
 
-      })
-      .catch((err)=>{
-        FTPDisconnect();
-        reject(err);
-      });
 
 
 
@@ -97,9 +113,10 @@ function extractZIP(path,remotePath){
 
 function createFile(path,remotePath){
   return new Promise((resolve,reject)=>{
-    FTP.put(path, remotePath, function(err) {
+    FTP.put(path, remotePath,function(err) {
+      console.info("File..... "+remotePath);
       if (err){
-        console.log(err);
+        console.error(err+"       remote_path: "+remotePath);
         reject(err);
       } else{
         resolve(true);
@@ -115,6 +132,7 @@ function FTPDisconnect(){
   FTP.end();
   FTP.removeAllListeners();
 }
+
 
 function renameFolder(oldPath,newPath){
   return new Promise((resolve,reject)=>{
@@ -209,7 +227,7 @@ function uploadFile(file,FTPPath){
         }
         // If the user's directory exists, we only need to upload the file...
         if(checkIfDirExists(PATH.parse(FTPPath).name,list)){
-          const newDirname="_backup_"+PATH.dirname(PATH.dirname(FTPPath))+"/"+appendDateToFilename()+"_"+PATH.parse(FTPPath).name;
+          const newDirname=PATH.dirname(PATH.dirname(FTPPath))+"/"+"_backup_"+appendDateToFilename()+"_"+PATH.parse(FTPPath).name;
           renameFolder(PATH.parse(FTPPath).dir,newDirname).then(()=>{
             console.log("Renamed...."+PATH.parse(FTPPath).dir+"  to  "+newDirname);
             createDir(PATH.dirname(FTPPath)).then(()=>{
@@ -221,12 +239,12 @@ function uploadFile(file,FTPPath){
                 FTPDisconnect();
                 reject(err);
               });
-            })
+            });
           })
           .catch((err)=>{
             FTPDisconnect();
             reject(err);
-          })
+          });
 
           // If the user's directory doesn't exist we have to create it first, and upload the file later that.
         }else{

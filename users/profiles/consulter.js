@@ -2,9 +2,11 @@
 
 
 const DB=require('../../db/coreFunctions');
+const DBQueries=require('../../db/queries/user/consult.json');
+
 const User=require('../_common/user');
 
-class InternProfile extends User{
+class ConsultProfile extends User{
   constructor(id_usuario=-1){
     super(id_usuario);
   }
@@ -14,4 +16,4 @@ class InternProfile extends User{
 
 
 
-module.exports=InternProfile;
+module.exports=ConsultProfile;

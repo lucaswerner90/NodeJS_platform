@@ -5,10 +5,10 @@
     "create":"INSERT INTO auditlog (id_usuario, id_contenido, fecha_modificacion, Accion, observaciones) VALUES ([id_usuario],[id_contenido],[fecha_modificacion], 'Course create', NULL);"
   },
   "user":{
-    "login":"INSERT INTO auditlog (id_usuario, id_contenido, fecha_modificacion, Accion, observaciones) VALUES ([id_usuario],[id_contenido],[fecha_modificacion], 'User login', NULL);",
-    "modify_info":"INSERT INTO auditlog (id_usuario, id_contenido, fecha_modificacion, Accion, observaciones) VALUES ([id_usuario],[id_contenido],[fecha_modificacion], 'User modify info', NULL);",
-    "modify_password":"INSERT INTO auditlog (id_usuario, id_contenido, fecha_modificacion, Accion, observaciones) VALUES ([id_usuario],[id_contenido],[fecha_modificacion], 'User modify password', NULL);",
-    "modify_avatar":"INSERT INTO auditlog (id_usuario, id_contenido, fecha_modificacion, Accion, observaciones) VALUES ([id_usuario],[id_contenido],[fecha_modificacion], 'User modify avatar', NULL);"
+    "login":"INSERT INTO auditlog (id_usuario,Accion) VALUES ([id_usuario],'User login');",
+    "modify_info":"INSERT INTO auditlog (id_usuario,Accion) VALUES ([id_usuario], 'User modify info');",
+    "modify_password":"INSERT INTO auditlog (id_usuario,Accion) VALUES ([id_usuario], 'User modify password');",
+    "modify_avatar":"INSERT INTO auditlog (id_usuario,Accion) VALUES ([id_usuario], 'User modify avatar');"
   }
 
 

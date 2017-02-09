@@ -1,7 +1,7 @@
 {
   "server":{
     "port":3000,
-    "max_timeout":30000,
+    "max_timeout":90000,
     "dir":"../../server"
   },
   "headers":{

@@ -5,8 +5,8 @@ const DBCourseQueries=require('../db/queries/course.json');
 const FILE=require('./fileFunctions');
 const FTP=require('./FTP');
 const CONFIG=require('./config.json');
-const modifyInfoUser=require('../users/modify');
-const getInfoUser=require('../users/get');
+const modifyInfoUser=require('../users/_common/modify');
+const getInfoUser=require('../users/_common/get');
 
 
 // Varibales that manage the data of the form
@@ -30,9 +30,20 @@ const updateContentInDB=(camposFormulario,updateFile=false)=>{
 
   return new Promise((resolve,reject)=>{
     DB.sendQuery((updateFile)?DBCourseQueries.UPDATE.content:DBCourseQueries.UPDATE.contentNoFile,camposFormulario).then(()=>{
-      removeVariables();
-      // After insert the basic info about the content we need to populate the relations
-      resolve(true);
+
+      DB.sendQuery(DBCourseQueries.UPDATE.tableOfCompatibilities,
+      {
+        multiple_insert_query:DB.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
+        id_contenido:camposFormulario.id_contenido
+      }).then(()=>{
+        removeVariables();
+        resolve({status:true});
+      })
+      .catch((err)=>{
+        removeVariables();
+        reject(err);
+      });
+
     }).catch((err)=>{
       removeVariables();
       reject(err);
@@ -47,6 +58,7 @@ const updateContentInDB=(camposFormulario,updateFile=false)=>{
 const insertNewContentToDB=(form,camposFormulario)=>{
 
   function removeVariables(){
+    form.removeAllListeners();
     form=null;
     camposFormulario=null;
   }
@@ -59,7 +71,10 @@ const insertNewContentToDB=(form,camposFormulario)=>{
       // So we send the query for that, managing both the success and the fail option.
       DB.sendQuery(DBCourseQueries.INSERT.contentRelation,camposFormulario).then(()=>{
 
-        DB.sendQuery(DBCourseQueries.INSERT.tableOfCompatibilities,DB.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario)).then(()=>{
+        DB.sendQuery(DBCourseQueries.INSERT.tableOfCompatibilities,
+          {
+            multiple_insert_query:DB.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query
+          }).then(()=>{
           removeVariables();
           resolve({status:true});
         })
@@ -101,6 +116,7 @@ router.post('/intern/create/course',(req,res)=>{
 
   form.once("error",()=>{
     console.log("Error on parse form...");
+    form.removeAllListeners();
     form=null;
     formFields=null;
     return res.status(200).json({status:false});
@@ -112,14 +128,20 @@ router.post('/intern/create/course',(req,res)=>{
     FILE.uploadContentFile(formFields['file_to_upload'],formFields,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
       insertNewContentToDB(form,formFields).then(()=>{
 
+
         FTP.extractZIP(formFields['file_to_upload'],formFields['ruta_zip']).then(()=>{
           console.log("ZIP EXTRACTED CORRECTLY....");
-
+          DB.recordOnLog("course.upload",{
+            id_usuario:formFields.id_usuario,
+            id_contenido:formFields.id_contenido
+          });
         })
         .catch((err)=>{
           console.error("*****  ERROR EXTRACTING ZIP  *****");
           console.error(err);
-        })
+        });
+
+        form.removeAllListeners();
         return res.send({status:true});
 
       })
@@ -133,8 +155,13 @@ router.post('/intern/create/course',(req,res)=>{
 
   });
 
-  form.once("file",(name,file)=>{
-    formFields['file_to_upload']=file;
+  form.on("file",(name,file)=>{
+    if(name==='screenshot'){
+        formFields['screenshot']=file;
+    }else{
+      formFields['file_to_upload']=file;
+    }
+
   });
 
   form.on("field",(name,value)=>{
@@ -166,10 +193,27 @@ router.post('/intern/modify/course',(req,res)=>{
   form.once("close",()=>{
 
     formFields["fecha_alta"]=FILE.returnActualDate();
+    formFields["multiple_insert_query"]=eval("["+ formFields.tableTechnologies +"]");
     // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
     if(formFields['file_to_upload']){
       FILE.uploadContentFile(formFields['file_to_upload'],formFields,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
         updateContentInDB(formFields,true).then(()=>{
+
+          FTP.extractZIP(formFields['file_to_upload'],formFields['ruta_zip']).then(()=>{
+            console.log("ZIP EXTRACTED CORRECTLY....");
+
+          })
+          .catch((err)=>{
+            console.error("*****  ERROR EXTRACTING ZIP  *****");
+            console.error(err);
+          })
+
+
+          DB.recordOnLog("course.modify",
+          {
+            id_usuario:formFields.id_usuario,
+            ic_contenido:formFields.id_contenido
+          });
           return res.status(200).send({status:true});
         })
         .catch((err)=>{
@@ -192,9 +236,11 @@ router.post('/intern/modify/course',(req,res)=>{
   });
 
 
-  form.once("file",(name,file)=>{
-    if(file.originalFilename){
-    formFields['file_to_upload']=file;
+  form.on("file",(name,file)=>{
+    if(name==='screenshot'){
+        formFields['screenshot']=file;
+    }else{
+      formFields['file_to_upload']=file;
     }
 
   });

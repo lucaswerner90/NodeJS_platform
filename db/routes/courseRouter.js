@@ -41,15 +41,6 @@ courseRouter.get('/getAllContenidos/:id_proveedor',(req,res)=>{
 });
 
 
-courseRouter.get('/getAllContenidos',(req,res)=>{
-  DDBB.sendQuery(COURSES_QUERIES.GET.all,req.params).then((data)=>{
-    return res.send(data);
-  })
-  .catch((err)=>{
-    return res.send(err);
-  });
-});
-
 
 courseRouter.get('/getGenericInformation',(req,res)=>{
   DDBB.sendQuery(COURSES_QUERIES.GET.genericInformation,null).then((data)=>{
@@ -59,14 +50,16 @@ courseRouter.get('/getGenericInformation',(req,res)=>{
       evaluationSystems:data[1],
       contentTypes:data[2],
       states:data[3],
-      technologies:data[4],
+      tabla_compatibilidades:data[4],
       educationLevels:data[5],
       exploitedRights:data[6],
       tipoProveedores:data[7],
       proyectos:data[8],
       idiomas:data[9],
       puntos_control:data[10],
-      valores_certificacion:data[11]
+      valores_certificacion:data[11],
+      tecnologias:data[12],
+      tipo_desarrollo:data[13]
     };
 
     return res.send(dataResults);
@@ -88,19 +81,6 @@ courseRouter.post('/search',(req,res)=>{
 });
 
 
-// Must have the id_contenido variable
-courseRouter.get('/compatibilityTable/:id_contenido',(req,res)=>{
-
-  // req.params.id_contenido
-  DDBB.sendQuery(COURSES_QUERIES.GET.tableOfCompatibilities,
-    {id_contenido:req.params.id_contenido},
-    true).then((data)=>{
-    return res.send(data);
-  })
-  .catch((err)=>{
-    return res.send(err);
-  });
-});
 
 
 

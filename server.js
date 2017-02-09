@@ -9,7 +9,6 @@ const CONFIG_SERVER=require('./CONFIG_SERVER.json');
 const PORT = process.env.PORT || CONFIG_SERVER.PORT;
 // Inclusion of third-party middlewares
 const BODY_PARSER=require('body-parser');
-const path=require('path');
 /*
   HERE IS WHERE WE CHARGE THE ROUTES THAT WE WILL USE IN THE SERVER APP
 */

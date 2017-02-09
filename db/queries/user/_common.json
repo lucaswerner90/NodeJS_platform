@@ -1,0 +1,14 @@
+{
+  "UPDATE":{
+    "avatar":"UPDATE usuarios SET urlAvatar=[urlAvatar] WHERE id_usuario=[id_usuario];",
+    "personalInfo":"UPDATE usuarios SET Nombre=[nombre],Apellidos=[apellidos],email=[email] WHERE id_usuario=[id_usuario]",
+    "password":"UPDATE usuarios SET password=[password] WHERE id_usuario=[id_usuario];"
+  },
+  "GET":{
+    "type_of_user":"select perfil.descripcion from perfil where id_perfil=[id_perfil]",
+    "generic_information":"Select plataformas.*,tipo_plataformas.descripcion as tipo_plataforma From plataformas,tipo_plataformas where plataformas.id_estado=1 AND tipo_plataformas.id_tipo_plataforma=plataformas.id_tipo_plataforma;Select * From sistema_evaluacion where id_estado=1;Select * From tipo_contenidos where id_estado=1;Select * From estados;Select * From tabla_compatibilidades where id_estado=1;Select * from nivel_educacional where id_estado=1;Select * From derechos_explotacion;SELECT descripcion from perfil;SELECT * FROM proyectos;SELECT * FROM pais;SELECT * FROM puntos_control;SELECT * FROM valorestablacertificacion;Select * From tecnologias where id_estado=1;Select * From tipo_desarrollo where id_estado=1;",
+    "user_info":"Select usuarios.*,proveedores.empresa From usuarios,proveedores where usuarios.id_usuario=[id_usuario] and id_estado=1 and proveedores.id_proveedor=usuarios.id_proveedor",
+    "contents_proveedor":"select contenidos.*,proyectos.codigo_proyecto from contenidos, proyectos, relacion_contenidos_proyectos as relacion where contenidos.id_proveedor=[id_proveedor]",
+    "search":"select contenidos.*,proyectos.codigo_proyecto from contenidos, proyectos, relacion_contenidos_proyectos as relacion where contenidos.id_proveedor=[id_proveedor] and relacion.id_contenido=contenidos.id_contenido and proyectos.id_proyecto=relacion.id_proyecto AND [search_query]"
+  }
+}

@@ -12,12 +12,12 @@ const LOG_QUERIES=require('./queries/log.json');
 let connection = null;
 
 
-const recordOnLog=function(action,id_usuario){
+const recordOnLog=function(action,obj){
   // Record the user's login
   logActions(action,
   {
-    id_usuario:id_usuario,
-    id_contenido:'0',
+    id_usuario:obj.id_usuario,
+    id_contenido:obj.id_contenido,
     fecha_modificacion:new Date().toISOString().slice(0, 19).replace('T', ' ')
   });
 };
@@ -26,11 +26,15 @@ const createSearchQuery=function(query,obj){
   let index=0;
   let searchQuery="";
   for(const prop in obj) {
-    index++;
-    if (index>1) {
-        searchQuery+=" AND ";
+    if(prop!=='id_usuario'){
+      index++;
+      if (index>1) {
+          searchQuery+=" AND ";
+      }
+      searchQuery+=`${prop} LIKE "%${obj[prop]}%"`;
     }
-    searchQuery+=`${prop} LIKE "%${obj[prop]}%"`;
+
+
   }
   searchQuery+=';';
   searchQuery=query.split(`[search_query]`).join(searchQuery);
@@ -50,9 +54,6 @@ const replaceVariablesOnQuery=function (query,obj){
   return query;
 };
 
-const returnActualDate=()=>{
-  return new Date().toISOString().slice(0, 19).replace('T', ' ');
-};
 
 function logActions(action,obj){
   let action_sentence=action.split(".");
@@ -112,7 +113,6 @@ function sendQuery(query,object,searchContent=false){
       if(err || !dbConnection){
         reject(err || 'Impossible to connect to the database at this moment...');
       }
-      console.log(query);
       if(searchContent){
         query=replaceVariablesOnQuery(query,object);
         query=createSearchQuery(query,object);
