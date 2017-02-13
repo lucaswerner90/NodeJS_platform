@@ -5,6 +5,7 @@ const DB=require('../../db/coreFunctions');
 const multiparty=require('multiparty');
 const FILE_FUNCTIONS = require('../../files/fileFunctions');
 const FILE_CONFIG= require('../../files/config.json');
+const FTP= require('../../files/FTP');
 const DBCommonQueries=require('../../db/queries/user/_common.json');
 const DBCourseQueries=require('../../db/queries/course.json');
 
@@ -12,8 +13,10 @@ const DBCourseQueries=require('../../db/queries/course.json');
 class User{
 
 
-  constructor(id_usuario=-1){
+  constructor(id_usuario=-1,queries){
     this._id_usuario=id_usuario;
+    this._profile_queries=queries;
+    this._common_queries=DBCommonQueries;
   }
 
   _logOnDB(action){
@@ -24,6 +27,10 @@ class User{
 
   _get_type_of_user(){
     let _self=this;
+
+
+    if(_self._id_usuario===-1) return "Administrador";
+
     return new Promise((resolve,reject)=>{
       _self.get_user_info().then((result)=>{
         DB.sendQuery(DBCommonQueries.GET.type_of_user,{
@@ -110,8 +117,9 @@ class User{
 
 
   get_platform_generic_info(){
+    const _self=this;
     return new Promise((resolve,reject)=>{
-      DB.sendQuery(DBCommonQueries.GET.generic_information,null).then((data)=>{
+      DB.sendQuery(_self._common_queries.GET.generic_information,null).then((data)=>{
         resolve({
           platforms:data[0],
           evaluationSystems:data[1],
@@ -175,7 +183,7 @@ class User{
 
 
         FILE_FUNCTIONS.uploadContentFile(formData[fieldFile],formData,FILE_CONFIG.avatarUpload.directory,FILE_CONFIG.avatarUpload.extensionsAllowed,true);
-        DB.sendQuery(DBCommonQueries.UPDATE.avatar,formData).then(()=>{
+        DB.sendQuery(_self._common_queries.UPDATE.avatar,formData).then(()=>{
 
           _self._id_usuario=formData.id_usuario;
           this._logOnDB("user.modify_avatar");
@@ -193,10 +201,10 @@ class User{
   }
 
   modify_personal_info(request){
-
+    const _self=this;
 
     return new Promise((resolve,reject)=>{
-      DB.sendQuery(DBCommonQueries.UPDATE.personalInfo,request.body).then(()=>{
+      DB.sendQuery(_self._common_queries.UPDATE.personalInfo,request.body).then(()=>{
 
         this._logOnDB("user.modify_info");
 
@@ -211,8 +219,10 @@ class User{
 
   modify_password(fields){
 
+    const _self=this;
+
     return new Promise((resolve,reject)=>{
-      DB.sendQuery(DBCommonQueries.UPDATE.password,fields).then(()=>{
+      DB.sendQuery(_self._common_queries.UPDATE.password,fields).then(()=>{
 
         this._logOnDB("user.modify_password");
         resolve(true);
@@ -223,6 +233,88 @@ class User{
     });
   }
 
+
+  create_course(request){
+
+    const _self=this;
+
+    return new Promise((resolve,reject)=>{
+
+      debugger;
+      let form = new multiparty.Form();
+      let formFields={};
+
+
+      function clear(){
+        form.removeAllListeners();
+        form=null;
+        formFields=null;
+      }
+
+
+      form.once("error",(err)=>{
+        console.log("Error on parse form...");
+        clear();
+        reject({error:err});
+      });
+
+      // Once the form is parsed, we call the "close" function to send back the response
+      form.once("close",()=>{
+
+        _self._id_usuario=formFields.id_usuario;
+
+        formFields["multiple_insert_query"]=eval("["+ formFields.tableTechnologies +"]");
+        FILE_FUNCTIONS.uploadContentFile(formFields['file_to_upload'],formFields,FILE_CONFIG.fileUpload.directory,FILE_CONFIG.fileUpload.extensionsAllowed).then(()=>{
+
+
+          FILE_FUNCTIONS.insertNewContentToDB(form,formFields,_self._profile_queries).then(()=>{
+
+
+            FTP.extractZIP(formFields['file_to_upload'],formFields['ruta_zip']).then(()=>{
+              console.log("ZIP EXTRACTED CORRECTLY....");
+              DB.recordOnLog("course.upload",{
+                id_usuario:_self._id_usuario,
+                id_contenido:formFields.id_contenido
+              });
+              clear();
+            })
+            .catch((err)=>{
+              console.error("*****  ERROR EXTRACTING ZIP  *****");
+              console.error(err);
+            });
+
+            resolve(true);
+
+          })
+          .catch((err)=>{
+            reject({error:err});
+          });
+        })
+        .catch((err)=>{
+          reject({error:err});
+        });
+
+      });
+
+      form.on("file",(name,file)=>{
+        if(name==='screenshot'){
+          formFields['screenshot']=file;
+        }else{
+          formFields['file_to_upload']=file;
+        }
+
+      });
+
+      form.on("field",(name,value)=>{
+        formFields[name]=value;
+      });
+
+
+      form.parse(request);
+
+
+    });
+  }
 
 
 }

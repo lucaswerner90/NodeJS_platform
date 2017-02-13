@@ -7,6 +7,7 @@ const FTP=require('./FTP');
 const CONFIG=require('./config.json');
 const modifyInfoUser=require('../users/_common/modify');
 const getInfoUser=require('../users/_common/get');
+const insertInfo=require('../users/_common/insert');
 
 
 // Varibales that manage the data of the form
@@ -259,6 +260,7 @@ router.post('/intern/modify/course',(req,res)=>{
 /********************************************************************************************************************/
 
 
+router.use('/insert',insertInfo);
 router.use('/modify',modifyInfoUser);
 router.use('/get',getInfoUser);
 /********************************************************************************************************************/

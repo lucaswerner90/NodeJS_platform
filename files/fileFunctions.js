@@ -3,6 +3,7 @@
 const FTP=require('./FTP');
 
 
+const DB=require('../db/coreFunctions');
 const PATH=require('path');
 const fs=require('fs');
 const BASE_64_ENCODER = require('base64-stream');
@@ -147,6 +148,48 @@ const downloadFile=(filepath,response)=>{
 };
 
 
+const insertNewContentToDB=(form,camposFormulario,user_queries)=>{
+
+  function clear(){
+    form.removeAllListeners();
+    form=null;
+  }
+
+  return new Promise(function(resolve, reject) {
+    // DB.sendQuery(DBCourseQueries.INSERT.content,camposFormulario).then((row)=>{
+    DB.sendQuery(user_queries.INSERT.content,camposFormulario).then((row)=>{
+
+
+      // After insert the basic info about the content we need to populate the relations
+      camposFormulario["id_contenido"]=row.insertId;
+
+      // So we send the query for that, managing both the success and the fail option.
+      DB.sendQuery(user_queries.INSERT.contentRelation,camposFormulario).then(()=>{
+
+        DB.sendQuery(user_queries.INSERT.tableOfCompatibilities,
+          {
+            multiple_insert_query:DB.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query
+          }).then(()=>{
+          clear();
+          resolve({status:true});
+        })
+        .catch((err)=>{
+          clear();
+          reject(err);
+        });
+
+      }).catch((err)=>{
+        clear();
+        reject(err);
+      });
+
+    }).catch((err)=>{
+      clear();
+      reject(err);
+    });
+  });
+
+};
 
 
 module.exports={
@@ -155,5 +198,6 @@ module.exports={
   "uploadContentFile":uploadContentFile,
   "returnActualDate":returnActualDate,
   "appendDateToFilename":appendDateToFilename,
+  "insertNewContentToDB":insertNewContentToDB,
   "checkFileExtension":checkFileExtension
 };

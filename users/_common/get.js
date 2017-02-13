@@ -21,14 +21,20 @@ router.get('/avatar/file=:filename',(req,res)=>{
 
 
 router.get('/generic_info',(req,res)=>{
-  const user=new User();
-
-  user.get_platform_generic_info().then((data)=>{
-    res.send(data);
+  const select_user=new Selector(req.body.id_usuario);
+  select_user.return_user().then((profile)=>{
+    const user=profile;
+    user.get_platform_generic_info().then((data)=>{
+      res.send(data);
+    })
+    .catch((err)=>{
+      res.send({error:err});
+    });
   })
   .catch((err)=>{
     res.send({error:err});
   });
+
 });
 
 
