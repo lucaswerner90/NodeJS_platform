@@ -1,16 +1,14 @@
-// TODO: Crear un enrutador para los diferentes tipos de usuarios
-
-
 const express=require('express');
 const router=express.Router();
 
-const intern_router=require('./profiles/intern');
-const extern_router=require('./profiles/extern');
+const modify=require('./_common/modify');
+const insert=require('./_common/insert');
+const get=require('./_common/get');
 
 
-router.use('/intern',intern_router);
-router.use('/extern',extern_router);
-
+router.use("/modify",modify);
+router.use("/insert",insert);
+router.use("/get",get);
 
 
 module.exports=router;

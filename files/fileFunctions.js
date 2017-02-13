@@ -148,12 +148,7 @@ const downloadFile=(filepath,response)=>{
 };
 
 
-const insertNewContentToDB=(form,camposFormulario,user_queries)=>{
-
-  function clear(){
-    form.removeAllListeners();
-    form=null;
-  }
+const insertNewContentToDB=(camposFormulario,user_queries)=>{
 
   return new Promise(function(resolve, reject) {
     // DB.sendQuery(DBCourseQueries.INSERT.content,camposFormulario).then((row)=>{
@@ -170,24 +165,54 @@ const insertNewContentToDB=(form,camposFormulario,user_queries)=>{
           {
             multiple_insert_query:DB.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query
           }).then(()=>{
-          clear();
           resolve({status:true});
         })
         .catch((err)=>{
-          clear();
           reject(err);
         });
 
       }).catch((err)=>{
-        clear();
         reject(err);
       });
 
     }).catch((err)=>{
-      clear();
       reject(err);
     });
   });
+
+};
+
+
+const updateContentInDB=(user_queries,camposFormulario,updateFile=false)=>{
+
+
+  function removeVariables(){
+    camposFormulario=null;
+  }
+
+  return new Promise((resolve,reject)=>{
+    DB.sendQuery((updateFile)?user_queries.UPDATE.content:user_queries.UPDATE.contentNoFile,camposFormulario).then(()=>{
+
+      DB.sendQuery(user_queries.UPDATE.tableOfCompatibilities,
+      {
+        multiple_insert_query:DB.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
+        id_contenido:camposFormulario.id_contenido
+      }).then(()=>{
+        removeVariables();
+        resolve({status:true});
+      })
+      .catch((err)=>{
+        removeVariables();
+        reject(err);
+      });
+
+    }).catch((err)=>{
+      removeVariables();
+      reject(err);
+    });
+  });
+
+
 
 };
 
@@ -199,5 +224,6 @@ module.exports={
   "returnActualDate":returnActualDate,
   "appendDateToFilename":appendDateToFilename,
   "insertNewContentToDB":insertNewContentToDB,
+  "updateContentInDB":updateContentInDB,
   "checkFileExtension":checkFileExtension
 };

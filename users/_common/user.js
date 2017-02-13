@@ -180,8 +180,6 @@ class User{
 
       form.once("close",()=>{
 
-
-
         FILE_FUNCTIONS.uploadContentFile(formData[fieldFile],formData,FILE_CONFIG.avatarUpload.directory,FILE_CONFIG.avatarUpload.extensionsAllowed,true);
         DB.sendQuery(_self._common_queries.UPDATE.avatar,formData).then(()=>{
 
@@ -200,11 +198,11 @@ class User{
     });
   }
 
-  modify_personal_info(request){
+  modify_personal_info(form){
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-      DB.sendQuery(_self._common_queries.UPDATE.personalInfo,request.body).then(()=>{
+      DB.sendQuery(_self._common_queries.UPDATE.personalInfo,form).then(()=>{
 
         this._logOnDB("user.modify_info");
 
@@ -234,89 +232,98 @@ class User{
   }
 
 
-  create_course(request){
+  create_course(form){
 
     const _self=this;
 
     return new Promise((resolve,reject)=>{
 
-      debugger;
-      let form = new multiparty.Form();
-      let formFields={};
+      form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
+      FILE_FUNCTIONS.uploadContentFile(form['file_to_upload'],form,FILE_CONFIG.fileUpload.directory,FILE_CONFIG.fileUpload.extensionsAllowed).then(()=>{
 
 
-      function clear(){
-        form.removeAllListeners();
-        form=null;
-        formFields=null;
-      }
+        FILE_FUNCTIONS.insertNewContentToDB(form,_self._profile_queries).then(()=>{
 
 
-      form.once("error",(err)=>{
-        console.log("Error on parse form...");
-        clear();
-        reject({error:err});
-      });
-
-      // Once the form is parsed, we call the "close" function to send back the response
-      form.once("close",()=>{
-
-        _self._id_usuario=formFields.id_usuario;
-
-        formFields["multiple_insert_query"]=eval("["+ formFields.tableTechnologies +"]");
-        FILE_FUNCTIONS.uploadContentFile(formFields['file_to_upload'],formFields,FILE_CONFIG.fileUpload.directory,FILE_CONFIG.fileUpload.extensionsAllowed).then(()=>{
-
-
-          FILE_FUNCTIONS.insertNewContentToDB(form,formFields,_self._profile_queries).then(()=>{
-
-
-            FTP.extractZIP(formFields['file_to_upload'],formFields['ruta_zip']).then(()=>{
-              console.log("ZIP EXTRACTED CORRECTLY....");
-              DB.recordOnLog("course.upload",{
-                id_usuario:_self._id_usuario,
-                id_contenido:formFields.id_contenido
-              });
-              clear();
-            })
-            .catch((err)=>{
-              console.error("*****  ERROR EXTRACTING ZIP  *****");
-              console.error(err);
+          FTP.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
+            console.log("ZIP EXTRACTED CORRECTLY....");
+            DB.recordOnLog("course.upload",{
+              id_usuario:_self._id_usuario,
+              id_contenido:form.id_contenido
             });
-
-            resolve(true);
-
           })
           .catch((err)=>{
-            reject({error:err});
+            console.error("*****  ERROR EXTRACTING ZIP  *****");
+            console.error(err);
           });
+
+          resolve(true);
+
         })
         .catch((err)=>{
           reject({error:err});
         });
-
+      })
+      .catch((err)=>{
+        reject({error:err});
       });
-
-      form.on("file",(name,file)=>{
-        if(name==='screenshot'){
-          formFields['screenshot']=file;
-        }else{
-          formFields['file_to_upload']=file;
-        }
-
-      });
-
-      form.on("field",(name,value)=>{
-        formFields[name]=value;
-      });
-
-
-      form.parse(request);
-
 
     });
+}
+
+
+
+  modify_course(form){
+
+    const _self=this;
+
+    return new Promise((resolve,reject)=>{
+      // Once the form is parsed, we call the "close" function to send back the response
+
+        form["fecha_alta"]=FILE_FUNCTIONS.returnActualDate();
+        form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
+        // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
+        if(form['file_to_upload']){
+          FILE_FUNCTIONS.uploadContentFile(form['file_to_upload'],form,FILE_CONFIG.fileUpload.directory,FILE_CONFIG.fileUpload.extensionsAllowed).then(()=>{
+            FILE_FUNCTIONS.updateContentInDB(_self._profile_queries,form,true).then(()=>{
+
+              FTP.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
+                console.log("ZIP EXTRACTED CORRECTLY....");
+              })
+              .catch((err)=>{
+                console.error("*****  ERROR EXTRACTING ZIP  *****");
+                console.error(err);
+              });
+              DB.recordOnLog("course.modify",
+              {
+                id_usuario:form.id_usuario,
+                ic_contenido:form.id_contenido
+              });
+              resolve(true);
+            })
+            .catch((err)=>{
+              reject(err);
+            });
+          })
+          .catch((err)=>{
+            reject(err);
+          });
+        }else{
+          // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
+          FILE_FUNCTIONS.updateContentInDB(_self._profile_queries,form).then(()=>{
+            resolve(true);
+          })
+          .catch((err)=>{
+            reject(err);
+          });
+        }
+
+    });
+
   }
 
 
+//END OF THE USER CLASS --> DONT TOUCH THE BRACKET
 }
 
 
