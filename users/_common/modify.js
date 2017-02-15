@@ -3,7 +3,6 @@ const express=require('express');
 const router=express.Router();
 
 const Form=require('../../files/_form');
-const User=require('./user');
 const Selector=require('../profiles/_selector');
 
 
@@ -15,20 +14,16 @@ router.post('/course',(req,res)=>{
     select_user.return_user().then((profile)=>{
       const user=profile;
       user.modify_course(formulario._campos).then(()=>{
-        formulario.clear();
         res.send({status:true});
       })
       .catch((err)=>{
-        formulario.clear();
         res.send({error:err});
       });
     })
     .catch((err)=>{
-      formulario.clear();
       res.send({error:err});
     });
   },function(err){
-    formulario.clear();
     res.send({error:err});
   });
 
@@ -58,25 +53,43 @@ router.post('/personal_info',(req,res)=>{
 
 router.post('/change_password',(req,res)=>{
 
-  let user=new User(req.body.id_usuario);
-  user.modify_avatar(req.body).then(()=>{
-    res.send({status:true});
+  const select_user=new Selector(req.body.id_usuario);
+  select_user.return_user().then((profile)=>{
+    const user=profile;
+    user.modify_password(req.body).then(()=>{
+      res.send({status:true});
+    })
+    .catch((err)=>{
+      res.send({error:err});
+    });
   })
   .catch((err)=>{
     res.send({error:err});
   });
+
 });
 
 
 router.post('/avatar',(req,res)=>{
 
-  let user=new User();
-  user.modify_avatar(req).then(()=>{
-    res.send({status:true});
-  })
-  .catch((err)=>{
+  let formulario=new Form(req,function(){
+    const select_user=new Selector(formulario._campos['id_usuario']);
+    select_user.return_user().then((profile)=>{
+      const user=profile;
+      user.modify_avatar(formulario._campos,formulario._campos["file_to_upload"]).then(()=>{
+        res.send({status:true});
+      })
+      .catch((err)=>{
+        res.send({error:err});
+      });
+    })
+    .catch((err)=>{
+      res.send({error:err});
+    });
+  },function(err){
     res.send({error:err});
   });
+
 });
 
 

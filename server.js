@@ -16,7 +16,6 @@ const BODY_PARSER=require('body-parser');
 const authentication=require('./authentication/index');
 
 // Route related with the DB manage
-const bbdd=require('./db/index');
 
 // Route related with the files functionality
 const user=require('./files/index');
@@ -54,7 +53,6 @@ for (let i = 0; i < CONFIG_SERVER.STATIC_ROUTES.length; i++) {
 
 
 app.use('/api/auth',BODY_PARSER.json({extended:true}),authentication);
-app.use('/api/bbdd',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),bbdd);
 app.use('/api/user',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),user);
 
 

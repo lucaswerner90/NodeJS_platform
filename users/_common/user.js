@@ -1,20 +1,19 @@
 "use strict";
 
 
-const DB=require('../../db/coreFunctions');
-const multiparty=require('multiparty');
+const Database=require('../../db/database');
+const DB=new Database();
 const FILE_FUNCTIONS = require('../../files/fileFunctions');
 const FILE_CONFIG= require('../../files/config.json');
 const FTP= require('../../files/FTP');
 const DBCommonQueries=require('../../db/queries/user/_common.json');
-const DBCourseQueries=require('../../db/queries/course.json');
 
 
 class User{
 
 
   constructor(id_usuario=-1,queries){
-    this._id_usuario=id_usuario;
+    this._id_usuario=parseInt(id_usuario);
     this._profile_queries=queries;
     this._common_queries=DBCommonQueries;
   }
@@ -33,7 +32,7 @@ class User{
 
     return new Promise((resolve,reject)=>{
       _self.get_user_info().then((result)=>{
-        DB.sendQuery(DBCommonQueries.GET.type_of_user,{
+        DB.sendQuery(_self._common_queries.GET.type_of_user,{
           id_perfil:result.id_perfil}
         ).then((data)=>{
           resolve(data[0].descripcion);
@@ -53,10 +52,24 @@ class User{
   }
 
   search_course(fields){
+    const _self=this;
 
     return new Promise((resolve,reject)=>{
-      DB.sendQuery(DBCommonQueries.GET.search,fields,true).then((data)=>{
-        resolve(data);
+      DB.sendQuery(_self._common_queries.GET.search,fields,true).then((data)=>{
+        let arrayPromises=[];
+        for (let i = 0; i < data.length; i++) {
+          arrayPromises[i]=DB.sendQuery(_self._common_queries.GET.tableOfCompatibilities,data[i]);
+        }
+
+        Promise.all(arrayPromises).then((values)=>{
+          for (let i = 0; i < data.length; i++) {
+            data[i].compatibilities_table=values[i];
+          }
+          resolve(data);
+        })
+        .catch((err)=>{
+          reject(err);
+        });
       })
       .catch((err)=>{
         reject(err);
@@ -69,7 +82,7 @@ class User{
 
     let _self=this;
     return new Promise((resolve,reject)=>{
-      DB.sendQuery(DBCommonQueries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
+      DB.sendQuery(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
         resolve(data[0]);
       })
       .catch((err)=>{
@@ -81,15 +94,15 @@ class User{
 
 
   get_contents(){
-    let _self=this;
+    const _self=this;
     return new Promise((resolve,reject)=>{
       _self.get_user_info().then((result)=>{
 
-        DB.sendQuery(DBCommonQueries.GET.contents_proveedor,result).then((data)=>{
+        DB.sendQuery(_self._common_queries.GET.contents_proveedor,result).then((data)=>{
 
           let arrayPromises=[];
           for (let i = 0; i < data.length; i++) {
-            arrayPromises[i]=DB.sendQuery(DBCourseQueries.GET.tableOfCompatibilities,data[i]);
+            arrayPromises[i]=DB.sendQuery(_self._common_queries.GET.tableOfCompatibilities,data[i]);
           }
 
           Promise.all(arrayPromises).then((values)=>{
@@ -97,7 +110,6 @@ class User{
               data[i].compatibilities_table=values[i];
             }
             resolve(data);
-
           })
           .catch((err)=>{
             reject(err);
@@ -158,45 +170,28 @@ class User{
   }
 
 
-  modify_avatar(request){
-    let _self=this;
-    let formData={};
-    let form = new multiparty.Form();
-    let fieldFile='';
+  modify_avatar(form,file){
+
+    const _self=this;
 
     return new Promise((resolve,reject)=>{
 
-      form.once("error",(err)=>{
+
+      FILE_FUNCTIONS.uploadContentFile(file,form,FILE_CONFIG.avatarUpload.directory,FILE_CONFIG.avatarUpload.extensionsAllowed,true);
+      DB.sendQuery(_self._common_queries.UPDATE.avatar,form).then(()=>{
+
+        _self._id_usuario=form.id_usuario;
+        this._logOnDB("user.modify_avatar");
+
+        resolve(true);
+      })
+      .catch((err)=>{
         reject(err);
       });
-      form.once("field",(name,value)=>{
-        formData[name]=value;
-      });
-
-      form.once("file",(name,file)=>{
-        fieldFile=name;
-        formData[fieldFile]=file;
-      });
-
-      form.once("close",()=>{
-
-        FILE_FUNCTIONS.uploadContentFile(formData[fieldFile],formData,FILE_CONFIG.avatarUpload.directory,FILE_CONFIG.avatarUpload.extensionsAllowed,true);
-        DB.sendQuery(_self._common_queries.UPDATE.avatar,formData).then(()=>{
-
-          _self._id_usuario=formData.id_usuario;
-          this._logOnDB("user.modify_avatar");
-          form.removeAllListeners();
-
-          resolve(true);
-        })
-        .catch((err)=>{
-          reject(err);
-        });
-      });
-
-      form.parse(request);
     });
   }
+
+
 
   modify_personal_info(form){
     const _self=this;
@@ -244,7 +239,6 @@ class User{
 
         FILE_FUNCTIONS.insertNewContentToDB(form,_self._profile_queries).then(()=>{
 
-
           FTP.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
             console.log("ZIP EXTRACTED CORRECTLY....");
             DB.recordOnLog("course.upload",{
@@ -269,7 +263,7 @@ class User{
       });
 
     });
-}
+  }
 
 
 
@@ -280,50 +274,50 @@ class User{
     return new Promise((resolve,reject)=>{
       // Once the form is parsed, we call the "close" function to send back the response
 
-        form["fecha_alta"]=FILE_FUNCTIONS.returnActualDate();
-        form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
-        // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
-        if(form['file_to_upload']){
-          FILE_FUNCTIONS.uploadContentFile(form['file_to_upload'],form,FILE_CONFIG.fileUpload.directory,FILE_CONFIG.fileUpload.extensionsAllowed).then(()=>{
-            FILE_FUNCTIONS.updateContentInDB(_self._profile_queries,form,true).then(()=>{
+      form["fecha_alta"]=FILE_FUNCTIONS.returnActualDate();
+      form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
+      // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
+      if(form['file_to_upload']){
+        FILE_FUNCTIONS.uploadContentFile(form['file_to_upload'],form,FILE_CONFIG.fileUpload.directory,FILE_CONFIG.fileUpload.extensionsAllowed).then(()=>{
+          FILE_FUNCTIONS.updateContentInDB(_self._profile_queries,form,true).then(()=>{
 
-              FTP.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
-                console.log("ZIP EXTRACTED CORRECTLY....");
-              })
-              .catch((err)=>{
-                console.error("*****  ERROR EXTRACTING ZIP  *****");
-                console.error(err);
-              });
-              DB.recordOnLog("course.modify",
-              {
-                id_usuario:form.id_usuario,
-                ic_contenido:form.id_contenido
-              });
-              resolve(true);
+            FTP.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
+              console.log("ZIP EXTRACTED CORRECTLY....");
             })
             .catch((err)=>{
-              reject(err);
+              console.error("*****  ERROR EXTRACTING ZIP  *****");
+              console.error(err);
             });
-          })
-          .catch((err)=>{
-            reject(err);
-          });
-        }else{
-          // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
-          FILE_FUNCTIONS.updateContentInDB(_self._profile_queries,form).then(()=>{
+            DB.recordOnLog("course.modify",
+            {
+              id_usuario:form.id_usuario,
+              id_contenido:form.id_contenido
+            });
             resolve(true);
           })
           .catch((err)=>{
             reject(err);
           });
-        }
+        })
+        .catch((err)=>{
+          reject(err);
+        });
+      }else{
+        // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
+        FILE_FUNCTIONS.updateContentInDB(_self._profile_queries,form).then(()=>{
+          resolve(true);
+        })
+        .catch((err)=>{
+          reject(err);
+        });
+      }
 
     });
 
   }
 
 
-//END OF THE USER CLASS --> DONT TOUCH THE BRACKET
+  //END OF THE USER CLASS --> DONT TOUCH THE BRACKET
 }
 
 

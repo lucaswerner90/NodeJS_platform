@@ -186,28 +186,33 @@ const insertNewContentToDB=(camposFormulario,user_queries)=>{
 const updateContentInDB=(user_queries,camposFormulario,updateFile=false)=>{
 
 
-  function removeVariables(){
-    camposFormulario=null;
-  }
 
   return new Promise((resolve,reject)=>{
+
     DB.sendQuery((updateFile)?user_queries.UPDATE.content:user_queries.UPDATE.contentNoFile,camposFormulario).then(()=>{
 
       DB.sendQuery(user_queries.UPDATE.tableOfCompatibilities,
       {
-        multiple_insert_query:DB.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
         id_contenido:camposFormulario.id_contenido
       }).then(()=>{
-        removeVariables();
+
+        DB.sendQuery(user_queries.INSERT.tableOfCompatibilities,
+        {
+          multiple_insert_query:DB.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
+          id_contenido:camposFormulario.id_contenido
+        }).then(()=>{
+          resolve({status:true});
+        })
+        .catch((err)=>{
+          reject(err);
+        });
         resolve({status:true});
       })
       .catch((err)=>{
-        removeVariables();
         reject(err);
       });
 
     }).catch((err)=>{
-      removeVariables();
       reject(err);
     });
   });

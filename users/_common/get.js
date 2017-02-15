@@ -40,7 +40,7 @@ router.get('/generic_info',(req,res)=>{
 
 // A esta funcion le tenemos que pasar el req.body.id_usuario y nosotros nos encargamos de obtener la info del user y el proveedor que le corresponde
 router.post('/contents',(req,res)=>{
-
+  debugger;
   const select_user=new Selector(req.body.id_usuario);
   select_user.return_user().then((profile)=>{
     const user=profile;

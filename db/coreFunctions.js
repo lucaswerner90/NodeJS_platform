@@ -105,7 +105,7 @@ THIS METHOD SENDS A QUERY TO THE DB
 */
 function sendQuery(query,object,searchContent=false){
   return new Promise(function(resolve,reject){
-
+    startConnection();
     // Use the connection
     connection.getConnection(function(err, dbConnection) {
 

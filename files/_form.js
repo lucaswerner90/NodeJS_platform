@@ -51,8 +51,8 @@ class Form{
   }
 
   clear(){
-    this._formulario=null;
     this._formulario.removeAllListeners();
+    this._formulario=null;
     this._campos={};
   }
 
