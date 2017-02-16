@@ -5,8 +5,8 @@
 // Basic configuration
 const CONFIG=require('./config');
 const PATH=require('path');
-const ftpClient = require('ftp');
-const FTP = new ftpClient();
+const FTP_CLIENT = require('ftp');
+const FTP = new FTP_CLIENT();
 const unzip=require('unzip');
 const fs=require('fs');
 
@@ -18,6 +18,9 @@ const appendDateToFilename=()=>{
   const minutes=(fecha.getMinutes()<10)?`0${fecha.getMinutes()+1}`:fecha.getMinutes()+1;
   return `${fecha.getFullYear()}_${month}_${day}_${hours}_${minutes}`;
 };
+
+
+
 
 
 function checkIfDirExists(dir,path=[]){
@@ -45,6 +48,11 @@ function createDir(path){
 
 function extractZIP(path,remotePath){
   return new Promise((resolve,reject)=>{
+
+
+
+
+
     let uploadPipe=fs.createReadStream(path.path).pipe(unzip.Parse());
     let arrayDirectories=[];
     let arrayFiles=[];
@@ -52,6 +60,10 @@ function extractZIP(path,remotePath){
     let type="";
     let filename="";
 
+
+    uploadPipe.once("error",function(err){
+      reject(err);
+    });
 
     const pathToFTP=PATH.dirname(remotePath)+"/";
 
@@ -223,7 +235,7 @@ function uploadFile(file,FTPPath){
       FTP.list(PATH.dirname(PATH.dirname(FTPPath)),function(err, list) {
         // If there is any error firing the ls command
         if (err) {
-          reject(err);
+          list=[];
         }
         // If the user's directory exists, we only need to upload the file...
         if(checkIfDirExists(PATH.parse(FTPPath).name,list)){

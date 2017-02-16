@@ -3,7 +3,8 @@
 const FTP=require('./FTP');
 
 
-const DB=require('../db/coreFunctions');
+const Database=require('../db/database');
+const DB=new Database();
 const PATH=require('path');
 const fs=require('fs');
 const BASE_64_ENCODER = require('base64-stream');
@@ -40,9 +41,9 @@ const checkFileExtension=(extensions,fileExtension)=>{
 const fileRoute=(contentType,formFields,uploadDirectory,filename)=>{
   switch (contentType) {
     case "avatar":
-      return uploadDirectory+"/"+formFields['id_usuario']+"/avatar"+filename.ext;
+      return uploadDirectory+"/"+formFields['carpeta_proveedor']+formFields["id_usuario"]+"/avatar"+filename.ext;
     case "zip":
-      return uploadDirectory+"/"+formFields["id_proveedor"]+"/"+formFields["id_proyecto"]+"/"+filename.name+"/"+filename.name+filename.ext;
+      return uploadDirectory+"/"+formFields["carpeta_proveedor"]+"/"+filename.name+"/"+filename.name+filename.ext;
   }
 };
 
@@ -201,12 +202,12 @@ const updateContentInDB=(user_queries,camposFormulario,updateFile=false)=>{
           multiple_insert_query:DB.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
           id_contenido:camposFormulario.id_contenido
         }).then(()=>{
-          resolve({status:true});
+          resolve(true);
         })
         .catch((err)=>{
           reject(err);
         });
-        resolve({status:true});
+        resolve(true);
       })
       .catch((err)=>{
         reject(err);

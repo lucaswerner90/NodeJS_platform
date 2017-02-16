@@ -11,6 +11,16 @@ const LOG_QUERIES=require('./queries/log.json');
 
 let connection = null;
 
+function createCompatibilityTableForInsertCourseQuery(obj,id_contenido,id_usuario){
+  let finalQuery="";
+  for (let i = 0; i < obj.length; i++) {
+    // id_contenido,id_usuario,id_punto_control,id_tc,valor,fecha_validacion_proveedor,fecha_validacion_CQA
+    if(i>0) finalQuery+=`, `;
+
+      finalQuery+=`(${id_contenido},${parseInt(id_usuario)},${parseInt(obj[i].id_punto_control)},${parseInt(obj[i].id_tc)},${parseInt(obj[i].id_valor)})`;
+  }
+  return {multiple_insert_query:finalQuery};
+}
 
 const recordOnLog=function(action,obj){
   // Record the user's login

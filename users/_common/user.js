@@ -2,7 +2,6 @@
 
 
 const Database=require('../../db/database');
-const DB=new Database();
 const FILE_FUNCTIONS = require('../../files/fileFunctions');
 const FILE_CONFIG= require('../../files/config.json');
 const FTP= require('../../files/FTP');
@@ -14,25 +13,27 @@ class User{
 
   constructor(id_usuario=-1,queries){
     this._id_usuario=parseInt(id_usuario);
+    this._db_connection=new Database();
+
     this._profile_queries=queries;
     this._common_queries=DBCommonQueries;
   }
 
   _logOnDB(action){
-    DB.recordOnLog(action,{
+    this._db_connection.recordOnLog(action,{
       id_usuario:this._id_usuario
     });
   }
 
   _get_type_of_user(){
-    let _self=this;
 
+    const _self=this;
 
     if(_self._id_usuario===-1) return "Administrador";
 
     return new Promise((resolve,reject)=>{
       _self.get_user_info().then((result)=>{
-        DB.sendQuery(_self._common_queries.GET.type_of_user,{
+        _self._db_connection.sendQuery(_self._common_queries.GET.type_of_user,{
           id_perfil:result.id_perfil}
         ).then((data)=>{
           resolve(data[0].descripcion);
@@ -55,10 +56,10 @@ class User{
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-      DB.sendQuery(_self._common_queries.GET.search,fields,true).then((data)=>{
+      _self._db_connection.sendQuery(_self._common_queries.GET.search,fields,true).then((data)=>{
         let arrayPromises=[];
         for (let i = 0; i < data.length; i++) {
-          arrayPromises[i]=DB.sendQuery(_self._common_queries.GET.tableOfCompatibilities,data[i]);
+          arrayPromises[i]=_self._db_connection.sendQuery(_self._common_queries.GET.tableOfCompatibilities,data[i]);
         }
 
         Promise.all(arrayPromises).then((values)=>{
@@ -80,9 +81,9 @@ class User{
 
   get_user_info(){
 
-    let _self=this;
+    const _self=this;
     return new Promise((resolve,reject)=>{
-      DB.sendQuery(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
+      _self._db_connection.sendQuery(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
         resolve(data[0]);
       })
       .catch((err)=>{
@@ -98,11 +99,11 @@ class User{
     return new Promise((resolve,reject)=>{
       _self.get_user_info().then((result)=>{
 
-        DB.sendQuery(_self._common_queries.GET.contents_proveedor,result).then((data)=>{
+        _self._db_connection.sendQuery(_self._common_queries.GET.contents_proveedor,result).then((data)=>{
 
           let arrayPromises=[];
           for (let i = 0; i < data.length; i++) {
-            arrayPromises[i]=DB.sendQuery(_self._common_queries.GET.tableOfCompatibilities,data[i]);
+            arrayPromises[i]=_self._db_connection.sendQuery(_self._common_queries.GET.tableOfCompatibilities,data[i]);
           }
 
           Promise.all(arrayPromises).then((values)=>{
@@ -131,7 +132,7 @@ class User{
   get_platform_generic_info(){
     const _self=this;
     return new Promise((resolve,reject)=>{
-      DB.sendQuery(_self._common_queries.GET.generic_information,null).then((data)=>{
+      _self._db_connection.sendQuery(_self._common_queries.GET.generic_information,null).then((data)=>{
         resolve({
           platforms:data[0],
           evaluationSystems:data[1],
@@ -178,10 +179,10 @@ class User{
 
 
       FILE_FUNCTIONS.uploadContentFile(file,form,FILE_CONFIG.avatarUpload.directory,FILE_CONFIG.avatarUpload.extensionsAllowed,true);
-      DB.sendQuery(_self._common_queries.UPDATE.avatar,form).then(()=>{
+      _self._db_connection.sendQuery(_self._common_queries.UPDATE.avatar,form).then(()=>{
 
         _self._id_usuario=form.id_usuario;
-        this._logOnDB("user.modify_avatar");
+        _self._logOnDB("user.modify_avatar");
 
         resolve(true);
       })
@@ -197,9 +198,9 @@ class User{
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-      DB.sendQuery(_self._common_queries.UPDATE.personalInfo,form).then(()=>{
+      _self._db_connection.sendQuery(_self._common_queries.UPDATE.personalInfo,form).then(()=>{
 
-        this._logOnDB("user.modify_info");
+        _self._logOnDB("user.modify_info");
 
         resolve(true);
       })
@@ -215,9 +216,9 @@ class User{
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-      DB.sendQuery(_self._common_queries.UPDATE.password,fields).then(()=>{
+      _self._db_connection.sendQuery(_self._common_queries.UPDATE.password,fields).then(()=>{
 
-        this._logOnDB("user.modify_password");
+        _self._logOnDB("user.modify_password");
         resolve(true);
       })
       .catch((err)=>{
@@ -234,33 +235,46 @@ class User{
     return new Promise((resolve,reject)=>{
 
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
-      FILE_FUNCTIONS.uploadContentFile(form['file_to_upload'],form,FILE_CONFIG.fileUpload.directory,FILE_CONFIG.fileUpload.extensionsAllowed).then(()=>{
+      _self._db_connection.sendQuery(_self._common_queries.GET.info_proveedor,form).then((data)=>{
 
 
-        FILE_FUNCTIONS.insertNewContentToDB(form,_self._profile_queries).then(()=>{
+        form['carpeta_proveedor']=data[0].carpeta_proveedor;
 
-          FTP.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
-            console.log("ZIP EXTRACTED CORRECTLY....");
-            DB.recordOnLog("course.upload",{
-              id_usuario:_self._id_usuario,
-              id_contenido:form.id_contenido
+
+        FILE_FUNCTIONS.uploadContentFile(form['file_to_upload'],form,FILE_CONFIG.fileUpload.directory,FILE_CONFIG.fileUpload.extensionsAllowed).then(()=>{
+
+
+          _self._db_connection.insert_new_content(form,_self._profile_queries).then(()=>{
+
+            FTP.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
+              console.log("ZIP EXTRACTED CORRECTLY....");
+              _self._db_connection.recordOnLog("course.upload",{
+                id_usuario:_self._id_usuario,
+                id_contenido:form.id_contenido
+              });
+              resolve(true);
+            })
+            .catch((err)=>{
+              console.error("*****  ERROR EXTRACTING ZIP  *****");
+              console.error(err);
+              reject(err);
             });
+
+
+
           })
           .catch((err)=>{
-            console.error("*****  ERROR EXTRACTING ZIP  *****");
-            console.error(err);
+            reject(err);
           });
-
-          resolve(true);
-
         })
         .catch((err)=>{
-          reject({error:err});
+          reject(err);
         });
       })
       .catch((err)=>{
-        reject({error:err});
+        reject(err);
       });
+
 
     });
   }
@@ -279,7 +293,7 @@ class User{
       // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
       if(form['file_to_upload']){
         FILE_FUNCTIONS.uploadContentFile(form['file_to_upload'],form,FILE_CONFIG.fileUpload.directory,FILE_CONFIG.fileUpload.extensionsAllowed).then(()=>{
-          FILE_FUNCTIONS.updateContentInDB(_self._profile_queries,form,true).then(()=>{
+          _self._db_connection.update_content(_self._profile_queries,form,true).then(()=>{
 
             FTP.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
               console.log("ZIP EXTRACTED CORRECTLY....");
@@ -288,7 +302,7 @@ class User{
               console.error("*****  ERROR EXTRACTING ZIP  *****");
               console.error(err);
             });
-            DB.recordOnLog("course.modify",
+            _self._db_connection.recordOnLog("course.modify",
             {
               id_usuario:form.id_usuario,
               id_contenido:form.id_contenido
@@ -304,7 +318,15 @@ class User{
         });
       }else{
         // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
-        FILE_FUNCTIONS.updateContentInDB(_self._profile_queries,form).then(()=>{
+        _self._db_connection.update_content(_self._profile_queries,form).then(()=>{
+
+          _self._db_connection.recordOnLog("course.modify",
+          {
+            id_usuario:form.id_usuario,
+            id_contenido:form.id_contenido
+          });
+
+
           resolve(true);
         })
         .catch((err)=>{

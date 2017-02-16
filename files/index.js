@@ -1,6 +1,7 @@
 'use strict';
 const multiparty=require('multiparty');
-const DB=require('../db/coreFunctions');
+const Database=require('../db/database');
+const DB=new Database();
 const DBCourseQueries=require('../db/queries/course.json');
 const FILE=require('./fileFunctions');
 const FTP=require('./FTP');
