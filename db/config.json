@@ -1,8 +1,9 @@
 {
-  "host"      : "10.102.225.73",
-  "port"      : 3306,
-  "user"      : "contenidos",
-  "password"  : "Contenid0s",
-  "database"  : "catalogo_contenidos",
+  "host"              : "10.102.225.73",
+  "port"              : 3306,
+  "user"              : "contenidos",
+  "password"          : "Contenid0s",
+  "database"          : "catalogo_contenidos",
+  "connectionLimit"   : 10,
   "multipleStatements":true
 }

@@ -6,8 +6,7 @@
     "port":21,
     "password":"ted01",
     "debug":true,
-    "uploadsDirectory":"uploads/",
-    "keepalive":300000
+    "uploadsDirectory":"uploads/"
   },
   "screenshotsUpload":{
     "directory":"./content_screenshots",

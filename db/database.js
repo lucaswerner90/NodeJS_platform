@@ -9,14 +9,14 @@ class Database{
 
   constructor(){
     this._configuration=CONFIGURATION_DB;
-    this._connection = mysql.createPool(this._configuration);
+    this._connection = mysql.createConnection(this._configuration);
     this._log_queries=LOG_QUERIES;
 
 
     this._connection.on("error",function(error){
       try {
         console.log(error);
-        this._connection = mysql.createPool(this._configuration);
+        this._connection = mysql.createConnection(this._configuration);
       } catch (err) {
         console.log(err);
       }
@@ -49,7 +49,7 @@ class Database{
       if(prop!=='id_usuario'){
         index++;
         if (index>1) {
-            searchQuery+=" AND ";
+          searchQuery+=" AND ";
         }
         searchQuery+=`${prop} LIKE "%${obj[prop]}%"`;
       }
@@ -83,7 +83,18 @@ class Database{
       // id_contenido,id_usuario,id_punto_control,id_tc,valor,fecha_validacion_proveedor,fecha_validacion_CQA
       if(i>0) finalQuery+=`, `;
 
-        finalQuery+=`(${id_contenido},${parseInt(id_usuario)},${parseInt(obj[i].id_punto_control)},${parseInt(obj[i].id_tc)},${parseInt(obj[i].id_valor)})`;
+      finalQuery+=`(${id_contenido},${parseInt(id_usuario)},${parseInt(obj[i].id_punto_control)},${parseInt(obj[i].id_tc)},${parseInt(obj[i].id_valor)})`;
+    }
+    return {multiple_insert_query:finalQuery};
+  }
+
+  _createInsertContentPlatform(obj,id_contenido){
+    let finalQuery="";
+    for (let i = 0; i < obj.length; i++) {
+      // id_contenido,id_usuario,id_punto_control,id_tc,valor,fecha_validacion_proveedor,fecha_validacion_CQA
+      if(i>0) finalQuery+=`, `;
+
+      finalQuery+=`(${parseInt(id_contenido)},${parseInt(obj[i].id_plataforma)},${parseInt(obj[i].id_pais)})`;
     }
     return {multiple_insert_query:finalQuery};
   }
@@ -99,27 +110,26 @@ class Database{
     const _self=this;
 
     return new Promise(function(resolve,reject){
+
+
+
+      if(search_content){
+        query=_self._replace_variables_on_query(query,object);
+        query=_self._create_search_query(query,object);
+      }else{
+        query=_self._replace_variables_on_query(query,object);
+      }
+
       // Use the connection
-      _self._connection.getConnection(function(err, db_connection) {
+      _self._connection.query(query, function(err, rows) {
+
         // In case of error
         if(err){
           reject(err);
         }
 
-        if(search_content){
-          query=_self._replace_variables_on_query(query,object);
-          query=_self._create_search_query(query,object);
-        }else{
-          query=_self._replace_variables_on_query(query,object);
-        }
-        db_connection.query(query, function(err, rows) {
-
-          // And done with the connection.
-          db_connection.release();
-
-          // Don't use the connection here, it has been returned to the pool.!!!!!!
-          resolve(rows);
-        });
+        // Don't use the connection here, it has been returned to the pool.!!!!!!
+        resolve(rows);
       });
     });
 
@@ -128,88 +138,100 @@ class Database{
   recordOnLog(action,obj){
     // Record the user's login
     this._log_actions(action,
-    {
-      id_usuario:obj.id_usuario,
-      id_contenido:obj.id_contenido,
-      fecha_modificacion:new Date().toISOString().slice(0, 19).replace('T', ' ')
-    });
-  }
-
-
-  insert_new_content(camposFormulario,user_queries){
-
-    const _self=this;
-
-    return new Promise((resolve,reject)=>{
-      _self.sendQuery(user_queries.INSERT.content,camposFormulario).then((row)=>{
-
-
-        // After insert the basic info about the content we need to populate the relations
-        camposFormulario["id_contenido"]=row.insertId;
-
-        // So we send the query for that, managing both the success and the fail option.
-        _self.sendQuery(user_queries.INSERT.contentRelation,camposFormulario).then(()=>{
-
-          _self.sendQuery(user_queries.INSERT.tableOfCompatibilities,
-            {
-              multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query
-            }).then(()=>{
-            resolve({status:true});
-          })
-          .catch((err)=>{
-            reject(err);
-          });
-
-        }).catch((err)=>{
-          reject(err);
-        });
-
-      }).catch((err)=>{
-        reject(err);
+      {
+        id_usuario:obj.id_usuario,
+        id_contenido:obj.id_contenido,
+        fecha_modificacion:new Date().toISOString().slice(0, 19).replace('T', ' ')
       });
-    });
-  }
+    }
 
 
+    insert_new_content(camposFormulario,user_queries){
 
-  update_content(user_queries,camposFormulario,update_file=false){
+      const _self=this;
 
-    const _self=this;
+      return new Promise((resolve,reject)=>{
 
-    return new Promise(function(resolve, reject) {
-      _self.sendQuery((update_file)?user_queries.UPDATE.content:user_queries.UPDATE.contentNoFile,camposFormulario).then(()=>{
 
-        _self.sendQuery(user_queries.UPDATE.tableOfCompatibilities,
-        {
-          id_contenido:camposFormulario.id_contenido
-        }).then(()=>{
+        _self.sendQuery(user_queries.INSERT.content,camposFormulario).then((row)=>{
 
-          _self.sendQuery(user_queries.INSERT.tableOfCompatibilities,
-          {
-            multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
-            id_contenido:camposFormulario.id_contenido
-          }).then(()=>{
+          // After insert the basic info about the content we need to populate the relations
+          camposFormulario["id_contenido"]=row.insertId;
+
+
+          if(camposFormulario['id_proyecto']){
+            _self.sendQuery(user_queries.INSERT.contentRelation,camposFormulario).then(()=>{
+            }).catch((err)=>{
+              console.error("user_queries.INSERT.contentRelation: "+err);
+            });
+          }
+
+
+          _self.sendQuery(user_queries.INSERT.tableOfCompatibilities,{
+            multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query})
+            .then(()=>{
+
+            })
+            .catch((err)=>{
+              console.error("user_queries.INSERT.tableOfCompatibilities: "+err);
+            });
             resolve(true);
-          })
-          .catch((err)=>{
+
+          }).catch((err)=>{
             reject(err);
           });
-          resolve(true);
-        })
-        .catch((err)=>{
-          reject(err);
         });
-
-      }).catch((err)=>{
-        reject(err);
-      });
-    });
-
-  }
+      }
 
 
 
-}
+      update_content(user_queries,camposFormulario,update_file=false){
+
+        const _self=this;
+
+        return new Promise(function(resolve, reject) {
+          _self.sendQuery((update_file)?user_queries.UPDATE.content:user_queries.UPDATE.contentNoFile,camposFormulario).then(()=>{
 
 
-module.exports=Database;
+
+            _self.sendQuery(user_queries.UPDATE.tableOfCompatibilities,{id_contenido:camposFormulario.id_contenido})
+            .then(()=>{
+
+
+              _self.sendQuery(user_queries.INSERT.tableOfCompatibilities,{
+                multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query, id_contenido:camposFormulario.id_contenido}).then(()=>{
+                  if(camposFormulario['id_proyecto']){
+                    
+                    _self.sendQuery(user_queries.INSERT.contentRelation,camposFormulario).then(()=>{
+
+                      resolve(true);
+
+                    }).catch((err)=>{
+                      console.error("user_queries.INSERT.contentRelation: "+err);
+                    });
+                  }else{
+                    resolve(true);
+                  }
+                })
+                .catch((err)=>{
+                  console.error("user_queries.INSERT.tableOfCompatibilities: "+err);
+                });
+
+              })
+              .catch((err)=>{
+                console.error("user_queries.UPDATE.tableOfCompatibilities: "+err);
+              });
+
+            }).catch((err)=>{
+              reject(err);
+            });
+          });
+
+        }
+
+
+
+      }
+
+
+      module.exports=Database;

@@ -10,7 +10,13 @@ class FTPModel{
   constructor(){
     this._configuration=CONFIG;
     this._ftp=new FTP_CLIENT();
+    this._ftp.connect(this._configuration.ftpConnection);
+
+    this._ftp.once("error",function(err){
+      console.error("FTPModel constructor(): "+err);
+    });
   }
+
 
 
   _appendDateToFilename(){
@@ -19,7 +25,8 @@ class FTPModel{
     const day=(fecha.getDate()+1<10)?`0${fecha.getDate()}`:fecha.getDate();
     const hours=(fecha.getHours()+1<10)?`0${fecha.getHours()+1}`:fecha.getHours()+1;
     const minutes=(fecha.getMinutes()<10)?`0${fecha.getMinutes()+1}`:fecha.getMinutes()+1;
-    return `${fecha.getFullYear()}_${month}_${day}_${hours}_${minutes}`;
+    const seconds=(fecha.getSeconds()<10)?`0${fecha.getSeconds()+1}`:fecha.getSeconds()+1;
+    return `${fecha.getFullYear()}_${month}_${day}_${hours}_${minutes}_${seconds}`;
   }
 
 
@@ -89,58 +96,70 @@ class FTPModel{
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-      let uploadPipe=fs.createReadStream(path.path).pipe(unzip.Parse());
-      let arrayDirectories=[];
-      let arrayFiles=[];
-      let directory="";
-      let type="";
-      let filename="";
+      try {
+        let unzip_pipe=unzip.Parse();
+        unzip_pipe.once("error",(err)=>{
+          reject(err);
+        });
+        let uploadPipe=fs.createReadStream(path.path).pipe(unzip_pipe);
+        let arrayDirectories=[];
+        let arrayFiles=[];
+        let directory="";
+        let type="";
+        let filename="";
+
+        uploadPipe.once("error",function(err){
+          reject(err);
+        });
+
+        const pathToFTP=PATH.dirname(remotePath)+"/";
+
+        uploadPipe.on("entry",function (entry) {
+          type = entry.type; // 'Directory' or 'File'
+          filename=entry.path;
+          filename.replace(" ","\s");
+
+          if(type==='Directory'){
+            directory=pathToFTP+filename;
+            directory.replace(" ","\s");
+            arrayDirectories.push(_self._createDir(directory));
+          }else{
+            arrayFiles.push(filename);
+          }
+          entry.autodrain();
+        });
 
 
-      const pathToFTP=PATH.dirname(remotePath)+"/";
+        uploadPipe.on("close",function(){
+            Promise.all(arrayDirectories).then(()=>{
+              setTimeout(()=>{
 
-      uploadPipe.on("entry",function (entry) {
-        type = entry.type; // 'Directory' or 'File'
-        filename=entry.path;
-        filename.replace(" ","\s");
+                let arrayFilesPromises=[];
+                for (let i = 0; i < arrayFiles.length; i++) {
+                  arrayFilesPromises.push(_self._createFile(arrayFiles[i],pathToFTP+arrayFiles[i]));
+                }
+                Promise.all(arrayFilesPromises).then(()=>{
+                  uploadPipe.removeAllListeners();
+                  _self._FTPDisconnect();
+                  resolve(true);
+                })
+                .catch((err)=>{
+                  uploadPipe.removeAllListeners();
+                  _self._FTPDisconnect();
+                  reject(err);
+                });
+              },3000);
+            })
+            .catch((err)=>{
+              uploadPipe.removeAllListeners();
+              _self._FTPDisconnect();
+              reject(err);
+            });
+        });
+      } catch (err) {
+        reject(err);
+      }
 
-        if(type==='Directory'){
-          directory=pathToFTP+filename;
-          directory.replace(" ","\s");
-          arrayDirectories.push(_self._createDir(directory));
-        }else{
-          arrayFiles.push(filename);
-        }
-        entry.autodrain();
-      });
-
-
-      uploadPipe.on("close",function(){
-          Promise.all(arrayDirectories).then(()=>{
-            setTimeout(()=>{
-
-              let arrayFilesPromises=[];
-              for (let i = 0; i < arrayFiles.length; i++) {
-                arrayFilesPromises.push(_self._createFile(arrayFiles[i],pathToFTP+arrayFiles[i]));
-              }
-              Promise.all(arrayFilesPromises).then(()=>{
-                uploadPipe.removeAllListeners();
-                _self._FTPDisconnect();
-                resolve(true);
-              })
-              .catch((err)=>{
-                uploadPipe.removeAllListeners();
-                _self._FTPDisconnect();
-                reject(err);
-              });
-            },3000);
-          })
-          .catch((err)=>{
-            uploadPipe.removeAllListeners();
-            _self._FTPDisconnect();
-            reject(err);
-          });
-      });
     });
   }
 
@@ -205,15 +224,12 @@ class FTPModel{
   uploadFile(file,FTPPath){
     const _self=this;
 
-    _self._ftp.connect(_self._configuration.ftpConnection);
-
     return new Promise(function(resolve,reject){
 
       // Connect to the FTP server with the CONFIG object setted on the config.json file
 
       // When the connection is ready....
-      _self._ftp.once('ready', function() {
-        // First of all we have to list the cwd to check if the user's directory exists.
+      // First of all we have to list the cwd to check if the user's directory exists.
         _self._ftp.list(PATH.dirname(PATH.dirname(FTPPath)),function(err, list) {
           // If there is any error firing the ls command
           if (err) {
@@ -261,11 +277,6 @@ class FTPModel{
         });
 
 
-      });
-      _self._ftp.once('error',(err)=>{
-        _self._FTPDisconnect();
-        reject(err);
-      });
 
     });
   }

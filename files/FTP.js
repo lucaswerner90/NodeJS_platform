@@ -45,6 +45,9 @@ function createDir(path){
   });
 }
 
+function newConnection(){
+  FTP.connect(CONFIG.ftpConnection);
+}
 
 function extractZIP(path,remotePath){
   return new Promise((resolve,reject)=>{
@@ -113,10 +116,6 @@ function extractZIP(path,remotePath){
         });
 
 
-
-
-
-
     });
   });
 
@@ -128,7 +127,6 @@ function createFile(path,remotePath){
     FTP.put(path, remotePath,function(err) {
       console.info("File..... "+remotePath);
       if (err){
-        console.error(err+"       remote_path: "+remotePath);
         reject(err);
       } else{
         resolve(true);
@@ -291,5 +289,6 @@ function uploadFile(file,FTPPath){
 module.exports={
   "uploadFile":uploadFile,
   "downloadFile":downloadFile,
+  "newConnection":newConnection,
   "extractZIP":extractZIP
 };

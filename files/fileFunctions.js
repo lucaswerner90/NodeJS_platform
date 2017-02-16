@@ -62,7 +62,7 @@ const uploadContentFile=(file,formFields,uploadDirectory,extensionsAllowed,avata
 
   return new Promise((resolve,reject)=>{
     if(checkFileExtension(extensionsAllowed,PATH.parse(file.originalFilename).ext)){
-
+      
       newFilename=PATH.parse(file.originalFilename);
 
 

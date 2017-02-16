@@ -2,9 +2,7 @@
 
 
 const Database=require('../../db/database');
-const FILE_FUNCTIONS = require('../../files/fileFunctions');
-const FILE_CONFIG= require('../../files/config.json');
-const FTP= require('../../files/FTP');
+const File=require('../../files/_fileModel');
 const DBCommonQueries=require('../../db/queries/user/_common.json');
 
 
@@ -14,6 +12,7 @@ class User{
   constructor(id_usuario=-1,queries){
     this._id_usuario=parseInt(id_usuario);
     this._db_connection=new Database();
+    this._file=new File();
 
     this._profile_queries=queries;
     this._common_queries=DBCommonQueries;
@@ -49,7 +48,8 @@ class User{
   }
 
   download_zip(filename,response){
-    FILE_FUNCTIONS.downloadFile(filename,response);
+    const _self=this;
+    _self._file.downloadFile(filename,response);
   }
 
   search_course(fields){
@@ -159,8 +159,9 @@ class User{
 
 
   get_avatar(filename){
+    const _self=this;
     return new Promise((resolve,reject)=>{
-      FILE_FUNCTIONS.downloadImageInBase64(filename).then((data)=>{
+      _self._file.downloadImageInBase64(filename).then((data)=>{
         resolve(data);
       })
       .catch((err)=>{
@@ -178,7 +179,7 @@ class User{
     return new Promise((resolve,reject)=>{
 
 
-      FILE_FUNCTIONS.uploadContentFile(file,form,FILE_CONFIG.avatarUpload.directory,FILE_CONFIG.avatarUpload.extensionsAllowed,true);
+      _self._file.uploadContentFile(file,form,_self._file._config.avatarUpload.directory,_self._file._config.avatarUpload.extensionsAllowed,true);
       _self._db_connection.sendQuery(_self._common_queries.UPDATE.avatar,form).then(()=>{
 
         _self._id_usuario=form.id_usuario;
@@ -241,24 +242,23 @@ class User{
         form['carpeta_proveedor']=data[0].carpeta_proveedor;
 
 
-        FILE_FUNCTIONS.uploadContentFile(form['file_to_upload'],form,FILE_CONFIG.fileUpload.directory,FILE_CONFIG.fileUpload.extensionsAllowed).then(()=>{
+        _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
 
 
           _self._db_connection.insert_new_content(form,_self._profile_queries).then(()=>{
 
-            FTP.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
+            _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
               console.log("ZIP EXTRACTED CORRECTLY....");
               _self._db_connection.recordOnLog("course.upload",{
                 id_usuario:_self._id_usuario,
                 id_contenido:form.id_contenido
               });
-              resolve(true);
             })
             .catch((err)=>{
               console.error("*****  ERROR EXTRACTING ZIP  *****");
               console.error(err);
-              reject(err);
             });
+            resolve(true);
 
 
 
@@ -288,14 +288,14 @@ class User{
     return new Promise((resolve,reject)=>{
       // Once the form is parsed, we call the "close" function to send back the response
 
-      form["fecha_alta"]=FILE_FUNCTIONS.returnActualDate();
+      form["fecha_alta"]=_self._file._returnActualDate();
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
       // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
       if(form['file_to_upload']){
-        FILE_FUNCTIONS.uploadContentFile(form['file_to_upload'],form,FILE_CONFIG.fileUpload.directory,FILE_CONFIG.fileUpload.extensionsAllowed).then(()=>{
+        _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
           _self._db_connection.update_content(_self._profile_queries,form,true).then(()=>{
 
-            FTP.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
+            _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
               console.log("ZIP EXTRACTED CORRECTLY....");
             })
             .catch((err)=>{
@@ -308,6 +308,7 @@ class User{
               id_contenido:form.id_contenido
             });
             resolve(true);
+
           })
           .catch((err)=>{
             reject(err);
