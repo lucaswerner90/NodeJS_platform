@@ -12,10 +12,12 @@ router.post('/course',(req,res)=>{
 
 
   let formulario=new Form(req,()=>{
-    const select_user=new Selector(formulario._campos["id_usuario"]);
+    let select_user=new Selector(formulario._campos["id_usuario"]);
     select_user.return_user().then((profile)=>{
-      const user=profile;
+      let user=profile;
       user.create_course(formulario._campos).then(()=>{
+        select_user=null;
+        user=null;
         res.send({status:true});
       })
       .catch((err)=>{

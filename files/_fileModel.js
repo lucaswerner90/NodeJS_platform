@@ -140,7 +140,9 @@ class File{
         response.attachment(filepath);
 
         // We pipe the file throught the readableStream object to the response
-        data.pipe(response);
+        data.pipe(response).on("end",function(){
+          _self._ftp._FTPDisconnect();
+        });
     })
     .catch((err)=>{
       response.send(err);

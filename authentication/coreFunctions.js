@@ -3,12 +3,13 @@ const jwt=require('jwt-simple');
 const moment=require('moment');
 const config=require('./config');
 
-const DDBB=require('../db/coreFunctions');
-const USER_QUERIES=require('../db/queries/user.json');
+const Database=require('../db/database');
 
-const FILE_FUNCTIONS = require('../files/fileFunctions');
+const User=require('../users/_common/user');
 
+const File = require('../files/_fileModel');
 
+let DDBB=new Database();
 // Function that creates a token that the user will keep and send to the platform to check
 // if is logued or not
 function createToken(id){
@@ -27,33 +28,19 @@ function createToken(id){
 
 // Function that looks for an existing user inside the system based on the parameters specified
 function existeUsuario(params){
-  return new Promise(function(resolve,reject){
-    DDBB.sendQuery(USER_QUERIES.GET.user,params).then((rows)=>{
-      if(rows.length===0){
-        // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
-        // indicando que no esta autorizado y el token como null.
-        reject({token:null});
-      }else{
-        if(rows[0].urlAvatar!==null){
-          FILE_FUNCTIONS.downloadImageInBase64(rows[0].urlAvatar).then((data)=>{
-            rows[0].imgAvatar=data;
-            resolve({userInfo:rows[0]});
+  return new Promise(function(resolve, reject) {
+    let user=new User();
+    user.get_login_info(params).then((data)=>{
 
-          })
-          .catch((err)=>{
-            reject(err);
-          });
-        }else{
-          // Si el usuario se encuentra dentro del sistema de la base de datos entonces
-          // devolvemos el token que usará para mantener la sesion en la plataforma
-          resolve({userInfo:rows[0]});
-        }
-
-
-
-      }
+      user._db_connection._connection.end();
+      user=null;
+      resolve(data);
+    })
+    .catch((err)=>{
+      reject(err);
     });
   });
+
 
 
 }
@@ -67,7 +54,7 @@ exports.emailLogin=function(req,res){
 
 
     // Record the user's login
-    DDBB.logActions("user.login",
+    DDBB._log_actions("user.login",
     {
       id_usuario:data.userInfo.id_usuario,
       id_contenido:'0',
@@ -83,6 +70,7 @@ exports.emailLogin=function(req,res){
   .catch((err)=>{
     // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
     // indicando que no esta autorizado y el token como null.
+    console.error(err);
     res.status(401)
     .send({userInfo:null,token:null});
   });

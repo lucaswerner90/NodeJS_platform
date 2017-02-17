@@ -10,13 +10,21 @@ const Selector=require('../profiles/_selector');
 router.post('/course',(req,res)=>{
 
   let formulario=new Form(req,()=>{
-    const select_user=new Selector(formulario._campos['id_usuario']);
+    let select_user=new Selector(formulario._campos['id_usuario']);
     select_user.return_user().then((profile)=>{
-      const user=profile;
+      let user=profile;
       user.modify_course(formulario._campos).then(()=>{
+        user._db_connection._connection.end();
+        formulario=null;
+        select_user=null;
+        user=null;
         res.send({status:true});
       })
       .catch((err)=>{
+        user._db_connection._connection.end();
+        formulario=null;
+        select_user=null;
+        user=null;
         res.send({error:err});
       });
     })
@@ -33,13 +41,19 @@ router.post('/course',(req,res)=>{
 router.post('/personal_info',(req,res)=>{
 
 
-  const select_user=new Selector(req.body.id_usuario);
+  let select_user=new Selector(req.body.id_usuario);
   select_user.return_user().then((profile)=>{
-    const user=profile;
+    let user=profile;
     user.modify_personal_info(req.body).then(()=>{
+      user._db_connection._connection.end();
+      select_user=null;
+      user=null;
       res.send({status:true});
     })
     .catch((err)=>{
+      user._db_connection._connection.end();
+      select_user=null;
+      user=null;
       res.send({error:err});
     });
   })
@@ -53,13 +67,19 @@ router.post('/personal_info',(req,res)=>{
 
 router.post('/change_password',(req,res)=>{
 
-  const select_user=new Selector(req.body.id_usuario);
+  let select_user=new Selector(req.body.id_usuario);
   select_user.return_user().then((profile)=>{
-    const user=profile;
+    let user=profile;
     user.modify_password(req.body).then(()=>{
+      user._db_connection._connection.end();
+      select_user=null;
+      user=null;
       res.send({status:true});
     })
     .catch((err)=>{
+      user._db_connection._connection.end();
+      select_user=null;
+      user=null;
       res.send({error:err});
     });
   })
@@ -73,17 +93,24 @@ router.post('/change_password',(req,res)=>{
 router.post('/avatar',(req,res)=>{
 
   let formulario=new Form(req,function(){
-    const select_user=new Selector(formulario._campos['id_usuario']);
+    let select_user=new Selector(formulario._campos['id_usuario']);
     select_user.return_user().then((profile)=>{
-      const user=profile;
+      let user=profile;
       user.modify_avatar(formulario._campos,formulario._campos["file_to_upload"]).then(()=>{
+        user._db_connection._connection.end();
+        select_user=null;
+        user=null;
         res.send({status:true});
       })
       .catch((err)=>{
+        user._db_connection._connection.end();
+        select_user=null;
+        user=null;
         res.send({error:err});
       });
     })
     .catch((err)=>{
+      select_user=null;
       res.send({error:err});
     });
   },function(err){

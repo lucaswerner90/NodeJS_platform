@@ -13,12 +13,12 @@ class Database{
     this._log_queries=LOG_QUERIES;
 
 
-    this._connection.on("error",function(error){
+    this._connection.once("error",function(error){
       try {
         console.log(error);
         this._connection = mysql.createConnection(this._configuration);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     });
 
@@ -63,7 +63,7 @@ class Database{
 
   _replace_variables_on_query(queries,obj){
     let query_parsed=[];
-    queries=queries.split(";");
+    queries=queries.toString().split(";");
     for (let i = 0; i < queries.length; i++) {
       let query=queries[i];
       for(const prop in obj) {
@@ -159,17 +159,51 @@ class Database{
           camposFormulario["id_contenido"]=row.insertId;
 
 
-          if(camposFormulario['id_proyecto']){
-            _self.sendQuery(user_queries.INSERT.contentRelation,camposFormulario).then(()=>{
-            }).catch((err)=>{
-              console.error("user_queries.INSERT.contentRelation: "+err);
-            });
-          }
 
 
           _self.sendQuery(user_queries.INSERT.tableOfCompatibilities,{
-            multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query})
+            multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
+            id_contenido:camposFormulario.id_contenido,
+            id_usuario:camposFormulario.id_usuario})
             .then(()=>{
+
+
+              if(camposFormulario['id_proyecto']){
+                _self.sendQuery(user_queries.INSERT.contentRelation,camposFormulario).then(()=>{
+
+                  if(camposFormulario['url_image']){
+                    _self.sendQuery(user_queries.UPDATE.screenshot,camposFormulario).then(()=>{
+                      resolve(true);
+                    }).catch((err)=>{
+                      console.error("user_queries.UPDATE.screenshot: "+err);
+                    });
+                  }else{
+                    resolve(true);
+                  }
+
+
+                }).catch((err)=>{
+                  console.error("user_queries.INSERT.contentRelation: "+err);
+                });
+              }else{
+
+                if(camposFormulario['url_image']){
+                  _self.sendQuery(user_queries.UPDATE.screenshot,camposFormulario).then(()=>{
+                    resolve(true);
+                  }).catch((err)=>{
+                    console.error("user_queries.UPDATE.screenshot: "+err);
+                  });
+                }else{
+                  resolve(true);
+                }
+
+
+
+              }
+
+
+
+
 
             })
             .catch((err)=>{
@@ -198,14 +232,21 @@ class Database{
             .then(()=>{
 
 
-              _self.sendQuery(user_queries.INSERT.tableOfCompatibilities,{
+
+              if(camposFormulario['screenshot']){
+                _self.sendQuery(user_queries.UPDATE.screenshot,camposFormulario).then(()=>{
+                }).catch((err)=>{
+                  console.error("user_queries.UPDATE.screenshot: "+err);
+                });
+              }
+
+              _self.sendQuery(user_queries.INSERT.tableOfCompatibilities+user_queries.INSERT.tableOfCompatibilities,{
                 multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query, id_contenido:camposFormulario.id_contenido}).then(()=>{
+
                   if(camposFormulario['id_proyecto']){
-                    
+
                     _self.sendQuery(user_queries.INSERT.contentRelation,camposFormulario).then(()=>{
-
                       resolve(true);
-
                     }).catch((err)=>{
                       console.error("user_queries.INSERT.contentRelation: "+err);
                     });

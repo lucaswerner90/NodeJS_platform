@@ -72,21 +72,20 @@ class FTPModel{
   }
 
   _FTPDisconnect(){
-    const _self=this;
-    _self._ftp.end();
-    _self._ftp.removeAllListeners();
+    // const _self=this;
+    // _self._ftp.end();
   }
 
   _renameFolder(oldPath,newPath){
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-        _self._ftp.rename(oldPath,newPath,(err)=>{
-          if(err){
-            reject(err);
-          }
-          resolve(true);
-        });
+      _self._ftp.rename(oldPath,newPath,(err)=>{
+        if(err){
+          reject(err);
+        }
+        resolve(true);
+      });
     });
 
   }
@@ -131,30 +130,30 @@ class FTPModel{
 
 
         uploadPipe.on("close",function(){
-            Promise.all(arrayDirectories).then(()=>{
-              setTimeout(()=>{
+          Promise.all(arrayDirectories).then(()=>{
+            setTimeout(()=>{
 
-                let arrayFilesPromises=[];
-                for (let i = 0; i < arrayFiles.length; i++) {
-                  arrayFilesPromises.push(_self._createFile(arrayFiles[i],pathToFTP+arrayFiles[i]));
-                }
-                Promise.all(arrayFilesPromises).then(()=>{
-                  uploadPipe.removeAllListeners();
-                  _self._FTPDisconnect();
-                  resolve(true);
-                })
-                .catch((err)=>{
-                  uploadPipe.removeAllListeners();
-                  _self._FTPDisconnect();
-                  reject(err);
-                });
-              },3000);
-            })
-            .catch((err)=>{
-              uploadPipe.removeAllListeners();
-              _self._FTPDisconnect();
-              reject(err);
-            });
+              let arrayFilesPromises=[];
+              for (let i = 0; i < arrayFiles.length; i++) {
+                arrayFilesPromises.push(_self._createFile(arrayFiles[i],pathToFTP+arrayFiles[i]));
+              }
+              Promise.all(arrayFilesPromises).then(()=>{
+                uploadPipe.removeAllListeners();
+                _self._FTPDisconnect();
+                resolve(true);
+              })
+              .catch((err)=>{
+                uploadPipe.removeAllListeners();
+                _self._FTPDisconnect();
+                reject(err);
+              });
+            },3000);
+          })
+          .catch((err)=>{
+            uploadPipe.removeAllListeners();
+            _self._FTPDisconnect();
+            reject(err);
+          });
         });
       } catch (err) {
         reject(err);
@@ -169,54 +168,50 @@ class FTPModel{
     const rutaFile=filePath;
 
     // Connect to the FTP server with the CONFIG object setted on the config.json file
-    _self._ftp.connect(_self._configuration.ftpConnection);
+    // _self._ftp.connect(_self._configuration.ftpConnection);
 
     return new Promise((resolve,reject)=>{
-
+      
       // Once the connection is established
-      _self._ftp.once('greeting', function() {
+      // We look for the files/dirs inside the specified filepath
+      _self._ftp.list(PATH.dirname(rutaFile),function(err, list) {
 
-        // We look for the files/dirs inside the specified filepath
-        _self._ftp.list(PATH.dirname(rutaFile),function(err, list) {
+        // If there is an error listing on the FTP we reject the promise
+        if(err) {
+          _self._FTPDisconnect();
+          reject(err);
+        }
 
-          // If there is an error listing on the FTP we reject the promise
-          if(err) {
-            _self._FTPDisconnect();
-            reject(err);
-          }
+        // If the file does not exists in the FTP we return a message advising it
+        if(_self._checkIfDirExists(PATH.basename(rutaFile),list)){
 
-          // If the file does not exists in the FTP we return a message advising it
-          if(_self._checkIfDirExists(PATH.basename(rutaFile),list)){
-
-            // If the file exists...
-            _self._ftp.get(rutaFile,(err,fileStream)=>{
-              if(err) {
-                _self._FTPDisconnect();
-                reject(err);
-              }
+          // If the file exists...
+          _self._ftp.get(rutaFile,(err,fileStream)=>{
+            if(err) {
+              _self._FTPDisconnect();
+              reject(err);
+            }
 
 
-              fileStream.once("end",()=>{
-                _self._FTPDisconnect();
-                console.log(`Fichero ${rutaFile} descargado correctamente`);
-              });
-
-              fileStream.once("error",()=>{
-                _self._FTPDisconnect();
-                reject(`Error transmitting the file...`);
-              });
-
-              // We returned a readableStream to pass it to the response
-              resolve(fileStream);
-
+            fileStream.once("end",()=>{
+              _self._FTPDisconnect();
+              console.log(`Fichero ${rutaFile} descargado correctamente`);
             });
-          }else{
-            reject(`File doesn't exist on the specified path`);
-          }
-        });
 
+            fileStream.once("error",()=>{
+              _self._FTPDisconnect();
+              reject(`Error transmitting the file...`);
+            });
 
+            // We returned a readableStream to pass it to the response
+            resolve(fileStream);
+
+          });
+        }else{
+          reject(`File doesn't exist on the specified path`);
+        }
       });
+
 
     });
   }
@@ -230,34 +225,16 @@ class FTPModel{
 
       // When the connection is ready....
       // First of all we have to list the cwd to check if the user's directory exists.
-        _self._ftp.list(PATH.dirname(PATH.dirname(FTPPath)),function(err, list) {
-          // If there is any error firing the ls command
-          if (err) {
-            reject(err);
-          }
-          // If the user's directory exists, we only need to upload the file...
-          if(_self._checkIfDirExists(PATH.parse(FTPPath).name,list)){
-            const newDirname=PATH.dirname(PATH.dirname(FTPPath))+"/"+"_backup_"+_self._appendDateToFilename()+"_"+PATH.parse(FTPPath).name;
-            _self._renameFolder(PATH.parse(FTPPath).dir,newDirname).then(()=>{
-              console.log("Renamed...."+PATH.parse(FTPPath).dir+"  to  "+newDirname);
-              _self._createDir(PATH.dirname(FTPPath)).then(()=>{
-                _self._createFile(file,FTPPath).then(()=>{
-                  resolve(true);
-                })
-                .catch((err)=>{
-                  console.log("Error creating file on FTP");
-                  _self._FTPDisconnect();
-                  reject(err);
-                });
-              });
-            })
-            .catch((err)=>{
-              _self._FTPDisconnect();
-              reject(err);
-            });
-
-            // If the user's directory doesn't exist we have to create it first, and upload the file later that.
-          }else{
+      _self._ftp.list(PATH.dirname(PATH.dirname(FTPPath)),function(err, list) {
+        // If there is any error firing the ls command
+        if (err) {
+          reject(err);
+        }
+        // If the user's directory exists, we only need to upload the file...
+        if(_self._checkIfDirExists(PATH.parse(FTPPath).name,list)){
+          const newDirname=PATH.dirname(PATH.dirname(FTPPath))+"/"+"_backup_"+_self._appendDateToFilename()+"_"+PATH.parse(FTPPath).name;
+          _self._renameFolder(PATH.parse(FTPPath).dir,newDirname).then(()=>{
+            console.log("Renamed...."+PATH.parse(FTPPath).dir+"  to  "+newDirname);
             _self._createDir(PATH.dirname(FTPPath)).then(()=>{
               _self._createFile(file,FTPPath).then(()=>{
                 resolve(true);
@@ -267,14 +244,32 @@ class FTPModel{
                 _self._FTPDisconnect();
                 reject(err);
               });
+            });
+          })
+          .catch((err)=>{
+            _self._FTPDisconnect();
+            reject(err);
+          });
+
+          // If the user's directory doesn't exist we have to create it first, and upload the file later that.
+        }else{
+          _self._createDir(PATH.dirname(FTPPath)).then(()=>{
+            _self._createFile(file,FTPPath).then(()=>{
+              resolve(true);
             })
             .catch((err)=>{
+              console.log("Error creating file on FTP");
               _self._FTPDisconnect();
               reject(err);
             });
-          }
+          })
+          .catch((err)=>{
+            _self._FTPDisconnect();
+            reject(err);
+          });
+        }
 
-        });
+      });
 
 
 
@@ -284,7 +279,7 @@ class FTPModel{
 
 
 
-// END OF FTPModel Class
+  // END OF FTPModel Class
 }
 
 

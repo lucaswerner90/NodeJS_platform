@@ -92,7 +92,38 @@ class User{
     });
   }
 
+  get_login_info(params){
+    const _self=this;
+    return new Promise(function(resolve, reject) {
 
+      _self._db_connection.sendQuery(_self._common_queries.GET.login_info,params).then((rows)=>{
+
+        if(rows.length===0){
+          // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
+          // indicando que no esta autorizado y el token como null.
+          reject({token:null});
+        }else{
+          if(rows[0].urlAvatar!==null){
+            _self._file._downloadImageInBase64(rows[0].urlAvatar).then((data)=>{
+              rows[0].imgAvatar=data;
+              console.table(rows[0]);
+              resolve({userInfo:rows[0]});
+
+            })
+            .catch((err)=>{
+              reject(err);
+            });
+          }else{
+            // Si el usuario se encuentra dentro del sistema de la base de datos entonces
+            // devolvemos el token que usará para mantener la sesion en la plataforma
+            resolve({userInfo:rows[0]});
+          }
+
+        }
+      });
+    });
+
+  }
 
   get_contents(){
     const _self=this;
@@ -253,14 +284,15 @@ class User{
                 id_usuario:_self._id_usuario,
                 id_contenido:form.id_contenido
               });
+              _self._db_connection._connection.end();
             })
             .catch((err)=>{
               console.error("*****  ERROR EXTRACTING ZIP  *****");
               console.error(err);
+              reject(err);
             });
+
             resolve(true);
-
-
 
           })
           .catch((err)=>{
