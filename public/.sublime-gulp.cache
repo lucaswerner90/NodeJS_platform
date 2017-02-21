@@ -1,1 +1,0 @@
-{"C:\\Users\\JE10690\\Documents\\CatalogTED\\gulpfile.babel.js": {"sha1": "9445ae49b25131d5598fe27ada52f50faabd9a40", "tasks": {"default": {"name": "default", "dependencies": ""}, "watch": {"name": "watch", "dependencies": ""}, "server": {"name": "server", "dependencies": ""}, "build": {"name": "build", "dependencies": ""}, "styles": {"name": "styles", "dependencies": ""}}}}

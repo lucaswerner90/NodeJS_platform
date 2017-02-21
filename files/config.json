@@ -6,6 +6,7 @@
     "port":21,
     "password":"ted01",
     "debug":true,
+    "pasvTimeout":0,
     "uploadsDirectory":"uploads/"
   },
   "screenshotsUpload":{

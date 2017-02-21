@@ -12,12 +12,24 @@ class FTPModel{
     this._ftp=new FTP_CLIENT();
     this._ftp.connect(this._configuration.ftpConnection);
 
-    this._ftp.once("error",function(err){
-      console.error("FTPModel constructor(): "+err);
+    this._ftp.once("close",()=>{
+      this._close_connection();
+    });
+
+    this._ftp.once("error",(error)=>{
+      console.error("Error on FTPModel: ",error);
+      this._close_connection();
     });
   }
 
+  _close_connection(){
+    const _self=this;
+    if(_self._ftp){
+      _self._ftp.removeAllListeners();
+      _self._ftp.end();      
+    }
 
+  }
 
   _appendDateToFilename(){
     const fecha=new Date();
@@ -72,8 +84,8 @@ class FTPModel{
   }
 
   _FTPDisconnect(){
-    // const _self=this;
-    // _self._ftp.end();
+    const _self=this;
+    _self._ftp.end();
   }
 
   _renameFolder(oldPath,newPath){
@@ -171,7 +183,7 @@ class FTPModel{
     // _self._ftp.connect(_self._configuration.ftpConnection);
 
     return new Promise((resolve,reject)=>{
-      
+
       // Once the connection is established
       // We look for the files/dirs inside the specified filepath
       _self._ftp.list(PATH.dirname(rutaFile),function(err, list) {

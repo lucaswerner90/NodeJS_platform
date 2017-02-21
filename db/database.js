@@ -24,7 +24,11 @@ class Database{
 
   }
 
-
+  _close_connection(){
+    const _self=this;
+    _self._connection.destroy();
+  }
+  
   _log_actions(action,obj){
 
     const _self=this;

@@ -18,12 +18,20 @@ class User{
     this._common_queries=DBCommonQueries;
   }
 
+
   _logOnDB(action){
     this._db_connection.recordOnLog(action,{
       id_usuario:this._id_usuario
     });
   }
 
+
+  _close_connections(){
+    const _self=this;
+    _self._db_connection._close_connection();
+    _self._file._close_connection();
+
+  }
   _get_type_of_user(){
 
     const _self=this;
@@ -66,6 +74,7 @@ class User{
           for (let i = 0; i < data.length; i++) {
             data[i].compatibilities_table=values[i];
           }
+          _self._close_connections();
           resolve(data);
         })
         .catch((err)=>{
@@ -141,6 +150,7 @@ class User{
             for (let i = 0; i < data.length; i++) {
               data[i].compatibilities_table=values[i];
             }
+            _self._close_connections();
             resolve(data);
           })
           .catch((err)=>{
@@ -164,6 +174,7 @@ class User{
     const _self=this;
     return new Promise((resolve,reject)=>{
       _self._db_connection.sendQuery(_self._common_queries.GET.generic_information,null).then((data)=>{
+        _self._close_connections();
         resolve({
           platforms:data[0],
           evaluationSystems:data[1],
@@ -178,7 +189,8 @@ class User{
           puntos_control:data[10],
           valores_certificacion:data[11],
           tecnologias:data[12],
-          tipo_desarrollo:data[13]
+          tipo_desarrollo:data[13],
+          servidores_contenidos:data[14]
         });
       })
       .catch((err)=>{
@@ -193,6 +205,7 @@ class User{
     const _self=this;
     return new Promise((resolve,reject)=>{
       _self._file.downloadImageInBase64(filename).then((data)=>{
+        _self._close_connections();
         resolve(data);
       })
       .catch((err)=>{
@@ -215,7 +228,7 @@ class User{
 
         _self._id_usuario=form.id_usuario;
         _self._logOnDB("user.modify_avatar");
-
+        _self._close_connections();
         resolve(true);
       })
       .catch((err)=>{
@@ -233,7 +246,7 @@ class User{
       _self._db_connection.sendQuery(_self._common_queries.UPDATE.personalInfo,form).then(()=>{
 
         _self._logOnDB("user.modify_info");
-
+        _self._close_connections();
         resolve(true);
       })
       .catch((err)=>{
@@ -251,6 +264,7 @@ class User{
       _self._db_connection.sendQuery(_self._common_queries.UPDATE.password,fields).then(()=>{
 
         _self._logOnDB("user.modify_password");
+        _self._close_connections();
         resolve(true);
       })
       .catch((err)=>{
@@ -267,6 +281,8 @@ class User{
     return new Promise((resolve,reject)=>{
 
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
+      debugger;
+      form['url_image'];
       _self._db_connection.sendQuery(_self._common_queries.GET.info_proveedor,form).then((data)=>{
 
 
@@ -284,7 +300,7 @@ class User{
                 id_usuario:_self._id_usuario,
                 id_contenido:form.id_contenido
               });
-              _self._db_connection._connection.end();
+              _self._close_connections();
             })
             .catch((err)=>{
               console.error("*****  ERROR EXTRACTING ZIP  *****");
@@ -329,6 +345,7 @@ class User{
 
             _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
               console.log("ZIP EXTRACTED CORRECTLY....");
+              _self._close_connections();
             })
             .catch((err)=>{
               console.error("*****  ERROR EXTRACTING ZIP  *****");

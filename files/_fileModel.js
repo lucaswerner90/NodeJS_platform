@@ -13,6 +13,10 @@ class File{
     this._config=CONFIG;
   }
 
+  _close_connection(){
+    const _self=this;
+    _self._ftp._close_connection();
+  }
 
   _returnActualDate(){
     return new Date().toISOString().slice(0, 19).replace('T', ' ');

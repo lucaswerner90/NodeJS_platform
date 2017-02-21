@@ -14,14 +14,12 @@ router.post('/course',(req,res)=>{
     select_user.return_user().then((profile)=>{
       let user=profile;
       user.modify_course(formulario._campos).then(()=>{
-        user._db_connection._connection.end();
         formulario=null;
         select_user=null;
         user=null;
         res.send({status:true});
       })
       .catch((err)=>{
-        user._db_connection._connection.end();
         formulario=null;
         select_user=null;
         user=null;
@@ -97,13 +95,11 @@ router.post('/avatar',(req,res)=>{
     select_user.return_user().then((profile)=>{
       let user=profile;
       user.modify_avatar(formulario._campos,formulario._campos["file_to_upload"]).then(()=>{
-        user._db_connection._connection.end();
         select_user=null;
         user=null;
         res.send({status:true});
       })
       .catch((err)=>{
-        user._db_connection._connection.end();
         select_user=null;
         user=null;
         res.send({error:err});

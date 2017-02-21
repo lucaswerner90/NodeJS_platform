@@ -27,9 +27,7 @@ router.get('/generic_info',(req,res)=>{
   select_user.return_user().then((profile)=>{
     let user=profile;
     user.get_platform_generic_info().then((data)=>{
-      user._db_connection._connection.end();
       select_user=null;
-      user=null;
       res.send(data);
     })
     .catch((err)=>{
@@ -49,13 +47,11 @@ router.post('/contents',(req,res)=>{
   select_user.return_user().then((profile)=>{
     let user=profile;
     user.get_contents().then((data)=>{
-      user._db_connection._connection.end();
       select_user=null;
       user=null;
       res.send(data);
     })
     .catch((err)=>{
-      user._db_connection._connection.end();
       select_user=null;
       user=null;
       res.send({error:err});
@@ -79,7 +75,6 @@ router.post('/search',(req,res)=>{
   select_user.return_user().then((profile)=>{
     let user=profile;
     user.search_course(req.body).then((data)=>{
-      user._db_connection._connection.end();
       select_user=null;
       user=null;
       res.send(data);

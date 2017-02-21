@@ -17,12 +17,7 @@ class Form{
 
 
     this._formulario.on("file",(name,file)=>{
-      if(name==='screenshot'){
-        this._campos['screenshot']=file;
-      }else{
-        this._campos['file_to_upload']=file;
-      }
-
+        this._campos[name]=file;
     });
 
 

@@ -1,0 +1,9 @@
+select {
+    width: 90%;
+    margin: 0 auto;
+}
+
+td {
+    width: 10%;
+    text-align: center;
+}
