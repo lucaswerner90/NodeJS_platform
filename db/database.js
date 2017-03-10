@@ -28,7 +28,7 @@ class Database{
     const _self=this;
     _self._connection.destroy();
   }
-  
+
   _log_actions(action,obj){
 
     const _self=this;
@@ -123,6 +123,7 @@ class Database{
       }else{
         query=_self._replace_variables_on_query(query,object);
       }
+
 
       // Use the connection
       _self._connection.query(query, function(err, rows) {

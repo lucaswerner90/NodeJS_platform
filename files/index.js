@@ -24,7 +24,7 @@ const router=express.Router();
 /********************************************************************************************************************/
 /********************************************************************************************************************/
 const updateContentInDB=(camposFormulario,updateFile=false)=>{
-
+  console.log('ON UPDATE CONTENT In DB');
 
   function removeVariables(){
     camposFormulario=null;
@@ -61,6 +61,9 @@ const updateContentInDB=(camposFormulario,updateFile=false)=>{
 /********************************************************************************************************************/
 router.post('/intern/modify/course',(req,res)=>{
 
+  /*GERO*/
+  console.log('ON MODIFY COURSE');
+
   let form = new multiparty.Form();
   formFields={};
 
@@ -79,6 +82,8 @@ router.post('/intern/modify/course',(req,res)=>{
     formFields["multiple_insert_query"]=eval("["+ formFields.tableTechnologies +"]");
     // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
     if(formFields['file_to_upload']){
+      // GERO
+      console.log('File TO Upload');
       FILE.uploadContentFile(formFields['file_to_upload'],formFields,CONFIG.fileUpload.directory,CONFIG.fileUpload.extensionsAllowed).then(()=>{
         updateContentInDB(formFields,true).then(()=>{
 
@@ -110,9 +115,12 @@ router.post('/intern/modify/course',(req,res)=>{
 
       // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
       updateContentInDB(formFields).then(()=>{
+        /*GERO*/
+        console.log('Datos actualizados');
         return res.status(200).send({status:true});
       })
       .catch((err)=>{
+        console.error('Datos NO Actualizados' + err);
         return res.status(200).send({error:err});
       });
     }

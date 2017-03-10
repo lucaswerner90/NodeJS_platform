@@ -115,7 +115,6 @@ class User{
           if(rows[0].urlAvatar!==null){
             _self._file._downloadImageInBase64(rows[0].urlAvatar).then((data)=>{
               rows[0].imgAvatar=data;
-              console.table(rows[0]);
               resolve({userInfo:rows[0]});
 
             })

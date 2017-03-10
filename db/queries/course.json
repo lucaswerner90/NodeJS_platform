@@ -15,6 +15,6 @@
   "UPDATE":{
     "content":"UPDATE contenidos SET id_proveedor=[id_proveedor],notas=[notas],fecha_alta=[fecha_alta],titulo=[titulo], descripcion=[descripcion], ruta_zip=[ruta_zip], id_tipo_contenido=[id_tipo_contenido], duracion=[duracion], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado] WHERE id_contenido=[id_contenido];",
     "contentNoFile":"UPDATE contenidos SET id_proveedor=[id_proveedor],notas=[notas],fecha_alta=[fecha_alta],titulo=[titulo], descripcion=[descripcion],id_tipo_contenido=[id_tipo_contenido], duracion=[duracion], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado] WHERE id_contenido=[id_contenido];",
-    "tableOfCompatibilities":"UPDATE SET resultado_certificacion_contenido (id_contenido,id_usuario,id_punto_control,id_tc,valor) VALUES [multiple_insert_query] WHERE id_contenido=[id_contenido];"
+    "tableOfCompatibilities":"INSERT INTO resultado_certificacion_contenido (id_contenido, id_usuario, id_punto_control, id_tc, valor) VALUES [multiple_insert_query];"
   }
 }

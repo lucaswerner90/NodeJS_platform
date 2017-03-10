@@ -6,6 +6,8 @@
     "/",
     "/login",
     "/contenidos",
+    "/catalogoContenidos",
+    "/editar-contenido",
     "/busqueda",
     "/perfil",
     "/soporte",
