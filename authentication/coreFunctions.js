@@ -7,8 +7,6 @@ const Database=require('../db/database');
 
 const User=require('../users/_common/user');
 
-const File = require('../files/_fileModel');
-
 let DDBB=new Database();
 // Function that creates a token that the user will keep and send to the platform to check
 // if is logued or not

@@ -6,14 +6,7 @@ class Form{
     this._formulario = new multiparty.Form();
     this._campos={};
 
-
-    this._formulario.on("file",(name,file)=>{
-      if(name==='screenshot'){
-        this._campos['screenshot']=file;
-      }else{
-        this._campos['file_to_upload']=file;
-      }
-    });
+  
 
 
     this._formulario.on("file",(name,file)=>{
@@ -22,6 +15,7 @@ class Form{
 
 
     this._formulario.once("close",()=>{
+      console.log(`[*] Form parsed...`);
       callbackOnClose();
     });
 
@@ -29,7 +23,7 @@ class Form{
 
 
     this._formulario.once("error",(err)=>{
-      console.log("Error on parse form...");
+      console.log("[*] Error on parse form...");
       this.clear();
       callbackOnError(err);
     });

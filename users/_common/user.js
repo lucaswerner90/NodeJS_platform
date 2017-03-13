@@ -13,7 +13,6 @@ class User{
     this._id_usuario=parseInt(id_usuario);
     this._db_connection=new Database();
     this._file=new File();
-
     this._profile_queries=queries;
     this._common_queries=DBCommonQueries;
   }
@@ -90,7 +89,7 @@ class User{
 
   get_user_info(){
 
-    const _self=this;
+    let _self=this;
     return new Promise((resolve,reject)=>{
       _self._db_connection.sendQuery(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
         resolve(data[0]);
@@ -102,7 +101,7 @@ class User{
   }
 
   get_login_info(params){
-    const _self=this;
+    let _self=this;
     return new Promise(function(resolve, reject) {
 
       _self._db_connection.sendQuery(_self._common_queries.GET.login_info,params).then((rows)=>{
@@ -139,18 +138,27 @@ class User{
       _self.get_user_info().then((result)=>{
 
         _self._db_connection.sendQuery(_self._common_queries.GET.contents_proveedor,result).then((data)=>{
-
-          let arrayPromises=[];
+          let arrayPromisesTechnologies=[];
+          let arrayPromisesPlatforms=[];
           for (let i = 0; i < data.length; i++) {
-            arrayPromises[i]=_self._db_connection.sendQuery(_self._common_queries.GET.tableOfCompatibilities,data[i]);
+            arrayPromisesTechnologies[i]=_self._db_connection.sendQuery(_self._common_queries.GET.tableOfCompatibilities,data[i]);
+            arrayPromisesPlatforms[i]=_self._db_connection.sendQuery(_self._common_queries.GET.content_platforms,data[i]);
           }
 
-          Promise.all(arrayPromises).then((values)=>{
+          Promise.all(arrayPromisesTechnologies).then((values)=>{
             for (let i = 0; i < data.length; i++) {
               data[i].compatibilities_table=values[i];
             }
-            _self._close_connections();
-            resolve(data);
+            Promise.all(arrayPromisesPlatforms).then((values)=>{
+              for (let i = 0; i < data.length; i++) {
+                data[i].platforms=values[i];
+              }
+              _self._close_connections();
+              resolve(data);
+            })
+            .catch((err)=>{
+              reject(err);
+            });
           })
           .catch((err)=>{
             reject(err);
@@ -189,7 +197,8 @@ class User{
           valores_certificacion:data[11],
           tecnologias:data[12],
           tipo_desarrollo:data[13],
-          servidores_contenidos:data[14]
+          servidores_contenidos:data[14],
+          proveedores:data[15]
         });
       })
       .catch((err)=>{
@@ -280,26 +289,22 @@ class User{
     return new Promise((resolve,reject)=>{
 
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
-      debugger;
-      form['url_image'];
+      form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
       _self._db_connection.sendQuery(_self._common_queries.GET.info_proveedor,form).then((data)=>{
 
 
         form['carpeta_proveedor']=data[0].carpeta_proveedor;
-
-
         _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
-
-
+          console.log("[*] Adding new content.....");
           _self._db_connection.insert_new_content(form,_self._profile_queries).then(()=>{
 
+            console.log("[*] EXTRACTING ZIP....");
             _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
-              console.log("ZIP EXTRACTED CORRECTLY....");
               _self._db_connection.recordOnLog("course.upload",{
                 id_usuario:_self._id_usuario,
                 id_contenido:form.id_contenido
               });
-              _self._close_connections();
+
             })
             .catch((err)=>{
               console.error("*****  ERROR EXTRACTING ZIP  *****");
@@ -337,51 +342,60 @@ class User{
 
       form["fecha_alta"]=_self._file._returnActualDate();
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
-      // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
-      if(form['file_to_upload']){
-        _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
-          _self._db_connection.update_content(_self._profile_queries,form,true).then(()=>{
+      form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
 
-            _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
-              console.log("ZIP EXTRACTED CORRECTLY....");
-              _self._close_connections();
+      _self._db_connection.sendQuery(_self._common_queries.GET.info_proveedor,form).then((data)=>{
+        form["carpeta_proveedor"]=data[0].carpeta_proveedor;
+        // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
+        if(form['file_to_upload']){
+          _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
+            _self._db_connection.update_content(_self._profile_queries,form,true).then(()=>{
+
+              _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
+                console.log("ZIP EXTRACTED CORRECTLY....");
+                _self._close_connections();
+              })
+              .catch((err)=>{
+                console.error("*****  ERROR EXTRACTING ZIP  *****");
+                console.error(err);
+              });
+              _self._db_connection.recordOnLog("course.modify",
+              {
+                id_usuario:form.id_usuario,
+                id_contenido:form.id_contenido
+              });
+              resolve(true);
+
             })
             .catch((err)=>{
-              console.error("*****  ERROR EXTRACTING ZIP  *****");
-              console.error(err);
+              reject(err);
             });
+          })
+          .catch((err)=>{
+            reject(err);
+          });
+        }else{
+          // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
+          _self._db_connection.update_content(_self._profile_queries,form).then(()=>{
+
             _self._db_connection.recordOnLog("course.modify",
             {
               id_usuario:form.id_usuario,
               id_contenido:form.id_contenido
             });
-            resolve(true);
 
+
+            resolve(true);
           })
           .catch((err)=>{
             reject(err);
           });
-        })
-        .catch((err)=>{
-          reject(err);
-        });
-      }else{
-        // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
-        _self._db_connection.update_content(_self._profile_queries,form).then(()=>{
+        }
+      })
+      .catch((err)=>{
+        reject(err);
+      });
 
-          _self._db_connection.recordOnLog("course.modify",
-          {
-            id_usuario:form.id_usuario,
-            id_contenido:form.id_contenido
-          });
-
-
-          resolve(true);
-        })
-        .catch((err)=>{
-          reject(err);
-        });
-      }
 
     });
 

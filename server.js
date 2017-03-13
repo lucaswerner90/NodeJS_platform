@@ -18,7 +18,7 @@ const authentication=require('./authentication/index');
 // Route related with the DB manage
 
 // Route related with the files functionality
-const user=require('./files/index');
+const user=require('./users/index');
 
 
 // Disable this to try function among the authentication - for develop purposes
@@ -53,7 +53,7 @@ for (let i = 0; i < CONFIG_SERVER.STATIC_ROUTES.length; i++) {
 
 
 app.use('/api/auth',BODY_PARSER.json({extended:true}),authentication);
-app.use('/api/user',middlewareAuthentication.ensureAuthenticated,BODY_PARSER.json({extended:true}),user);
+app.use('/api/user',middlewareAuthentication.ensureAuthenticated,user);
 
 
 

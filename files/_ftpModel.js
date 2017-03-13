@@ -23,11 +23,11 @@ class FTPModel{
   }
 
   _close_connection(){
-    const _self=this;
-    if(_self._ftp){
-      _self._ftp.removeAllListeners();
-      _self._ftp.destroy();      
-    }
+    // const _self=this;
+    // if(_self._ftp){
+    //   _self._ftp.removeAllListeners();
+    //   _self._ftp.destroy();
+    // }
 
   }
 
@@ -71,7 +71,6 @@ class FTPModel{
 
     return new Promise((resolve,reject)=>{
       _self._ftp.put(path, remotePath,function(err) {
-        console.info("File..... "+remotePath);
         if (err){
           reject(err);
         } else{
@@ -137,6 +136,7 @@ class FTPModel{
           }else{
             arrayFiles.push(filename);
           }
+          console.log(`[**] Extracting ${filename}....`);
           entry.autodrain();
         });
 
@@ -144,13 +144,14 @@ class FTPModel{
         uploadPipe.on("close",function(){
           Promise.all(arrayDirectories).then(()=>{
             setTimeout(()=>{
-
+              console.log(`[!] On the promises extracting files.......`);
               let arrayFilesPromises=[];
               for (let i = 0; i < arrayFiles.length; i++) {
                 arrayFilesPromises.push(_self._createFile(arrayFiles[i],pathToFTP+arrayFiles[i]));
               }
               Promise.all(arrayFilesPromises).then(()=>{
                 uploadPipe.removeAllListeners();
+                console.log(`[****] ZIP Extracted....`);
                 _self._FTPDisconnect();
                 resolve(true);
               })

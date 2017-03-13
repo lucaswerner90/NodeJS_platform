@@ -25,8 +25,8 @@ class Database{
   }
 
   _close_connection(){
-    const _self=this;
-    _self._connection.destroy();
+    //const _self=this;
+    //_self._connection.destroy();
   }
 
   _log_actions(action,obj){
@@ -92,17 +92,17 @@ class Database{
     return {multiple_insert_query:finalQuery};
   }
 
-  _createInsertContentPlatform(obj,id_contenido){
+  _createInsertContentPlatform(obj,id_contenido,id_pais){
     let finalQuery="";
     for (let i = 0; i < obj.length; i++) {
       // id_contenido,id_usuario,id_punto_control,id_tc,valor,fecha_validacion_proveedor,fecha_validacion_CQA
       if(i>0) finalQuery+=`, `;
 
-      finalQuery+=`(${parseInt(id_contenido)},${parseInt(obj[i].id_plataforma)},${parseInt(obj[i].id_pais)})`;
+      // finalQuery+=`(${parseInt(id_contenido)},${parseInt(obj[i])},${parseInt(obj[i].id_pais)})`;
+      finalQuery+=`(${parseInt(id_contenido)},${parseInt(obj[i])},${parseInt(id_pais)})`;
     }
     return {multiple_insert_query:finalQuery};
   }
-
 
   finishConnection(){
     this._connection.end();
@@ -151,7 +151,7 @@ class Database{
     }
 
 
-    insert_new_content(camposFormulario,user_queries){
+  insert_new_content(camposFormulario,user_queries){
 
       const _self=this;
 
@@ -165,13 +165,20 @@ class Database{
 
 
 
-
           _self.sendQuery(user_queries.INSERT.tableOfCompatibilities,{
             multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
             id_contenido:camposFormulario.id_contenido,
             id_usuario:camposFormulario.id_usuario})
             .then(()=>{
+              _self.sendQuery(
+                user_queries.INSERT.content_platform,
+                _self._createInsertContentPlatform(camposFormulario.table_platforms,camposFormulario.id_contenido,camposFormulario.id_pais))
+              .then(()=>{
 
+              })
+              .catch((err)=>{
+                reject(err);
+              });
 
               if(camposFormulario['id_proyecto']){
                 _self.sendQuery(user_queries.INSERT.contentRelation,camposFormulario).then(()=>{
@@ -230,43 +237,55 @@ class Database{
 
         return new Promise(function(resolve, reject) {
           _self.sendQuery((update_file)?user_queries.UPDATE.content:user_queries.UPDATE.contentNoFile,camposFormulario).then(()=>{
+            _self.sendQuery(user_queries.UPDATE.contentRelation,{id_contenido:camposFormulario.id_contenido,id_proyecto:camposFormulario.id_proyecto}).then(()=>{
+              _self.sendQuery(user_queries.UPDATE.tableOfCompatibilities,{id_contenido:camposFormulario.id_contenido})
+              .then(()=>{
 
+                _self.sendQuery(user_queries.UPDATE.content_platform+user_queries.INSERT.content_platform,{
+                  id_contenido:camposFormulario.id_contenido,
+                  multiple_insert_query:_self._createInsertContentPlatform(camposFormulario.table_platforms,camposFormulario.id_contenido,camposFormulario.id_pais).multiple_insert_query
+                }
+                ).then(()=>{
 
-
-            _self.sendQuery(user_queries.UPDATE.tableOfCompatibilities,{id_contenido:camposFormulario.id_contenido})
-            .then(()=>{
-
-
-
-              if(camposFormulario['screenshot']){
-                _self.sendQuery(user_queries.UPDATE.screenshot,camposFormulario).then(()=>{
-                }).catch((err)=>{
-                  console.error("user_queries.UPDATE.screenshot: "+err);
-                });
-              }
-
-              _self.sendQuery(user_queries.INSERT.tableOfCompatibilities+user_queries.INSERT.tableOfCompatibilities,{
-                multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query, id_contenido:camposFormulario.id_contenido}).then(()=>{
-
-                  if(camposFormulario['id_proyecto']){
-
-                    _self.sendQuery(user_queries.INSERT.contentRelation,camposFormulario).then(()=>{
-                      resolve(true);
-                    }).catch((err)=>{
-                      console.error("user_queries.INSERT.contentRelation: "+err);
-                    });
-                  }else{
-                    resolve(true);
-                  }
                 })
                 .catch((err)=>{
-                  console.error("user_queries.INSERT.tableOfCompatibilities: "+err);
-                });
 
-              })
-              .catch((err)=>{
-                console.error("user_queries.UPDATE.tableOfCompatibilities: "+err);
-              });
+                })
+
+
+                if(camposFormulario['screenshot']){
+                  _self.sendQuery(user_queries.UPDATE.screenshot,camposFormulario).then(()=>{
+                  }).catch((err)=>{
+                    console.error("user_queries.UPDATE.screenshot: "+err);
+                  });
+                }
+                _self.sendQuery(user_queries.UPDATE.tableOfCompatibilities+user_queries.INSERT.tableOfCompatibilities,{
+                  multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query, id_contenido:camposFormulario.id_contenido}).then(()=>{
+                    if(camposFormulario['id_proyecto']){
+
+                      _self.sendQuery(user_queries.UPDATE.contentRelation,camposFormulario).then(()=>{
+                        resolve(true);
+                      }).catch((err)=>{
+                        console.error("user_queries.INSERT.contentRelation: "+err);
+                      });
+                    }else{
+                      resolve(true);
+                    }
+                  })
+                  .catch((err)=>{
+                    console.error("user_queries.INSERT.tableOfCompatibilities: "+err);
+                  });
+
+                })
+                .catch((err)=>{
+                  console.error("user_queries.UPDATE.tableOfCompatibilities: "+err);
+                });
+            })
+            .catch((err)=>{
+              reject(err);
+            });
+
+
 
             }).catch((err)=>{
               reject(err);

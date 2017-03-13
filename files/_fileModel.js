@@ -88,7 +88,6 @@ class File{
           ruta_file=formFields['urlAvatar'];
         }
 
-
         // Create the readableStream to upload the file physically
         readableStream = fs.createReadStream(file.path);
         _self._ftp.uploadFile(readableStream,ruta_file).then(()=>{
