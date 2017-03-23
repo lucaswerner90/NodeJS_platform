@@ -59,34 +59,6 @@ class User{
     _self._file.downloadFile(filename,response);
   }
 
-  search_course(fields){
-    const _self=this;
-
-    return new Promise((resolve,reject)=>{
-      _self._db_connection.sendQuery(_self._common_queries.GET.search,fields,true).then((data)=>{
-        let arrayPromises=[];
-        for (let i = 0; i < data.length; i++) {
-          arrayPromises[i]=_self._db_connection.sendQuery(_self._common_queries.GET.tableOfCompatibilities,data[i]);
-        }
-
-        Promise.all(arrayPromises).then((values)=>{
-          for (let i = 0; i < data.length; i++) {
-            data[i].compatibilities_table=values[i];
-          }
-          _self._close_connections();
-          resolve(data);
-        })
-        .catch((err)=>{
-          reject(err);
-        });
-      })
-      .catch((err)=>{
-        reject(err);
-      });
-    });
-  }
-
-
   get_user_info(){
 
     let _self=this;
@@ -105,14 +77,13 @@ class User{
     return new Promise(function(resolve, reject) {
 
       _self._db_connection.sendQuery(_self._common_queries.GET.login_info,params).then((rows)=>{
-
         if(rows.length===0){
           // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
           // indicando que no esta autorizado y el token como null.
           reject({token:null});
         }else{
           if(rows[0].urlAvatar!==null){
-            _self._file._downloadImageInBase64(rows[0].urlAvatar).then((data)=>{
+            _self._file.downloadImageInBase64(rows[0].urlAvatar).then((data)=>{
               rows[0].imgAvatar=data;
               resolve({userInfo:rows[0]});
 
@@ -181,8 +152,8 @@ class User{
     const _self=this;
     return new Promise((resolve,reject)=>{
       _self._db_connection.sendQuery(_self._common_queries.GET.generic_information,null).then((data)=>{
-        _self._close_connections();
-        resolve({
+
+        let generic_info={
           platforms:data[0],
           evaluationSystems:data[1],
           contentTypes:data[2],
@@ -198,8 +169,26 @@ class User{
           tecnologias:data[12],
           tipo_desarrollo:data[13],
           servidores_contenidos:data[14],
-          proveedores:data[15]
+          proveedores:data[15],
+          categorias:data[16],
+          habilidades:data[17],
+          recursos:data[18]
+        };
+        let arrayPromisesSubcategories=[];
+        for (let i = 0; i < generic_info.categorias.length; i++) {
+          arrayPromisesSubcategories[i]=_self._db_connection.sendQuery(_self._common_queries.GET.subcategorias,generic_info.categorias[i]);
+        }
+        Promise.all(arrayPromisesSubcategories).then((values)=>{
+          for (let i = 0; i < generic_info.categorias.length; i++) {
+            generic_info.categorias[i].subcategorias=values[i];
+          }
+          _self._close_connections();
+          resolve(generic_info);
+        })
+        .catch((err)=>{
+          reject(err);
         });
+
       })
       .catch((err)=>{
         reject(err);
@@ -213,7 +202,6 @@ class User{
     const _self=this;
     return new Promise((resolve,reject)=>{
       _self._file.downloadImageInBase64(filename).then((data)=>{
-        _self._close_connections();
         resolve(data);
       })
       .catch((err)=>{
@@ -229,7 +217,6 @@ class User{
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-
 
       _self._file.uploadContentFile(file,form,_self._file._config.avatarUpload.directory,_self._file._config.avatarUpload.extensionsAllowed,true);
       _self._db_connection.sendQuery(_self._common_queries.UPDATE.avatar,form).then(()=>{
@@ -299,7 +286,21 @@ class User{
           _self._db_connection.insert_new_content(form,_self._profile_queries).then(()=>{
 
             console.log("[*] EXTRACTING ZIP....");
-            _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
+            _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then((data)=>{
+              if(data){
+                form['rutaEjecucion']=data;
+                _self._db_connection.sendQuery(_self._profile_queries.UPDATE.rutaEjecucion,{
+                  rutaEjecucion:form['rutaEjecucion'],
+                  id_contenido:form['id_contenido']
+                }).then(()=>{
+                  _self._close_connections();
+                })
+                .catch((err)=>{
+                  console.log(err);
+                  _self._close_connections();
+                });
+              }
+
               _self._db_connection.recordOnLog("course.upload",{
                 id_usuario:_self._id_usuario,
                 id_contenido:form.id_contenido
@@ -309,7 +310,6 @@ class User{
             .catch((err)=>{
               console.error("*****  ERROR EXTRACTING ZIP  *****");
               console.error(err);
-              reject(err);
             });
 
             resolve(true);
@@ -351,9 +351,22 @@ class User{
           _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
             _self._db_connection.update_content(_self._profile_queries,form,true).then(()=>{
 
-              _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then(()=>{
+              _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then((data)=>{
+                if(data){
+                  form['rutaEjecucion']=data;
+                  _self._db_connection.sendQuery(_self._profile_queries.UPDATE.rutaEjecucion,{
+                    rutaEjecucion:form['rutaEjecucion'],
+                    id_contenido:form['id_contenido']
+                  }).then(()=>{
+                    _self._close_connections();
+                  })
+                  .catch((err)=>{
+                    console.log(err);
+                    _self._close_connections();
+                  });
+                }
                 console.log("ZIP EXTRACTED CORRECTLY....");
-                _self._close_connections();
+
               })
               .catch((err)=>{
                 console.error("*****  ERROR EXTRACTING ZIP  *****");

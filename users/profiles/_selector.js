@@ -1,6 +1,7 @@
 const Intern=require('./intern');
 const Extern=require('./extern');
 const Admin=require('./administrator');
+const Client=require('./client');
 const Consult=require('./consulter');
 const User=require('../_common/user');
 
@@ -25,7 +26,6 @@ class Selector extends User{
 
 
       this._get_type_of_user().then((data)=>{
-
         switch (data) {
           case "Administrador":
             resolve(new Admin(_self._id_usuario));
@@ -35,6 +35,9 @@ class Selector extends User{
             break;
           case "Proveedor interno":
             resolve(new Intern(_self._id_usuario));
+            break;
+          case "Cliente":
+            resolve(new Client(_self._id_usuario));
             break;
           default:
             resolve(new Consult(_self._id_usuario));

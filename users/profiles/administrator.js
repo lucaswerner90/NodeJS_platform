@@ -8,7 +8,7 @@ class AdminProfile extends User{
   constructor(id_usuario=-1){
     super(id_usuario,DBQueries);
   }
-
+  
 
 }
 

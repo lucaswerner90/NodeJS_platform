@@ -16,18 +16,18 @@ class FTPModel{
       this._close_connection();
     });
 
-    this._ftp.once("error",(error)=>{
-      console.error("Error on FTPModel: ",error);
+    this._ftp.once("error",()=>{
+      // console.error("Error on FTPModel: ",error);
       this._close_connection();
     });
   }
 
   _close_connection(){
-    // const _self=this;
-    // if(_self._ftp){
-    //   _self._ftp.removeAllListeners();
-    //   _self._ftp.destroy();
-    // }
+    const _self=this;
+    if(_self._ftp){
+      _self._ftp.removeAllListeners();
+      _self._ftp.destroy();
+    }
 
   }
 
@@ -118,22 +118,34 @@ class FTPModel{
         let type="";
         let filename="";
 
+        const regular_expression=/(.*index.*)*(\.html)$/;
+        let index_file="";
+
+
+
+        const pathToFTP=PATH.dirname(remotePath)+"/";
+
+
         uploadPipe.once("error",function(err){
           reject(err);
         });
-
-        const pathToFTP=PATH.dirname(remotePath)+"/";
 
         uploadPipe.on("entry",function (entry) {
           type = entry.type; // 'Directory' or 'File'
           filename=entry.path;
           filename.replace(" ","\s");
-
+          
           if(type==='Directory'){
             directory=pathToFTP+filename;
             directory.replace(" ","\s");
             arrayDirectories.push(_self._createDir(directory));
           }else{
+
+            if(regular_expression.test(filename)
+            && (index_file.length===0 || index_file.length>filename.length)){
+              index_file=_self._configuration.ftpConnection.equivalent_url+pathToFTP.slice(1)+filename;
+            }
+
             arrayFiles.push(filename);
           }
           console.log(`[**] Extracting ${filename}....`);
@@ -153,7 +165,7 @@ class FTPModel{
                 uploadPipe.removeAllListeners();
                 console.log(`[****] ZIP Extracted....`);
                 _self._FTPDisconnect();
-                resolve(true);
+                resolve(index_file);
               })
               .catch((err)=>{
                 uploadPipe.removeAllListeners();

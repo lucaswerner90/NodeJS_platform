@@ -6,11 +6,13 @@ class Form{
     this._formulario = new multiparty.Form();
     this._campos={};
 
-  
+
 
 
     this._formulario.on("file",(name,file)=>{
-        this._campos[name]=file;
+        if (file.originalFilename){
+          this._campos[name]=file;
+        }
     });
 
 

@@ -47,7 +47,7 @@ class File{
   _fileRoute(contentType,formFields,uploadDirectory,filename){
     switch (contentType) {
       case "avatar":
-        return uploadDirectory+"/"+formFields['carpeta_proveedor']+formFields["id_usuario"]+"/avatar"+filename.ext;
+        return uploadDirectory+"/"+formFields["id_usuario"]+"/avatar"+filename.ext;
       case "zip":
         return uploadDirectory+"/"+formFields["carpeta_proveedor"]+"/"+filename.name+"/"+filename.name+filename.ext;
     }
@@ -105,12 +105,10 @@ class File{
     });
   }
 
-  _downloadImageInBase64(filepath){
+  downloadImageInBase64(filepath){
     const _self=this;
-
     return new Promise((resolve,reject)=>{
       _self._ftp.downloadFile(filepath).then((data)=>{
-
           let imageData=`data:image/${PATH.parse(filepath).ext.slice(1)};base64,`;
 
           data.pipe(BASE_64_ENCODER.encode()).on("data",(buf)=>{
@@ -136,15 +134,13 @@ class File{
     const _self=this;
     _self._ftp.downloadFile(filepath).then((data)=>{
 
-        // Once the transference has finished...
-        // We set the appropiate headers to inform the client that it needs to download a file
-        filepath=filepath.split("_").splice(5,filepath.split("_").length).join("_");
 
         response.attachment(filepath);
 
         // We pipe the file throught the readableStream object to the response
         data.pipe(response).on("end",function(){
           _self._ftp._FTPDisconnect();
+
         });
     })
     .catch((err)=>{

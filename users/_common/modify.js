@@ -20,6 +20,7 @@ router.post('/course',(req,res)=>{
         res.send({status:true});
       })
       .catch((err)=>{
+        user._close_connections();
         formulario=null;
         select_user=null;
         user=null;
@@ -94,7 +95,7 @@ router.post('/avatar',(req,res)=>{
     let select_user=new Selector(formulario._campos['id_usuario']);
     select_user.return_user().then((profile)=>{
       let user=profile;
-      user.modify_avatar(formulario._campos,formulario._campos["file_to_upload"]).then(()=>{
+      user.modify_avatar(formulario._campos,formulario._campos["avatarImage"]).then(()=>{
         select_user=null;
         user=null;
         res.send({status:true});

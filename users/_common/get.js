@@ -12,7 +12,6 @@ const Selector=require('../profiles/_selector');
 router.get('/avatar/file=:filename',(req,res)=>{
   let user=new User();
   user.get_avatar(req.params.filename).then((data)=>{
-    user._db_connection._connection.end();
     user=null;
     res.send(data);
   })
@@ -27,6 +26,7 @@ router.get('/generic_info',(req,res)=>{
   select_user.return_user().then((profile)=>{
     let user=profile;
     user.get_platform_generic_info().then((data)=>{
+      user._close_connections();
       select_user=null;
       res.send(data);
     })
@@ -48,6 +48,7 @@ router.post('/contents',(req,res)=>{
     let user=profile;
     user.get_contents().then((data)=>{
       select_user=null;
+      user._close_connections();
       user=null;
       res.send(data);
     })
@@ -66,38 +67,16 @@ router.post('/contents',(req,res)=>{
 });
 
 
-
-
-// Deberemos pasarle los campos de busqueda y el id del proveedor pero no necesitamos el id del usuario
-router.post('/search',(req,res)=>{
-
-  let select_user=new Selector(req.body.id_usuario);
-  select_user.return_user().then((profile)=>{
-    let user=profile;
-    user.search_course(req.body).then((data)=>{
-      select_user=null;
-      user=null;
-      res.send(data);
-    })
-    .catch((err)=>{
-      res.send({error:err});
-    });
-  })
-  .catch((err)=>{
-    res.send({error:err});
-  });
-
-
-});
-
-
-
 router.get('/download/filepath=:filepath',(req,res)=>{
+  if(req.headers && req.headers.referer && req.headers.referer.indexOf('editar-contenido?index')>-1){
+    let user=new User();
+    user.download_zip(req.params.filepath,res);
+    user._db_connection._connection.end();
+    user=null;
+  }else{
+    res.status(403).send({error:"Qué carajo hacés pelotudo? Salí de aca :) ! PD: Un beso 8=============D  "});
+  }
 
-  let user=new User();
-  user.download_zip(req.params.filepath,res);
-  user._db_connection._connection.end();
-  user=null;
 
 });
 
