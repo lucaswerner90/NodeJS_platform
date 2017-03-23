@@ -6,6 +6,7 @@ const unzip=require('unzip');
 const fs=require('fs');
 
 
+
 class FTPModel{
   constructor(){
     this._configuration=CONFIG;
@@ -59,7 +60,7 @@ class FTPModel{
         if(err){
           reject(err);
         }
-        console.info("DIR..... "+path);
+        console.info("[!] Created DIR..... "+path);
         resolve(true);
       });
     });
@@ -70,7 +71,9 @@ class FTPModel{
     const _self=this;
 
     return new Promise((resolve,reject)=>{
+
       _self._ftp.put(path, remotePath,function(err) {
+        console.log("[!] Created file...."+remotePath);
         if (err){
           reject(err);
         } else{
@@ -101,6 +104,28 @@ class FTPModel{
 
   }
 
+  readDataFile(entry){
+
+    return new Promise(function(resolve, reject) {
+      entry.file_data=[];
+
+      entry.on('data', (chunk) => {
+        entry.file_data[entry.file_data.length]=chunk;
+      });
+      entry.once('end',()=>{
+        resolve(Buffer.concat(entry.file_data));
+      });
+      entry.once('error',(error)=>{
+        reject(error);
+      });
+      entry.once('close',()=>{
+        console.log(`[**] Extracting ${entry.path}....`);
+        entry.removeAllListeners();
+      });
+    });
+  }
+
+
   extractZIP(path,remotePath){
 
     const _self=this;
@@ -118,7 +143,7 @@ class FTPModel{
         let type="";
         let filename="";
 
-        const regular_expression=/(.*index.*)*(\.html)$/;
+        const regular_expression=/.*index.*(\.html)$/;
         let index_file="";
 
 
@@ -134,7 +159,7 @@ class FTPModel{
           type = entry.type; // 'Directory' or 'File'
           filename=entry.path;
           filename.replace(" ","\s");
-          
+
           if(type==='Directory'){
             directory=pathToFTP+filename;
             directory.replace(" ","\s");
@@ -142,13 +167,16 @@ class FTPModel{
           }else{
 
             if(regular_expression.test(filename)
-            && (index_file.length===0 || index_file.length>filename.length)){
+            && (index_file.length===0 || index_file.length>filename.length)){
               index_file=_self._configuration.ftpConnection.equivalent_url+pathToFTP.slice(1)+filename;
             }
 
-            arrayFiles.push(filename);
+            _self.readDataFile(entry).then((datos)=>{
+              arrayFiles.push({data:datos,entry:entry});
+            });
+
           }
-          console.log(`[**] Extracting ${filename}....`);
+
           entry.autodrain();
         });
 
@@ -159,7 +187,7 @@ class FTPModel{
               console.log(`[!] On the promises extracting files.......`);
               let arrayFilesPromises=[];
               for (let i = 0; i < arrayFiles.length; i++) {
-                arrayFilesPromises.push(_self._createFile(arrayFiles[i],pathToFTP+arrayFiles[i]));
+                arrayFilesPromises.push(_self._createFile(arrayFiles[i].data,pathToFTP+arrayFiles[i].entry.path));
               }
               Promise.all(arrayFilesPromises).then(()=>{
                 uploadPipe.removeAllListeners();

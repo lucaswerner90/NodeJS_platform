@@ -162,12 +162,12 @@ class Database{
 
           let additional_queries=[];
 
-          additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.tableOfCompatibilities,
-            {
-            multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
-            id_contenido:camposFormulario.id_contenido,
-            id_usuario:camposFormulario.id_usuario
-          }));
+          // additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.tableOfCompatibilities,
+          //   {
+          //   multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
+          //   id_contenido:camposFormulario.id_contenido,
+          //   id_usuario:camposFormulario.id_usuario
+          // }));
 
 
 
