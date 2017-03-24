@@ -95,6 +95,7 @@ router.post('/avatar',(req,res)=>{
     let select_user=new Selector(formulario._campos['id_usuario']);
     select_user.return_user().then((profile)=>{
       let user=profile;
+      debugger;
       user.modify_avatar(formulario._campos,formulario._campos["avatarImage"]).then(()=>{
         select_user=null;
         user=null;

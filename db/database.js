@@ -162,12 +162,12 @@ class Database{
 
           let additional_queries=[];
 
-          // additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.tableOfCompatibilities,
-          //   {
-          //   multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
-          //   id_contenido:camposFormulario.id_contenido,
-          //   id_usuario:camposFormulario.id_usuario
-          // }));
+          additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.tableOfCompatibilities,
+            {
+            multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
+            id_contenido:camposFormulario.id_contenido,
+            id_usuario:camposFormulario.id_usuario
+          }));
 
 
 
@@ -233,6 +233,7 @@ class Database{
             additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.screenshot,camposFormulario));
 
           }
+
           additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.tableOfCompatibilities+user_queries.INSERT.tableOfCompatibilities,{
             multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query, id_contenido:camposFormulario.id_contenido}));
 
@@ -250,73 +251,7 @@ class Database{
           .catch((error)=>{
             reject(error);
           });
-          // _self.sendQuery((update_file)?user_queries.UPDATE.content:user_queries.UPDATE.contentNoFile,camposFormulario).then(()=>{
-            // _self.sendQuery(user_queries.UPDATE.contentRelation,{id_contenido:camposFormulario.id_contenido,id_proyecto:camposFormulario.id_proyecto}).then(()=>{
-              // _self.sendQuery(user_queries.UPDATE.tableOfCompatibilities,{id_contenido:camposFormulario.id_contenido})
-              // .then(()=>{
-
-                // _self.sendQuery(user_queries.UPDATE.content_platform+user_queries.INSERT.content_platform,{
-                //   id_contenido:camposFormulario.id_contenido,
-                //   multiple_insert_query:_self._createInsertContentPlatform(camposFormulario.table_platforms,camposFormulario.id_contenido,camposFormulario.id_pais).multiple_insert_query
-                // }
-                // ).then(()=>{
-                //
-                // })
-                // .catch(()=>{
-                //
-                // });
-
-                // Update of the content's assigned technology
-                // _self.sendQuery(
-                //   user_queries.UPDATE.content_technology,
-                //   {
-                //     id_contenido:camposFormulario.id_contenido,
-                //     id_tecnologia:camposFormulario.id_tecnologia
-                // })
-                // .then(()=>{
-                //
-                // })
-                // .catch((err)=>{
-                //   reject(err);
-                // });
-
-                // if(camposFormulario['screenshot']){
-                //   _self.sendQuery(user_queries.UPDATE.screenshot,camposFormulario).then(()=>{
-                //   }).catch((err)=>{
-                //     console.error("user_queries.UPDATE.screenshot: "+err);
-                //   });
-                // }
-                // _self.sendQuery(user_queries.UPDATE.tableOfCompatibilities+user_queries.INSERT.tableOfCompatibilities,{
-                //   multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query, id_contenido:camposFormulario.id_contenido}).then(()=>{
-                //     if(camposFormulario['id_proyecto']){
-                //
-                //       _self.sendQuery(user_queries.UPDATE.contentRelation,camposFormulario).then(()=>{
-                //         resolve(true);
-                //       }).catch((err)=>{
-                //         console.error("user_queries.INSERT.contentRelation: "+err);
-                //       });
-                //     }else{
-                //       resolve(true);
-                //     }
-                //   })
-                //   .catch((err)=>{
-                //     console.error("user_queries.INSERT.tableOfCompatibilities: "+err);
-                //   });
-
-                // })
-                // .catch((err)=>{
-                //   console.error("user_queries.UPDATE.tableOfCompatibilities: "+err);
-                // });
-            // })
-            // .catch((err)=>{
-            //   reject(err);
-            // });
-
-
-
-            // }).catch((err)=>{
-            //   reject(err);
-            // });
+          //
           });
 
         }

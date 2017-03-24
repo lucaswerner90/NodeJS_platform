@@ -69,7 +69,7 @@ class FTPModel{
   _createFile(path,remotePath){
 
     const _self=this;
-
+    debugger;
     return new Promise((resolve,reject)=>{
 
       _self._ftp.put(path, remotePath,function(err) {
@@ -104,9 +104,11 @@ class FTPModel{
 
   }
 
-  readDataFile(entry){
+  _readDataFile(entry){
 
     return new Promise(function(resolve, reject) {
+
+
       entry.file_data=[];
 
       entry.on('data', (chunk) => {
@@ -171,7 +173,7 @@ class FTPModel{
               index_file=_self._configuration.ftpConnection.equivalent_url+pathToFTP.slice(1)+filename;
             }
 
-            _self.readDataFile(entry).then((datos)=>{
+            _self._readDataFile(entry).then((datos)=>{
               arrayFiles.push({data:datos,entry:entry});
             });
 
@@ -219,9 +221,6 @@ class FTPModel{
     const _self=this;
 
     const rutaFile=filePath;
-
-    // Connect to the FTP server with the CONFIG object setted on the config.json file
-    // _self._ftp.connect(_self._configuration.ftpConnection);
 
     return new Promise((resolve,reject)=>{
 

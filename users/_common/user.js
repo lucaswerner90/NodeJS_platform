@@ -218,12 +218,14 @@ class User{
 
     return new Promise((resolve,reject)=>{
 
-      _self._file.uploadContentFile(file,form,_self._file._config.avatarUpload.directory,_self._file._config.avatarUpload.extensionsAllowed,true);
+      _self._file.uploadContentFile(file,form,_self._file._config.avatarUpload.directory,_self._file._config.avatarUpload.extensionsAllowed,true).then(()=>{
+        _self._close_connections();
+      });
       _self._db_connection.sendQuery(_self._common_queries.UPDATE.avatar,form).then(()=>{
 
         _self._id_usuario=form.id_usuario;
         _self._logOnDB("user.modify_avatar");
-        _self._close_connections();
+
         resolve(true);
       })
       .catch((err)=>{
@@ -239,7 +241,6 @@ class User{
 
     return new Promise((resolve,reject)=>{
       _self._db_connection.sendQuery(_self._common_queries.UPDATE.personalInfo,form).then(()=>{
-
         _self._logOnDB("user.modify_info");
         _self._close_connections();
         resolve(true);
@@ -290,7 +291,7 @@ class User{
               if(data){
                 form['rutaEjecucion']=data;
                 _self._db_connection.sendQuery(_self._profile_queries.UPDATE.rutaEjecucion,{
-                  rutaEjecucion:form['rutaEjecucion'],
+                  rutaEjecucion:"http://"+form['rutaEjecucion'],
                   id_contenido:form['id_contenido']
                 }).then(()=>{
                   _self._close_connections();
@@ -355,7 +356,7 @@ class User{
                 if(data){
                   form['rutaEjecucion']=data;
                   _self._db_connection.sendQuery(_self._profile_queries.UPDATE.rutaEjecucion,{
-                    rutaEjecucion:form['rutaEjecucion'],
+                    rutaEjecucion:"http://"+form['rutaEjecucion'],
                     id_contenido:form['id_contenido']
                   }).then(()=>{
                     _self._close_connections();
