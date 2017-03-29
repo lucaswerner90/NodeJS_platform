@@ -4,6 +4,7 @@
   "user"              : "contenidos",
   "password"          : "Contenid0s",
   "database"          : "catalogo_contenidos",
-  "connectionLimit"   : 10,
+  "connectionLimit"   : 500,
+  "connectTimeout"    : 1000,
   "multipleStatements":true
 }

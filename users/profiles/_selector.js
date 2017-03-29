@@ -26,7 +26,9 @@ class Selector extends User{
 
 
       this._get_type_of_user().then((data)=>{
+        this._db_connection._close_connection();
         switch (data) {
+
           case "Administrador":
             resolve(new Admin(_self._id_usuario));
             break;

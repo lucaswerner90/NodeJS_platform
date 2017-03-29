@@ -69,7 +69,6 @@ class FTPModel{
   _createFile(path,remotePath){
 
     const _self=this;
-    debugger;
     return new Promise((resolve,reject)=>{
 
       _self._ftp.put(path, remotePath,function(err) {

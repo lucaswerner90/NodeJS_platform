@@ -16,11 +16,10 @@ router.post('/course',(req,res)=>{
       user.modify_course(formulario._campos).then(()=>{
         formulario=null;
         select_user=null;
-        user=null;
+        user._db_connection._close_connection();
         res.send({status:true});
       })
       .catch((err)=>{
-        user._close_connections();
         formulario=null;
         select_user=null;
         user=null;
@@ -44,13 +43,11 @@ router.post('/personal_info',(req,res)=>{
   select_user.return_user().then((profile)=>{
     let user=profile;
     user.modify_personal_info(req.body).then(()=>{
-      user._db_connection._connection.end();
       select_user=null;
-      user=null;
+      user._db_connection._close_connection();
       res.send({status:true});
     })
     .catch((err)=>{
-      user._db_connection._connection.end();
       select_user=null;
       user=null;
       res.send({error:err});
@@ -70,15 +67,13 @@ router.post('/change_password',(req,res)=>{
   select_user.return_user().then((profile)=>{
     let user=profile;
     user.modify_password(req.body).then(()=>{
-      user._db_connection._connection.end();
       select_user=null;
-      user=null;
+      user._db_connection._close_connection();
       res.send({status:true});
     })
     .catch((err)=>{
-      user._db_connection._connection.end();
       select_user=null;
-      user=null;
+      user._db_connection._close_connection();
       res.send({error:err});
     });
   })
@@ -95,15 +90,15 @@ router.post('/avatar',(req,res)=>{
     let select_user=new Selector(formulario._campos['id_usuario']);
     select_user.return_user().then((profile)=>{
       let user=profile;
-      debugger;
+
       user.modify_avatar(formulario._campos,formulario._campos["avatarImage"]).then(()=>{
         select_user=null;
-        user=null;
+        user._db_connection._close_connection();
         res.send({status:true});
       })
       .catch((err)=>{
         select_user=null;
-        user=null;
+        user._db_connection._close_connection();
         res.send({error:err});
       });
     })

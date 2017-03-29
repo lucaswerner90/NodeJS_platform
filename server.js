@@ -25,7 +25,9 @@ const user=require('./users/index');
 const middlewareAuthentication=require('./authentication/middleware');
 
 
+const microservices=require('./microservices/index');
 
+microservices.runAllServices();
 
 
 app.use(function(req, res, next) {

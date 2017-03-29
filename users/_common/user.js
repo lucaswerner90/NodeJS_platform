@@ -5,7 +5,6 @@ const Database=require('../../db/database');
 const File=require('../../files/_fileModel');
 const DBCommonQueries=require('../../db/queries/user/_common.json');
 
-
 class User{
 
 
@@ -31,6 +30,8 @@ class User{
     _self._file._close_connection();
 
   }
+
+
   _get_type_of_user(){
 
     const _self=this;
@@ -102,18 +103,44 @@ class User{
     });
 
   }
+  get_content_by_id(id_contenido){
+    const _self=this;
+    return new Promise((resolve,reject)=>{
+      let arrayPromises=[];
+      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_id,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.tableOfCompatibilities,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_platforms,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_servers,{id_contenido:id_contenido}));
+
+
+      Promise.all(arrayPromises).then((values)=>{
+        let content=values[0][0];
+        content.compatibilities_table=values[1];
+        content.platforms=values[2];
+        content.tableServCont=values[3];
+
+        resolve(content);
+
+
+      }).catch((error)=>{
+        reject(error);
+      });
+
+    });
+  }
 
   get_contents(){
     const _self=this;
     return new Promise((resolve,reject)=>{
       _self.get_user_info().then((result)=>{
-
         _self._db_connection.sendQuery(_self._common_queries.GET.contents_proveedor,result).then((data)=>{
           let arrayPromisesTechnologies=[];
           let arrayPromisesPlatforms=[];
+          let arrayPromisesServers=[];
           for (let i = 0; i < data.length; i++) {
             arrayPromisesTechnologies[i]=_self._db_connection.sendQuery(_self._common_queries.GET.tableOfCompatibilities,data[i]);
             arrayPromisesPlatforms[i]=_self._db_connection.sendQuery(_self._common_queries.GET.content_platforms,data[i]);
+            arrayPromisesServers[i]=_self._db_connection.sendQuery(_self._common_queries.GET.content_servers,data[i]);
           }
 
           Promise.all(arrayPromisesTechnologies).then((values)=>{
@@ -124,8 +151,15 @@ class User{
               for (let i = 0; i < data.length; i++) {
                 data[i].platforms=values[i];
               }
-              _self._close_connections();
-              resolve(data);
+              Promise.all(arrayPromisesServers).then((values)=>{
+                for (let i = 0; i < data.length; i++) {
+                  data[i].tableServCont=values[i];
+                }
+                resolve(data);
+              })
+              .catch((err)=>{
+                reject(err);
+              });
             })
             .catch((err)=>{
               reject(err);
@@ -260,7 +294,6 @@ class User{
       _self._db_connection.sendQuery(_self._common_queries.UPDATE.password,fields).then(()=>{
 
         _self._logOnDB("user.modify_password");
-        _self._close_connections();
         resolve(true);
       })
       .catch((err)=>{
@@ -273,11 +306,15 @@ class User{
   create_course(form){
 
     const _self=this;
-
+    console.log(form);
     return new Promise((resolve,reject)=>{
 
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
       form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
+      form["indice_contenidos"]=form['indiceContenidos']?form['indiceContenidos']:" ";
+      form["notas_contenidos"]=form['notasContenidos']?form['notasContenidos']:" ";
+      form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
+
       _self._db_connection.sendQuery(_self._common_queries.GET.info_proveedor,form).then((data)=>{
 
 
@@ -344,67 +381,74 @@ class User{
       form["fecha_alta"]=_self._file._returnActualDate();
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
       form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
-
+      form["indice_contenidos"]=form['indiceContenidos']?form['indiceContenidos']:"   ";
+      form["notas_contenidos"]=form['notasContenidos']?form['notasContenidos']:"   ";
+      form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
       _self._db_connection.sendQuery(_self._common_queries.GET.info_proveedor,form).then((data)=>{
         form["carpeta_proveedor"]=data[0].carpeta_proveedor;
         // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
-        if(form['file_to_upload']){
-          _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
-            _self._db_connection.update_content(_self._profile_queries,form,true).then(()=>{
+        _self.get_content_by_id(form["id_contenido"]).then((content)=>{
+          if(form['file_to_upload']){
+            _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
+                _self._db_connection.update_content(content,_self._profile_queries,form,true).then(()=>{
 
-              _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then((data)=>{
-                if(data){
-                  form['rutaEjecucion']=data;
-                  _self._db_connection.sendQuery(_self._profile_queries.UPDATE.rutaEjecucion,{
-                    rutaEjecucion:"http://"+form['rutaEjecucion'],
-                    id_contenido:form['id_contenido']
-                  }).then(()=>{
-                    _self._close_connections();
+                  _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then((data)=>{
+                    if(data){
+                      form['rutaEjecucion']=data;
+                      _self._db_connection.sendQuery(_self._profile_queries.UPDATE.rutaEjecucion,{
+                        rutaEjecucion:"http://"+form['rutaEjecucion'],
+                        id_contenido:form['id_contenido']
+                      }).then(()=>{
+                      })
+                      .catch((err)=>{
+                        console.log(err);
+                      });
+                    }
+                    console.log("ZIP EXTRACTED CORRECTLY....");
+
                   })
                   .catch((err)=>{
-                    console.log(err);
-                    _self._close_connections();
+                    console.error("*****  ERROR EXTRACTING ZIP  *****");
+                    console.error(err);
                   });
-                }
-                console.log("ZIP EXTRACTED CORRECTLY....");
+                  _self._db_connection.recordOnLog("course.modify",
+                  {
+                    id_usuario:form.id_usuario,
+                    id_contenido:form.id_contenido
+                  });
+                  resolve(true);
 
-              })
-              .catch((err)=>{
-                console.error("*****  ERROR EXTRACTING ZIP  *****");
-                console.error(err);
-              });
-              _self._db_connection.recordOnLog("course.modify",
-              {
-                id_usuario:form.id_usuario,
-                id_contenido:form.id_contenido
-              });
-              resolve(true);
+                })
+                .catch((err)=>{
+                  reject(err);
+                });
 
             })
             .catch((err)=>{
               reject(err);
             });
-          })
-          .catch((err)=>{
-            reject(err);
-          });
-        }else{
-          // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
-          _self._db_connection.update_content(_self._profile_queries,form).then(()=>{
+          }else{
+            // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
+            _self._db_connection.update_content(content,_self._profile_queries,form).then(()=>{
+              
+              _self._db_connection.recordOnLog("course.modify",
+              {
+                id_usuario:form.id_usuario,
+                id_contenido:form.id_contenido
+              });
 
-            _self._db_connection.recordOnLog("course.modify",
-            {
-              id_usuario:form.id_usuario,
-              id_contenido:form.id_contenido
+
+              resolve(true);
+            })
+            .catch((err)=>{
+              reject(err);
             });
+          }
+        })
+        .catch((error)=>{
+          reject(error);
+        });
 
-
-            resolve(true);
-          })
-          .catch((err)=>{
-            reject(err);
-          });
-        }
       })
       .catch((err)=>{
         reject(err);
