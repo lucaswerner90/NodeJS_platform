@@ -18,7 +18,6 @@ class FTPModel{
     });
 
     this._ftp.once("error",()=>{
-      // console.error("Error on FTPModel: ",error);
       this._close_connection();
     });
   }

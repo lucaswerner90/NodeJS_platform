@@ -1,0 +1,13 @@
+{
+  "main_conf":{
+    "dir":"./microservices"
+  },
+  "login_microservice":{
+    "host":"localhost",
+    "port":"10101"
+  },
+  "filehandler_microservice":{
+    "host":"localhost",
+    "port":"10102"
+  }
+}

@@ -35,12 +35,22 @@ const ClientMicroservice=require('../microservices/client');
 // }
 
 exports.emailLogin=function(req,res){
-  const loginMicroservice=new ClientMicroservice();
-  loginMicroservice.login_user(req).then((data)=>{
+  const client=new ClientMicroservice();
+  // client.download_file('./Educaterra/CursoElPradoMiradaX_HTML_20161117184403/CursoElPradoMiradaX_HTML_20161117184403.zip',res).then((data)=>{
+  //   console.log("Everything works fine!");
+  // })
+  // .catch((error)=>{
+  //   console.error(error);
+  // });
+  client.login_user(req).then((data)=>{
     res.send(data);
   }).catch((error)=>{
     res.send(error);
   });
+
+
+
+
   // existeUsuario(req.body).then((data)=>{
   //   // Si el usuario se encuentra dentro del sistema de la base de datos entonces
   //   // devolvemos el token que usará para mantener la sesion en la plataforma

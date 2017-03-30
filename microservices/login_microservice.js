@@ -1,4 +1,5 @@
 'use strict';
+const CONFIG_MICRO=require('./config.json');
 const jwt=require('jwt-simple');
 const moment=require('moment');
 const User=require('../users/_common/user');
@@ -20,7 +21,7 @@ class LoginMicroservice{
         result( null, {error:err} );
       });
     })
-    .listen();
+    .listen(CONFIG_MICRO.login_microservice);
   }
 
   sendLogin(parameters,result){

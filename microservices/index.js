@@ -1,4 +1,6 @@
 const spawn = require('child_process').spawn;
+const fs=require('fs');
+const CONFIG=require('./config.json');
 class Microservices {
 
 
@@ -12,7 +14,18 @@ class Microservices {
 
   runAllServices(){
     const _self=this;
-    _self._startProcess('./microservices/login_microservice.js');
+    const regular_expression=/.*_microservice(\.js)$/;
+    let microservices_files=[];
+
+    fs.readdir(CONFIG.main_conf.dir,(err,files)=>{
+      microservices_files=files.filter(function(file){
+        return regular_expression.test(file);
+      });
+
+      for (let i = 0; i < microservices_files.length; i++) {
+        _self._startProcess(CONFIG.main_conf.dir+"/"+microservices_files[i]);
+      }
+    });
   }
 
 
