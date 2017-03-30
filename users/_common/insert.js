@@ -16,7 +16,6 @@ router.post('/course',(req,res)=>{
     select_user.return_user().then((profile)=>{
       let user=profile;
       user.create_course(formulario._campos).then(()=>{
-        user._db_connection._close_connection();
         select_user=null;
         res.send({status:true});
       })

@@ -5,6 +5,6 @@
   "password"          : "Contenid0s",
   "database"          : "catalogo_contenidos",
   "connectionLimit"   : 500,
-  "connectTimeout"    : 1000,
+  "connectTimeout"    : 10000,
   "multipleStatements":true
 }

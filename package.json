@@ -29,9 +29,7 @@
   },
   "devDependencies": {
     "eslint": "^3.12.2",
-    "gulp": "^3.9.1",
-    "gulp-minify": "0.0.15",
-    "gulp-obfuscate": "^0.2.9",
+    "gulp-concat": "^2.6.1",
     "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
     "request": "^2.79.0",

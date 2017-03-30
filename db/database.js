@@ -68,7 +68,7 @@ class Database{
       let query=queries[i];
       for(const prop in obj) {
         if (obj.hasOwnProperty(prop)){
-          query=(!obj[prop])?query:query.split(`[${prop}]`).join((isNaN(obj[prop]) && prop!=="multiple_insert_query")?`"${obj[prop]}"`:`${obj[prop]}`);
+          query=(obj[prop]===null)?query:query.split(`[${prop}]`).join((isNaN(obj[prop]) && prop!=="multiple_insert_query")?`"${obj[prop]}"`:`${obj[prop]}`);
         }
       }
       query_parsed.push(query);
@@ -103,6 +103,15 @@ class Database{
 
 
   createInsertContentServer(obj,id_contenido){
+    let finalQuery="";
+    for (let i = 0; i < obj.length; i++) {
+      if(i>0) finalQuery+=`, `;
+      finalQuery+=`(${parseInt(id_contenido)},${parseInt(obj[i])})`;
+    }
+    return {multiple_insert_query:finalQuery};
+  }
+
+  createInsertContentRecursos(obj,id_contenido){
     let finalQuery="";
     for (let i = 0; i < obj.length; i++) {
       if(i>0) finalQuery+=`, `;
@@ -158,6 +167,11 @@ class Database{
       const _self=this;
 
       return new Promise((resolve,reject)=>{
+        camposFormulario["notas"]=(camposFormulario.notas)?camposFormulario.notas:"Notas por defecto";
+        camposFormulario["indice_contenidos"]=(camposFormulario.indice_contenidos)?camposFormulario.indice_contenidos:"Notas por defecto";
+        camposFormulario["notas_produccion"]=(camposFormulario.notas_produccion)?camposFormulario.notas_produccion:"Notas por defecto";
+        camposFormulario["participantes"]=(camposFormulario.participantes)?camposFormulario.participantes:"Notas por defecto";
+        camposFormulario["notas_contenidos"]=(camposFormulario.notas_contenidos)?camposFormulario.notas_contenidos:"Notas por defecto";
 
         _self.sendQuery(user_queries.INSERT.content,camposFormulario).then((row)=>{
 
@@ -180,6 +194,14 @@ class Database{
             {
               id_contenido:camposFormulario.id_contenido,
               multiple_insert_query:_self.createInsertContentServer(camposFormulario.servidores_contenidos,camposFormulario.id_contenido).multiple_insert_query
+            }));
+          }
+
+          if(camposFormulario.recursos.length>0){
+            additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_recursos,
+            {
+              id_contenido:camposFormulario.id_contenido,
+              multiple_insert_query:_self.createInsertContentRecursos(camposFormulario.recursos,camposFormulario.id_contenido).multiple_insert_query
             }));
           }
 
@@ -239,10 +261,27 @@ class Database{
     return new Promise(function(resolve, reject) {
 
       let additional_queries=[];
-      camposFormulario["notas"]=(camposFormulario.notas!=="")?camposFormulario.notas:"Notas por defecto";
-      camposFormulario["indice_contenidos"]=(camposFormulario.indice_contenidos!=="")?camposFormulario.indice_contenidos:"Notas por defecto";
-      camposFormulario["notas_contenidos"]=(camposFormulario.notas_contenidos!=="")?camposFormulario.notas_contenidos:"Notas por defecto";
+      camposFormulario["notas"]=(camposFormulario.notas)?camposFormulario.notas:"Notas por defecto";
+      camposFormulario["indice_contenidos"]=(camposFormulario.indice_contenidos)?camposFormulario.indice_contenidos:"Notas por defecto";
+      camposFormulario["notas_produccion"]=(camposFormulario.notas_produccion)?camposFormulario.notas_produccion:"Notas por defecto";
+      camposFormulario["participantes"]=(camposFormulario.participantes)?camposFormulario.participantes:"Notas por defecto";
+      camposFormulario["notas_contenidos"]=(camposFormulario.notas_contenidos)?camposFormulario.notas_contenidos:"Notas por defecto";
+
       additional_queries.push(_self._replace_variables_on_query((update_file)?user_queries.UPDATE.content:user_queries.UPDATE.contentNoFile,camposFormulario));
+
+      if(camposFormulario.recursos.length>0){
+        if(content.recursos.length>0){
+          additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_recursos,
+          {id_contenido:camposFormulario.id_contenido}));
+        }
+        additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_recursos,
+        {
+          id_contenido:camposFormulario.id_contenido,
+          multiple_insert_query:_self.createInsertContentRecursos(camposFormulario.recursos,camposFormulario.id_contenido).multiple_insert_query
+        }));
+
+      }
+
 
 
       if(camposFormulario.table_platforms.length>0){
@@ -275,7 +314,7 @@ class Database{
 
       if(camposFormulario.servidores_contenidos.length>0){
 
-        if(content.tableServCont.length>0){
+        if(content.servidores_contenidos.length>0){
           additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_servidor,
           {
             id_contenido:camposFormulario.id_contenido,
@@ -343,12 +382,10 @@ class Database{
         }else{
           additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.contentRelation,camposFormulario));
         }
-
       }
-
       additional_queries=additional_queries.join(" ");
 
-
+      console.log(additional_queries);
       _self.sendQuery(additional_queries).then(()=>{
         resolve(true);
       })

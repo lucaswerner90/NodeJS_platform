@@ -15,6 +15,7 @@
     "content_id":"select c.*,pr.id_proyecto,codigo_proyecto,(select id_tecnologia from relacion_contenidos_tecnologias rel where rel.id_contenido=c.id_contenido) as id_tecnologia,(select id_habilidad from relacion_contenidos_habilidades habilidades where habilidades.id_contenido=c.id_contenido and habilidades.id_estado=1) as id_habilidad,(select id_nivel from relacion_contenido_nivel nivel where nivel.id_contenido=c.id_contenido) as id_nivel from (select * from contenidos where id_contenido=[id_contenido]) as c left join relacion_contenidos_proyectos rcp on rcp.id_contenido=c.id_contenido left join  proyectos pr on rcp.id_proyecto=pr.id_proyecto;",
     "info_proveedor":"SELECT * FROM proveedores WHERE id_proveedor=[id_proveedor];",
     "content_platforms":"SELECT content_platforms.id_plataforma FROM relacion_contenido_plataforma as content_platforms WHERE id_contenido=[id_contenido];",
-    "subcategorias":"select id_subcategoria,descripcion from subcategorias where id_estado=1 and id_categoria=[id_categoria];"
+    "subcategorias":"select id_subcategoria,descripcion from subcategorias where id_estado=1 and id_categoria=[id_categoria];",
+    "content_recursos":"select id_contenido,id_recurso from relacion_contenidos_recursos WHERE id_contenido=[id_contenido];"
   }
 }

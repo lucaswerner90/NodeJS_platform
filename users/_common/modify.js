@@ -16,7 +16,6 @@ router.post('/course',(req,res)=>{
       user.modify_course(formulario._campos).then(()=>{
         formulario=null;
         select_user=null;
-        user._db_connection._close_connection();
         res.send({status:true});
       })
       .catch((err)=>{
