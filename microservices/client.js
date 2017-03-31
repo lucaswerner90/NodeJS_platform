@@ -6,7 +6,20 @@ class ClientMicroservice{
   constructor(){
     this._login_client=seneca().client(CONFIG_MICRO.login_microservice);
     this._file_client=seneca().client(CONFIG_MICRO.filehandler_microservice);
+    this._db_client=seneca().client(CONFIG_MICRO.db_microservice);
   }
+
+
+  send_query(query,obj){
+    const _self=this;
+    return new Promise(function(resolve, reject) {
+      _self._db_client.act({ role: 'db', cmd: 'send_query', query:query,obj:obj},(error,result)=>{
+        if(error) reject(error);
+        resolve(result.answer);
+      });
+    });
+  }
+
 
   login_user(req){
     const _self=this;
@@ -18,6 +31,7 @@ class ClientMicroservice{
     });
   }
 
+
   download_file(filepath,response){
     const _self=this;
     return new Promise(function(resolve, reject) {
@@ -28,6 +42,7 @@ class ClientMicroservice{
       });
     });
   }
+
 
   upload_file(form){
     const _self=this;

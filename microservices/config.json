@@ -9,5 +9,9 @@
   "filehandler_microservice":{
     "host":"localhost",
     "port":"10102"
+  },
+  "db_microservice":{
+    "host":"localhost",
+    "port":"10103"
   }
 }

@@ -55,4 +55,4 @@ class FileHandlerMicroservice{
 
 }
 
-new FileHandlerMicroservice();
+//new FileHandlerMicroservice();

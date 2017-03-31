@@ -1,6 +1,6 @@
 {
   "GET":{
-    "generic_information":"Select plataformas.*,tipo_plataformas.descripcion as tipo_plataforma From plataformas,tipo_plataformas where plataformas.id_estado=1 AND tipo_plataformas.id_tipo_plataforma=plataformas.id_tipo_plataforma;Select * From sistema_evaluacion where id_estado=1;Select * From tipo_contenidos where id_estado=1;Select * From estados;Select * From tabla_compatibilidades where id_estado=1;Select * from nivel_educacional where id_estado=1;Select * From derechos_explotacion;SELECT descripcion from perfil;SELECT * FROM proyectos;SELECT * FROM pais;SELECT * FROM puntos_control where id_estado=1;SELECT * FROM valorestablacertificacion;Select * From tecnologias where id_estado=1;Select * From tipo_desarrollo where id_estado=1;"
+    "generic_information":"Select plataformas.*,tipo_plataformas.descripcion as tipo_plataforma From plataformas,tipo_plataformas where tipo_plataformas.id_tipo_plataforma=plataformas.id_tipo_plataforma;Select * From sistema_evaluacion;Select * From tipo_contenidos;Select * From estados;Select * From tabla_compatibilidades;Select * from nivel_educacional;Select * From derechos_explotacion;SELECT descripcion from perfil;SELECT * FROM proyectos;SELECT * FROM pais;SELECT * FROM puntos_control;SELECT * FROM valorestablacertificacion;Select * From tecnologias;Select * From tipo_desarrollo;Select * From servidores_contenidos; select * from proveedores;select id_categoria,descripcion from categoria;select id_habilidad,descripcion from habilidades;select id_recurso,descripcion from recursos;"
   },
   "INSERT":{
     "content":"INSERT INTO catalogo_contenidos.contenidos (participantes,notas_produccion,indice_contenidos,notas_contenidos,id_pais,id_proveedor,notas,fecha_alta,titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado,catalogo_ted,url_image,id_tipo_desarrollo,responsive) VALUES ([participantes],[notas_produccion],[indice_contenidos],[notas_contenidos],[id_pais],[id_proveedor],[notas],[fecha_alta],[titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado],[catalogo_ted],[url_image],[id_tipo_desarrollo],[responsive]);",
@@ -12,7 +12,8 @@
     "content_habilidades":"INSERT INTO relacion_contenidos_habilidades (id_contenido,id_habilidad,id_estado) VALUES ([id_contenido],[id_habilidad],1);",
     "content_servidor":"INSERT INTO relacion_contenido_servidor (id_contenido,id_servidor) VALUES [multiple_insert_query];",
     "content_recursos":"INSERT INTO relacion_contenidos_recursos (id_contenido,id_recurso) VALUES [multiple_insert_query];",
-    "content_education":"INSERT INTO relacion_contenido_nivel (id_contenido,id_nivel) VALUES ([id_contenido],[id_nivel]);"
+    "content_education":"INSERT INTO relacion_contenido_nivel (id_contenido,id_nivel) VALUES ([id_contenido],[id_nivel]);",
+    "content_categorias_subcategorias":"INSERT INTO relacion_contenido_categorias_subcategorias (id_subcategoria, id_categoria,id_contenido) VALUES [multiple_insert_query];"
   },
   "UPDATE":{
 
@@ -27,6 +28,7 @@
     "content_habilidades":"UPDATE relacion_contenidos_habilidades SET id_estado=0 WHERE id_contenido=[id_contenido];",
     "content_education":"UPDATE relacion_contenido_nivel SET id_nivel=[id_nivel] WHERE id_contenido=[id_contenido];",
     "content_servidor":"DELETE relacion_contenido_servidor FROM relacion_contenido_servidor WHERE id_contenido=[id_contenido];INSERT INTO relacion_contenido_servidor (id_contenido,id_servidor) VALUES [multiple_insert_query];",
-    "content_recursos":"UPDATE relacion_contenidos_recursos SET id_estado=0 WHERE id_contenido=[id_contenido];"
+    "content_recursos":"UPDATE relacion_contenidos_recursos SET id_estado=0 WHERE id_contenido=[id_contenido];",
+    "content_categorias_subcategorias":"DELETE * FROM relacion_contenido_categorias_subcategorias WHERE id_contenido=[id_contenido];"
   }
 }

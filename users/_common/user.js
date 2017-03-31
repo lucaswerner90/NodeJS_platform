@@ -62,7 +62,7 @@ class User{
 
   get_user_info(){
 
-    let _self=this;
+    const _self=this;
     return new Promise((resolve,reject)=>{
       _self._db_connection.sendQuery(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
         resolve(data[0]);
@@ -112,6 +112,7 @@ class User{
       arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_platforms,{id_contenido:id_contenido}));
       arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_servers,{id_contenido:id_contenido}));
       arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_recursos,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_categorias_subcategorias,{id_contenido:id_contenido}));
 
 
       Promise.all(arrayPromises).then((values)=>{
@@ -120,6 +121,7 @@ class User{
         content.platforms=values[2];
         content.servidores_contenidos=values[3];
         content.recursos=values[4];
+        content.categorias=values[5];
 
         resolve(content);
 
@@ -136,50 +138,7 @@ class User{
     return new Promise((resolve,reject)=>{
       _self.get_user_info().then((result)=>{
         _self._db_connection.sendQuery(_self._common_queries.GET.contents_proveedor,result).then((data)=>{
-          let arrayPromisesTechnologies=[];
-          let arrayPromisesPlatforms=[];
-          let arrayPromisesServers=[];
-          let arrayPromisesRecursos=[];
-          for (let i = 0; i < data.length; i++) {
-            arrayPromisesTechnologies[i]=_self._db_connection.sendQuery(_self._common_queries.GET.tableOfCompatibilities,data[i]);
-            arrayPromisesPlatforms[i]=_self._db_connection.sendQuery(_self._common_queries.GET.content_platforms,data[i]);
-            arrayPromisesServers[i]=_self._db_connection.sendQuery(_self._common_queries.GET.content_servers,data[i]);
-            arrayPromisesRecursos[i]=_self._db_connection.sendQuery(_self._common_queries.GET.content_recursos,data[i]);
-          }
-
-          Promise.all(arrayPromisesTechnologies).then((values)=>{
-            for (let i = 0; i < data.length; i++) {
-              data[i].compatibilities_table=values[i];
-            }
-            Promise.all(arrayPromisesPlatforms).then((values)=>{
-              for (let i = 0; i < data.length; i++) {
-                data[i].platforms=values[i];
-              }
-              Promise.all(arrayPromisesServers).then((values)=>{
-                for (let i = 0; i < data.length; i++) {
-                  data[i].servidores_contenidos=values[i];
-                }
-                Promise.all(arrayPromisesRecursos).then((values)=>{
-                  for (let i = 0; i < data.length; i++) {
-                    data[i].recursos=values[i];
-                  }
-                  resolve(data);
-                })
-                .catch((err)=>{
-                  reject(err);
-                });
-              })
-              .catch((err)=>{
-                reject(err);
-              });
-            })
-            .catch((err)=>{
-              reject(err);
-            });
-          })
-          .catch((err)=>{
-            reject(err);
-          });
+          resolve(data);
         })
         .catch((err)=>{
           reject(err);
@@ -192,12 +151,22 @@ class User{
 
 
   }
-
+  get_catalogo(){
+    const _self=this;
+    return new Promise(function(resolve, reject) {
+      _self._db_connection.sendQuery(_self._common_queries.GET.content_catalogo).then((data)=>{
+        resolve(data);
+      })
+      .catch((error)=>{
+        reject(error);
+      })
+    });
+  }
 
   get_platform_generic_info(){
     const _self=this;
     return new Promise((resolve,reject)=>{
-      _self._db_connection.sendQuery(_self._common_queries.GET.generic_information,null).then((data)=>{
+      _self._db_connection.sendQuery(_self._profile_queries.GET.generic_information,null).then((data)=>{
 
         let generic_info={
           platforms:data[0],

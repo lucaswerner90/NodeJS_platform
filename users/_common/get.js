@@ -21,6 +21,31 @@ router.get('/avatar/file=:filename',(req,res)=>{
   });
 });
 
+router.get('/user_info/id_usuario=:id_usuario',(req,res)=>{
+  let user=new User();
+  user.get_user_info(req.params.id_usuario).then((data)=>{
+    user._close_connections();
+    user=null;
+    res.send(data);
+  })
+  .catch((err)=>{
+    res.send({error:err});
+  });
+});
+
+
+router.get('/catalogo',(req,res)=>{
+  let user=new User();
+  user.get_catalogo().then((data)=>{
+    user._close_connections();
+    user=null;
+    res.send(data);
+  })
+  .catch((err)=>{
+    res.send({error:err});
+  });
+});
+
 
 router.get('/generic_info',(req,res)=>{
   let select_user=new Selector(req.body.id_usuario);
@@ -73,7 +98,7 @@ router.get('/download/filepath=:filepath',(req,res)=>{
     user.download_zip(req.params.filepath,res);
     user=null;
   }else{
-    res.status(403).send({error:"Qué carajo hacés pelotudo? Salí de aca :) ! PD: Un beso 8=============D  "});
+    res.status(403).send({error:"NO! Solo desde la plataforma :)! PD: Un beso (K)  "});
   }
 
 
