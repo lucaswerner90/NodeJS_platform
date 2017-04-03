@@ -22,11 +22,15 @@ router.get('/avatar/file=:filename',(req,res)=>{
 });
 
 router.get('/user_info/id_usuario=:id_usuario',(req,res)=>{
-  let user=new User();
-  user.get_user_info(req.params.id_usuario).then((data)=>{
-    user._close_connections();
-    user=null;
-    res.send(data);
+  let user=new User(req.params.id_usuario);
+  user.get_user_info().then((datos)=>{
+    user.get_avatar(datos.urlAvatar).then((data)=>{
+      debugger;
+      datos.urlAvatar=data;
+      user._close_connections();
+      user=null;
+      res.send(datos);
+    })
   })
   .catch((err)=>{
     res.send({error:err});

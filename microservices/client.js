@@ -7,8 +7,19 @@ class ClientMicroservice{
     this._login_client=seneca().client(CONFIG_MICRO.login_microservice);
     this._file_client=seneca().client(CONFIG_MICRO.filehandler_microservice);
     this._db_client=seneca().client(CONFIG_MICRO.db_microservice);
+    this._email_client=seneca().client(CONFIG_MICRO.email_microservice);
   }
 
+
+  send_email(data){
+    const _self=this;
+    return new Promise(function(resolve, reject) {
+      _self._email_client.act({ role: 'email', cmd: 'send', data:data},(error,result)=>{
+        if(error) reject(error);
+        resolve(result.answer);
+      });
+    });
+  }
 
   send_query(query,obj){
     const _self=this;

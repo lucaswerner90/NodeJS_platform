@@ -1,0 +1,32 @@
+{
+  "BASIC_CONF":{
+    "server_IP":"smtp://10.102.227.40"
+  },
+  "MAIL_INFO":{
+    "from" : "catalogoted@telefonicaed.com",
+    "to" : "pop3_desarrollo3@pop3.intranet.tls",
+    "subject" : "Catalogo TED",
+    "attachDataUrls":true
+  },
+  "USERS_MAIL":[
+    {
+      "CQA":"pop3_desarrollo3@pop3.intranet.tls"
+    },
+    {
+      "TEST_USER":"pop3_desarrollo3@pop3.intranet.tls"
+    }
+  ],
+  "TEMPLATES_CONF":[
+    {
+      "id":"new_course",
+      "folder_template":"/templates/new_course/",
+      "subject":"Catalogo TED - New Course Created"
+    },
+    {
+      "id":"uploaded_course",
+      "folder_template":"/templates/upload_course/",
+      "subject":"Catalogo TED - New Course Uploaded"
+    }
+  ]
+
+}

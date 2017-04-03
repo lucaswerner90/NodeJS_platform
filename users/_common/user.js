@@ -4,6 +4,7 @@
 const Database=require('../../db/database');
 const File=require('../../files/_fileModel');
 const DBCommonQueries=require('../../db/queries/user/_common.json');
+const ClientMicroservice=require('../../microservices/client');
 
 class User{
 
@@ -14,13 +15,12 @@ class User{
     this._file=new File();
     this._profile_queries=queries;
     this._common_queries=DBCommonQueries;
+    this._microservice_client=new ClientMicroservice();
   }
 
 
-  _logOnDB(action){
-    // this._db_connection.recordOnLog(action,{
-    //   id_usuario:this._id_usuario
-    // });
+  _logOnDB(){
+
   }
 
 
@@ -137,7 +137,7 @@ class User{
     const _self=this;
     return new Promise((resolve,reject)=>{
       _self.get_user_info().then((result)=>{
-        _self._db_connection.sendQuery(_self._common_queries.GET.contents_proveedor,result).then((data)=>{
+        _self._db_connection.sendQuery(_self._profile_queries.GET.contents_proveedor,result).then((data)=>{
           resolve(data);
         })
         .catch((err)=>{
@@ -159,7 +159,7 @@ class User{
       })
       .catch((error)=>{
         reject(error);
-      })
+      });
     });
   }
 
@@ -312,6 +312,11 @@ class User{
                   rutaEjecucion:"http://"+form['rutaEjecucion'],
                   id_contenido:form['id_contenido']
                 }).then(()=>{
+
+                  
+                  _self._microservice_client.send_email();
+
+
                   _self._close_connections();
                 })
                 .catch((err)=>{
@@ -377,6 +382,9 @@ class User{
                         rutaEjecucion:"http://"+form['rutaEjecucion'],
                         id_contenido:form['id_contenido']
                       }).then(()=>{
+
+                        _self._microservice_client.send_email("upload_course");
+
                         _self._db_connection._close_connection();
                       })
                       .catch((err)=>{

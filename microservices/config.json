@@ -13,5 +13,9 @@
   "db_microservice":{
     "host":"localhost",
     "port":"10103"
+  },
+  "email_microservice":{
+    "host":"localhost",
+    "port":"10104"
   }
 }
