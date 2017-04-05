@@ -313,8 +313,8 @@ class User{
                   id_contenido:form['id_contenido']
                 }).then(()=>{
 
-                  
-                  _self._microservice_client.send_email();
+
+                  _self._microservice_client.send_email({type:"new_course",datos_curso:form});
 
 
                   _self._close_connections();

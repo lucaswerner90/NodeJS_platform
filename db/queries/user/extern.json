@@ -4,7 +4,7 @@
     "contents_proveedor":"select c.id_contenido,codigo_proyecto,c.titulo,c.duracion,c.id_pais,c.fecha_publicacion,c.id_tipo_desarrollo, pr.id_proyecto from contenidos c left join relacion_contenidos_proyectos rcp on rcp.id_contenido=c.id_contenido left join  proyectos pr on rcp.id_proyecto=pr.id_proyecto where id_proveedor=[id_proveedor];"
   },
   "INSERT":{
-    "content":"INSERT INTO catalogo_contenidos.contenidos (id_pais,id_proveedor,notas,fecha_alta,titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado,id_tipo_desarrollo,responsive) VALUES ([id_pais],[id_proveedor],[notas],[fecha_alta],[titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado],[id_tipo_desarrollo],[responsive]);",
+    "content":"INSERT INTO catalogo_contenidos.contenidos (id_pais,id_proveedor,notas,titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado,id_tipo_desarrollo,responsive) VALUES ([id_pais],[id_proveedor],[notas],[titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado],[id_tipo_desarrollo],[responsive]);",
     "contentRelation":"",
     "tableOfCompatibilities":"INSERT INTO resultado_certificacion_contenido (id_contenido,id_usuario,id_punto_control,id_tc,valor) VALUES [multiple_insert_query];",
     "content_platform":"",
@@ -12,10 +12,10 @@
     "content_category_subcategory":"INSERT INTO relacion_contenido_categorias_subcategorias (id_contenido,id_categoria,id_subcategoria) VALUES [multiple_insert_query];"
   },
   "UPDATE":{
-    "content":"UPDATE contenidos SET id_proveedor=[id_proveedor],notas=[notas],fecha_alta=[fecha_alta],titulo=[titulo], descripcion=[descripcion], ruta_zip=[ruta_zip], id_tipo_contenido=[id_tipo_contenido],id_pais=[id_pais],duracion=[duracion], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado],id_tipo_desarrollo=[id_tipo_desarrollo],responsive=[responsive] WHERE id_contenido=[id_contenido];",
+    "content":"UPDATE contenidos SET id_proveedor=[id_proveedor],notas=[notas],titulo=[titulo], descripcion=[descripcion], ruta_zip=[ruta_zip],fecha_publicacion=[fecha_publicacion],id_tipo_contenido=[id_tipo_contenido],id_pais=[id_pais],duracion=[duracion], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado],id_tipo_desarrollo=[id_tipo_desarrollo],responsive=[responsive] WHERE id_contenido=[id_contenido];",
     "contentRelation":"",
     "rutaEjecucion":"UPDATE contenidos SET rutaEjecucion=[rutaEjecucion] WHERE id_contenido=[id_contenido];",
-    "contentNoFile":"UPDATE contenidos SET id_proveedor=[id_proveedor],notas=[notas],fecha_alta=[fecha_alta],titulo=[titulo], descripcion=[descripcion], id_tipo_contenido=[id_tipo_contenido],id_pais=[id_pais],duracion=[duracion], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado],id_tipo_desarrollo=[id_tipo_desarrollo],responsive=[responsive] WHERE id_contenido=[id_contenido];",
+    "contentNoFile":"UPDATE contenidos SET id_proveedor=[id_proveedor],notas=[notas],titulo=[titulo], descripcion=[descripcion], id_tipo_contenido=[id_tipo_contenido],fecha_publicacion=[fecha_publicacion],id_pais=[id_pais],duracion=[duracion], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado],id_tipo_desarrollo=[id_tipo_desarrollo],responsive=[responsive] WHERE id_contenido=[id_contenido];",
     "screenshot":"",
     "tableOfCompatibilities":"UPDATE resultado_certificacion_contenido SET id_estado=0 WHERE id_contenido=[id_contenido];",
     "content_platform":"",

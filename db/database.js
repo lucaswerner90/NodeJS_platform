@@ -167,6 +167,9 @@ class Database{
       const _self=this;
 
       return new Promise((resolve,reject)=>{
+
+
+
         camposFormulario["notas"]=(camposFormulario.notas)?camposFormulario.notas:"Notas por defecto";
         camposFormulario["indice_contenidos"]=(camposFormulario.indice_contenidos)?camposFormulario.indice_contenidos:"Notas por defecto";
         camposFormulario["notas_produccion"]=(camposFormulario.notas_produccion)?camposFormulario.notas_produccion:"Notas por defecto";
@@ -214,18 +217,23 @@ class Database{
             id_tecnologia:camposFormulario.id_tecnologia
           }));
 
-          additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_habilidades,
-          {
-            id_contenido:camposFormulario.id_contenido,
-            id_habilidad:camposFormulario.id_habilidad
-          }));
+          if(camposFormulario.id_habilidad){
+            additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_habilidades,
+            {
+              id_contenido:camposFormulario.id_contenido,
+              id_habilidad:camposFormulario.id_habilidad
+            }));
+          }
 
 
-          additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_education,
-          {
-            id_contenido:camposFormulario.id_contenido,
-            id_nivel:camposFormulario.id_nivel
-          }));
+          if(camposFormulario.id_nivel){
+            additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_education,
+            {
+              id_contenido:camposFormulario.id_contenido,
+              id_nivel:camposFormulario.id_nivel
+            }));
+          }
+
 
           if(camposFormulario.table_platforms.length){
             additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_platform,
@@ -266,6 +274,7 @@ class Database{
       camposFormulario["notas_produccion"]=(camposFormulario.notas_produccion)?camposFormulario.notas_produccion:"Notas por defecto";
       camposFormulario["participantes"]=(camposFormulario.participantes)?camposFormulario.participantes:"Notas por defecto";
       camposFormulario["notas_contenidos"]=(camposFormulario.notas_contenidos)?camposFormulario.notas_contenidos:"Notas por defecto";
+      camposFormulario['fecha_publicacion']=(new Date()).toISOString().substring(0, 19).replace('T', ' ');
 
       additional_queries.push(_self._replace_variables_on_query((update_file)?user_queries.UPDATE.content:user_queries.UPDATE.contentNoFile,camposFormulario));
 
@@ -330,13 +339,13 @@ class Database{
 
       }
 
-      if(content.id_nivel){
+      if(content.id_nivel && camposFormulario.id_nivel){
         additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_education,
         {
           id_contenido:camposFormulario.id_contenido,
           id_nivel:camposFormulario.id_nivel
         }));
-      }else{
+      }else if(camposFormulario.id_nivel){
         additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_education,
         {
           id_contenido:camposFormulario.id_contenido,
@@ -344,13 +353,13 @@ class Database{
         }));
       }
 
-      if(content.id_habilidad){
+      if(content.id_habilidad && camposFormulario.id_habilidad){
         additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_habilidades+user_queries.INSERT.content_habilidades,
         {
           id_contenido:camposFormulario.id_contenido,
           id_habilidad:camposFormulario.id_habilidad
         }));
-      }else{
+      }else if(camposFormulario.id_habilidad){
         additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_habilidades,
         {
           id_contenido:camposFormulario.id_contenido,
@@ -383,6 +392,10 @@ class Database{
           additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.contentRelation,camposFormulario));
         }
       }
+
+
+
+
       additional_queries=additional_queries.join(" ");
 
       console.log(additional_queries);

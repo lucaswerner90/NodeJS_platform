@@ -9,8 +9,9 @@ class EmailMicroservice{
     console.log("[RUNNING] Email microservice");
     this._email=new EmailSender();
     seneca.add('role:email,cmd:send',(parameters,result)=>{
+      console.log("Parametersssssss");
       console.log(parameters);
-      this._email.send_email().then((data)=>{
+      this._email.send_email(parameters.data.type,parameters.data.datos_curso).then((data)=>{
         result( null, {answer:data} );
       })
       .catch((err)=>{
