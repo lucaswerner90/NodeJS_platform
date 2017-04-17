@@ -1,3 +1,8 @@
+/** @module authentication/index */
+/**
+Here we set the route to initiate the login of the user
+*/
+
 var express=require('express');
 
 // Inclusion of third-party middlewares

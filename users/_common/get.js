@@ -25,7 +25,6 @@ router.get('/user_info/id_usuario=:id_usuario',(req,res)=>{
   let user=new User(req.params.id_usuario);
   user.get_user_info().then((datos)=>{
     user.get_avatar(datos.urlAvatar).then((data)=>{
-      debugger;
       datos.urlAvatar=data;
       user._close_connections();
       user=null;

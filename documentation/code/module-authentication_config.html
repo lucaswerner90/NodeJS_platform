@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: index.js</title>
+    <title>JSDoc: Module: authentication/config</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,44 +17,135 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: index.js</h1>
+    <h1 class="page-title">Module: authentication/config</h1>
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/** @module authentication/index */
-/**
-Here we set the route to initiate the login of the user
-*/
+        
+            
+        
+    
+</header>
 
-var express=require('express');
+<article>
+    <div class="container-overview">
+    
+        
 
-// Inclusion of third-party middlewares
-var AUTHENTICATE_CORE=require('./coreFunctions');
+        
+            
 
-// Creacion de un router para la aplicacion
-var authorizationRouter = express.Router();
+    
 
+    <h4 class="name" id="module:authentication/config"><span class="type-signature"></span>module:authentication/config<span class="type-signature"></span></h4>
 
-
-
-
-// Logging or signup operation had been sent to server
-authorizationRouter.post('/login', AUTHENTICATE_CORE.emailLogin);
+    
 
 
 
+<div class="description">
+    Here we export our default config for the authentication token.
+Used to access to our API
+</div>
 
 
-// Export the authorizationRouter object to use in the app
-module.exports=authorizationRouter;
-</code></pre>
-        </article>
-    </section>
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config.js.html">config.js</a>, <a href="config.js.html#line6">line 6</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

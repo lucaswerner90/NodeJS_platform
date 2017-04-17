@@ -336,7 +336,6 @@ class User{
                   id_contenido:form['id_contenido']
                 }).then(()=>{
 
-
                   _self._microservice_client.send_email({type:"new_course",datos_curso:form}).then(()=>{
                     _self._check_course_certified(form).then((data)=>{
                       _self._close_connections();

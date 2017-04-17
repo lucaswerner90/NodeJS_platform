@@ -1,68 +1,44 @@
-/**
+/*
   MAIN FILE NODE SERVER
 */
 'use strict';
-/**
-Declare of the express's app
-*/
+// Declare of the express's app
 const express = require('express');
-/**
-Module used to apply compression to our response object
-*/
 const compression = require('compression');
-/**
-Instantiate our Express server
-*/
 const app=express();
-/**
-Load of the main configuration
-*/
 const CONFIG_SERVER=require('./CONFIG_SERVER.json');
-/**
-If the PORT var is set on our command line we use it, otherwise we use the PORT property on our config file.
-*/
 const PORT = process.env.PORT || CONFIG_SERVER.PORT;
-/**
-Inclusion of the body-parser middleware
-*/
+// Inclusion of third-party middlewares
 const BODY_PARSER=require('body-parser');
-/**
-Load the authentication routes
+/*
+  HERE IS WHERE WE CHARGE THE ROUTES THAT WE WILL USE IN THE SERVER APP
 */
+// Inclusion of the routes
 const authentication=require('./authentication/index');
 
-/**
-Load all the routes related directly with the user once they are already logged in.
-*/
+// Route related with the DB manage
+
+// Route related with the files functionality
 const user=require('./users/index');
 
 
+// Disable this to try function among the authentication - for develop purposes
 const middlewareAuthentication=require('./authentication/middleware');
 
-/**
-Run of all our microservices
-*/
+
 const microservices=require('./microservices/index');
 
 microservices.runAllServices();
 
-/**
-Set the compression of the response object for all our server.
-*/
 app.use(compression());
 
-/**
-Set the headers of our server
-*/
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin","*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
 
-/**
-Use the body-parser middleware in our app
-*/
+
 app.use(BODY_PARSER.urlencoded({
   extended: true,
   parameterLimit: 10000,
@@ -73,13 +49,8 @@ app.use(BODY_PARSER.urlencoded({
 app.use(BODY_PARSER.json({limit: '500mb'}));
 
 
-/**
-Definition of the static routes that our frontend uses.
-Furthermore we set the maxage of our static files.
-```
-const maxage_cache=86400*24*7;
-```
-*/
+// app.use(express.static('public'));
+// maxAge defined by static files:
 const maxage_cache=86400*24*7;
 
 for (let i = 0; i < CONFIG_SERVER.STATIC_ROUTES.length; i++) {

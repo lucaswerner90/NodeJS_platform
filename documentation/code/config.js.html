@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: index.js</title>
+    <title>JSDoc: Source: config.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: index.js</h1>
+    <h1 class="page-title">Source: config.js</h1>
 
     
 
@@ -26,32 +26,15 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @module authentication/index */
+            <pre class="prettyprint source linenums"><code>/** @module authentication/config */
 /**
-Here we set the route to initiate the login of the user
+Here we export our default config for the authentication token.
+Used to access to our API
 */
-
-var express=require('express');
-
-// Inclusion of third-party middlewares
-var AUTHENTICATE_CORE=require('./coreFunctions');
-
-// Creacion de un router para la aplicacion
-var authorizationRouter = express.Router();
-
-
-
-
-
-// Logging or signup operation had been sent to server
-authorizationRouter.post('/login', AUTHENTICATE_CORE.emailLogin);
-
-
-
-
-
-// Export the authorizationRouter object to use in the app
-module.exports=authorizationRouter;
+module.exports = {
+  TOKEN_SECRET: process.env.TOKEN_SECRET || "TELEFONICAEducacionDigitalNodeServerJSYReact",
+  SECURITY_ALGORITHM:'HS512'
+};
 </code></pre>
         </article>
     </section>

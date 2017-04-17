@@ -1,8 +1,12 @@
-// middleware.js
+/** @module authentication/middleware */
+/**
+Here are implemented the main functions that creates/check the web token used for the user.
+*/
 
-var jwt=require('jwt-simple');
-var moment=require('moment');
-var config=require('./config');
+
+const jwt=require('jwt-simple');
+const moment=require('moment');
+const config=require('./config');
 
 /*
 
@@ -15,7 +19,9 @@ var config=require('./config');
 
 
 
-
+/**
+This method check if the user request has the correct authorization header and the correct token
+*/
 exports.ensureAuthenticated=function(req,res,next){
 
   if(req.originalUrl.indexOf("/download/filepath=")==-1){
@@ -31,10 +37,10 @@ exports.ensureAuthenticated=function(req,res,next){
         );
     }
 
-    var token = req.headers.authorization.split(" ")[1];
-    var payload=jwt.decode(token,config.TOKEN_SECRET,config.SECURITY_ALGORITHM);
+    const token = req.headers.authorization.split(" ")[1];
+    const payload=jwt.decode(token,config.TOKEN_SECRET,config.SECURITY_ALGORITHM);
 
-    if(payload.exp<=moment().unix()){
+    if(!payload || payload.exp<=moment().unix()){
       return res
         .status(401)
         .send(
