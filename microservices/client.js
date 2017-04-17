@@ -13,8 +13,6 @@ class ClientMicroservice{
 
   send_email(data){
     const _self=this;
-    console.log("Dataaaaaaaa: ");
-    console.log(data);
     return new Promise(function(resolve, reject) {
       _self._email_client.act({ role: 'email', cmd: 'send', data:data},(error,result)=>{
         if(error) reject(error);

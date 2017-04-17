@@ -2,7 +2,8 @@
   "UPDATE":{
     "avatar":"UPDATE usuarios SET urlAvatar=[urlAvatar] WHERE id_usuario=[id_usuario];",
     "personalInfo":"UPDATE usuarios SET Nombre=[nombre],Apellidos=[apellidos],email=[email] WHERE id_usuario=[id_usuario]",
-    "password":"UPDATE usuarios SET password=[password] WHERE id_usuario=[id_usuario];"
+    "password":"UPDATE usuarios SET password=[password] WHERE id_usuario=[id_usuario];",
+    "content_licencia":"DELETE FROM licencias WHERE id_contenido=[id_contenido];"
   },
   "GET":{
     "content_servers":"Select id_servidor from relacion_contenido_servidor where id_contenido=[id_contenido];",
@@ -17,6 +18,10 @@
     "subcategorias":"select id_subcategoria,descripcion from subcategorias where id_estado=1 and id_categoria=[id_categoria];",
     "content_categorias_subcategorias":"select id_subcategoria,id_categoria from relacion_contenido_categorias_subcategorias where id_contenido=[id_contenido];",
     "content_recursos":"select id_contenido,id_recurso from relacion_contenidos_recursos WHERE id_contenido=[id_contenido];",
-    "content_catalogo":"select id_contenido,url_image,id_pais,titulo,rutaEjecucion,(select id_tecnologia from relacion_contenidos_tecnologias rel where rel.id_contenido=c.id_contenido) as id_tecnologia from contenidos c where catalogo_ted=1;"
+    "content_catalogo":"select id_contenido,url_image,id_pais,titulo,rutaEjecucion,(select id_tecnologia from relacion_contenidos_tecnologias rel where rel.id_contenido=c.id_contenido) as id_tecnologia from contenidos c where catalogo_ted=1;",
+    "course_certified":"select count(*) from resultado_certificacion_contenido where id_contenido=[id_contenido] and id_estado=1 union select count(*) as validadas from resultado_certificacion_contenido where id_contenido=[id_contenido] and valor=(select id_valor from valorestablacertificacion where descripcion='Certificado') and id_estado=1;"
+  },
+  "INSERT":{
+    "content_licencia":"INSERT INTO licencias SET id_contenido=[id_contenido],fecha_inicio=[fecha_inicio],fecha_fin=[fecha_fin],numero_licencias=[numero_licencias];"
   }
 }

@@ -97,7 +97,7 @@ router.post('/contents',(req,res)=>{
 
 
 router.get('/download/filepath=:filepath',(req,res)=>{
-  if(req.headers && req.headers.referer && req.headers.referer.indexOf('editar-contenido?index')>-1){
+  if(req.headers && req.headers.referer && req.headers.referer.indexOf('editar-contenido')>-1){
     let user=new User();
     user.download_zip(req.params.filepath,res);
     user=null;

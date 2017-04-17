@@ -20,7 +20,7 @@
   "fileUpload":{
     "directory":".",
     "extensionsAllowed":[
-      "zip", ""
+      "zip"
     ]
   },
   "avatarUpload":{

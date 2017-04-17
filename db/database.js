@@ -40,7 +40,10 @@ class Database{
     // });
   }
 
-
+  _replace_characters(cadena){
+    const regex = /[\[\^{}`*+\\=º;"\]]+/g;
+    return cadena.toString().replace(regex, "");
+  }
 
   _create_search_query(query,obj){
     let index=0;
@@ -62,13 +65,14 @@ class Database{
 
 
   _replace_variables_on_query(queries,obj){
+    const _self=this;
     let query_parsed=[];
     queries=queries.toString().split(";");
     for (let i = 0; i < queries.length; i++) {
       let query=queries[i];
       for(const prop in obj) {
         if (obj.hasOwnProperty(prop)){
-          query=(obj[prop]===null)?query:query.split(`[${prop}]`).join((isNaN(obj[prop]) && prop!=="multiple_insert_query")?`"${obj[prop]}"`:`${obj[prop]}`);
+          query=(obj[prop]===null)?query:query.split(`[${prop}]`).join((isNaN(obj[prop]) && prop!=="multiple_insert_query")?`"${_self._replace_characters(obj[prop])}"`:`${obj[prop]}`);
         }
       }
       query_parsed.push(query);
@@ -200,6 +204,13 @@ class Database{
             }));
           }
 
+          // Campos licencia en el contenido
+          if(camposFormulario.licencia==1){
+            camposFormulario['fecha_fin']=new Date(camposFormulario['fecha_fin']).toISOString().slice(0, 19).replace('T', ' ');
+            camposFormulario['fecha_inicio']=new Date(camposFormulario['fecha_inicio']).toISOString().slice(0, 19).replace('T', ' ');
+            additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_licencia,camposFormulario));
+          }
+
           if(camposFormulario.recursos.length>0){
             additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_recursos,
             {
@@ -275,7 +286,6 @@ class Database{
       camposFormulario["participantes"]=(camposFormulario.participantes)?camposFormulario.participantes:"Notas por defecto";
       camposFormulario["notas_contenidos"]=(camposFormulario.notas_contenidos)?camposFormulario.notas_contenidos:"Notas por defecto";
       camposFormulario['fecha_publicacion']=(new Date()).toISOString().substring(0, 19).replace('T', ' ');
-
       additional_queries.push(_self._replace_variables_on_query((update_file)?user_queries.UPDATE.content:user_queries.UPDATE.contentNoFile,camposFormulario));
 
       if(camposFormulario.recursos.length>0){
@@ -291,7 +301,18 @@ class Database{
 
       }
 
+      // Campos licencia en el contenido
+      if(camposFormulario.licencia==1){
 
+        camposFormulario['fecha_fin']=new Date(camposFormulario['fecha_fin']).toISOString().slice(0, 19).replace('T', ' ');
+        debugger;
+        camposFormulario['fecha_inicio']=new Date(camposFormulario['fecha_inicio']).toISOString().slice(0, 19).replace('T', ' ');
+
+        if(content.licencia==1){
+          additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_licencia,{id_contenido:camposFormulario.id_contenido}));
+        }
+        additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_licencia,camposFormulario));
+      }
 
       if(camposFormulario.table_platforms.length>0){
 

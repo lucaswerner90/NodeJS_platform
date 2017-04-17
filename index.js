@@ -1,19 +1,28 @@
 const spawn = require('child_process').spawn;
 
+/**
+Class used to init the server as a microservice itself
+*/
 class ServerStart {
 
-
+  /**
+  @constructor
+  */
   constructor() {
   }
 
-
+  /**
+  Method that runs our server as a microservice
+  */
   runAllServices(){
     const _self=this;
     _self._startProcess('./server.js');
   }
 
 
-
+  /**
+  @param {String} file - Route to the file that we want to instantiate as a separate service.
+  */
   _startProcess(file){
     let bat = spawn('node',[file]);
 
@@ -35,5 +44,7 @@ class ServerStart {
     });
   }
 }
-
+/**
+Line that runs the object {ServerStart} 
+*/
 new ServerStart().runAllServices();

@@ -92,13 +92,8 @@ router.post('/avatar',(req,res)=>{
 
       user.modify_avatar(formulario._campos,formulario._campos["avatarImage"]).then(()=>{
         select_user=null;
-        user._db_connection._close_connection();
+        user._close_connections();
         res.send({status:true});
-      })
-      .catch((err)=>{
-        select_user=null;
-        user._db_connection._close_connection();
-        res.send({error:err});
       });
     })
     .catch((err)=>{

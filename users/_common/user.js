@@ -151,6 +151,31 @@ class User{
 
 
   }
+
+  _check_course_certified(form){
+    const _self=this;
+    return new Promise(function(resolve, reject) {
+      _self._db_connection.sendQuery(_self._common_queries.GET.course_certified,{id_contenido:form.id_contenido}).then((data)=>{
+
+        if(data[0]["count(*)"]>0 && data[1]["count(*)"]>0 &&
+        data[0]["count(*)"]-data[1]["count(*)"]===0){
+          // Send email of confirmation
+          _self._microservice_client.send_email({type:"course_certified",datos_curso:form}).then(()=>{
+            resolve(true);
+          })
+          .catch((error)=>{
+            reject(error);
+          })
+        }
+      })
+      .catch((error)=>{
+        reject(error);
+      });
+    });
+
+  }
+
+
   get_catalogo(){
     const _self=this;
     return new Promise(function(resolve, reject) {
@@ -234,18 +259,16 @@ class User{
     return new Promise((resolve,reject)=>{
 
       _self._file.uploadContentFile(file,form,_self._file._config.avatarUpload.directory,_self._file._config.avatarUpload.extensionsAllowed,true).then(()=>{
-        _self._close_connections();
-      });
-      _self._db_connection.sendQuery(_self._common_queries.UPDATE.avatar,form).then(()=>{
-
-        _self._id_usuario=form.id_usuario;
-        _self._logOnDB("user.modify_avatar");
-
-        resolve(true);
+        _self._db_connection.sendQuery(_self._common_queries.UPDATE.avatar,form).then(()=>{
+          _self._id_usuario=form.id_usuario;
+          _self._logOnDB("user.modify_avatar");
+          resolve(true);
+        })
       })
       .catch((err)=>{
         reject(err);
       });
+
     });
   }
 
@@ -314,10 +337,20 @@ class User{
                 }).then(()=>{
 
 
-                  _self._microservice_client.send_email({type:"new_course",datos_curso:form});
+                  _self._microservice_client.send_email({type:"new_course",datos_curso:form}).then(()=>{
+                    _self._check_course_certified(form).then((data)=>{
+                      _self._close_connections();
+                    })
+                    .catch((error)=>{
+                      _self._close_connections();
+                    });
+                  })
+                  .catch((error)=>{
+                    console.error(error);
+                    _self._close_connections();
+                  })
 
 
-                  _self._close_connections();
                 })
                 .catch((err)=>{
                   console.log(err);
