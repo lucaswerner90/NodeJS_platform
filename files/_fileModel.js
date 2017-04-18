@@ -91,6 +91,9 @@ class File{
         // Create the readableStream to upload the file physically
         readableStream = fs.createReadStream(file.path);
         _self._ftp.uploadFile(readableStream,ruta_file).then(()=>{
+          if(!avatar){
+            formFields["ruta_zip"]=_self._fileRoute("zip",formFields,_self._ftp._configuration.ftpConnection.equivalent_url,newFilename);
+          }
           removeVariables();
           resolve(true);
         })
@@ -134,9 +137,7 @@ class File{
     const _self=this;
     _self._ftp.downloadFile(filepath).then((data)=>{
 
-
         response.attachment(filepath);
-
         // We pipe the file throught the readableStream object to the response
         data.pipe(response).on("end",function(){
           _self._ftp._FTPDisconnect();

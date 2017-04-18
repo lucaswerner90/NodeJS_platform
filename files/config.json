@@ -5,8 +5,6 @@
     "user":"lucas",
     "port":21,
     "password":"ted01",
-    "debug":true,
-    "pasvTimeout":0,
     "equivalent_url":"certificacion.telefonicalearningservices.com/cursosamas/Educaterra/FACTORIA/lucas",
     "uploadsDirectory":"uploads/"
   },

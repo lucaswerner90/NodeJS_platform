@@ -225,7 +225,6 @@ class FTPModel{
       // Once the connection is established
       // We look for the files/dirs inside the specified filepath
       _self._ftp.list(PATH.dirname(rutaFile),function(err, list) {
-
         // If there is an error listing on the FTP we reject the promise
         if(err) {
           _self._FTPDisconnect();
@@ -251,6 +250,10 @@ class FTPModel{
             fileStream.once("error",()=>{
               _self._FTPDisconnect();
               reject(`Error transmitting the file...`);
+            });
+
+            fileStream.once("data",(chunk)=>{
+              console.log(chunk);
             });
 
             // We returned a readableStream to pass it to the response
