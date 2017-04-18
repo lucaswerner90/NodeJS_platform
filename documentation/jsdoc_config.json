@@ -1,0 +1,25 @@
+{
+  "tags": {
+    "allowUnknownTags": true
+  },
+  "source": {
+    "include":[
+      "./users",
+      "./users/_common",
+      "./authentication",
+      "./db",
+      "./email",
+      "./files",
+      "./microservices"
+    ],
+    "excludePattern": "node_modules"
+  },
+  "plugins": [],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false,
+    "default": {
+      "outputSourceFiles": true
+    }
+  }
+}

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>users/_common/user.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/*Class that defines the basic behaviour of every user.html">*Class that defines the basic behaviour of every user</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/authentication_config.html">authentication/config</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: users/_common/user.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+&quot;use strict&quot;;
+
+const Database=require(&#x27;../../db/database&#x27;);
+const File=require(&#x27;../../files/_fileModel&#x27;);
+const DBCommonQueries=require(&#x27;../../db/queries/user/_common.json&#x27;);
+const ClientMicroservice=require(&#x27;../../microservices/client&#x27;);
+
+/**
+@class
+*Class that defines the basic behaviour of every user
+*/
+class User{
+
+ /**
+ @constructor
+ @param {number} id_usuario - User ID
+ @param {object} queries - User&#x27;s profile queries
+ */
+  constructor(id_usuario=-1,queries){
+
+    this._id_usuario=parseInt(id_usuario);
+    this._db_connection=new Database();
+    this._file=new File();
+    this._profile_queries=queries;
+    this._common_queries=DBCommonQueries;
+    this._microservice_client=new ClientMicroservice();
+  }
+
+
+  _logOnDB(){
+
+  }
+
+  /**
+  Close the connections associated to the user
+  @return {null}
+  */
+  _close_connections(){
+    const _self=this;
+    _self._db_connection._close_connection();
+    _self._file._close_connection();
+
+  }
+
+  /**
+  Returns the role associated to a specific user ID
+  @return {Promise}
+  */
+  _get_type_of_user(){
+
+    const _self=this;
+
+    if(_self._id_usuario===-1) return &quot;Administrador&quot;;
+
+    return new Promise((resolve,reject)=&gt;{
+      _self.get_user_info().then((result)=&gt;{
+        _self._db_connection.sendQuery(_self._common_queries.GET.type_of_user,{
+          id_perfil:result.id_perfil}
+        ).then((data)=&gt;{
+          resolve(data[0].descripcion);
+        })
+        .catch((err)=&gt;{
+          reject(err);
+        });
+      })
+      .catch((err)=&gt;{
+        reject(err);
+      });
+    });
+  }
+
+  /**
+  Download the zip file associated to every content
+  @param {string} filename - Route of the file to download
+  @param {Response} response - The server response to associate the Buffer of the file to download
+  */
+  download_zip(filename,response){
+    const _self=this;
+    _self._file.downloadFile(filename,response);
+  }
+
+
+  /**
+  Returns the info relative to each user (name,provider,etc...)
+  @return {Promise}
+  */
+  get_user_info(){
+
+    const _self=this;
+    return new Promise((resolve,reject)=&gt;{
+      _self._db_connection.sendQuery(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=&gt;{
+        resolve(data[0]);
+      })
+      .catch((err)=&gt;{
+        reject(err);
+      });
+    });
+  }
+
+  /***
+  Returns basic info of the user to be used once the user is already logged
+  @param {object} params - Contains the user_id that comes from the form
+  @return {Promise}
+  */
+  get_login_info(params){
+    let _self=this;
+    return new Promise(function(resolve, reject) {
+
+      _self._db_connection.sendQuery(_self._common_queries.GET.login_info,params).then((rows)=&gt;{
+        if(rows.length===0){
+          // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
+          // indicando que no esta autorizado y el token como null.
+          reject({token:null});
+        }else{
+          if(rows[0].urlAvatar!==null){
+            _self._file.downloadImageInBase64(rows[0].urlAvatar).then((data)=&gt;{
+              rows[0].imgAvatar=data;
+              resolve({userInfo:rows[0]});
+
+            })
+            .catch((err)=&gt;{
+              reject(err);
+            });
+          }else{
+            // Si el usuario se encuentra dentro del sistema de la base de datos entonces
+            // devolvemos el token que usará para mantener la sesion en la plataforma
+            resolve({userInfo:rows[0]});
+          }
+
+        }
+      });
+    });
+
+  }
+
+  /**
+  Returns the extended content info that is used on the edit content page
+  @param {number} id_contenido - ID of the content
+  @return {Promise}
+  */
+  get_content_by_id(id_contenido){
+    const _self=this;
+    return new Promise((resolve,reject)=&gt;{
+      let arrayPromises=[];
+      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_id,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.tableOfCompatibilities,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_platforms,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_servers,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_recursos,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_categorias_subcategorias,{id_contenido:id_contenido}));
+
+
+      Promise.all(arrayPromises).then((values)=&gt;{
+        let content=values[0][0];
+        content.compatibilities_table=values[1];
+        content.platforms=values[2];
+        content.servidores_contenidos=values[3];
+        content.recursos=values[4];
+        content.categorias=values[5];
+
+        resolve(content);
+
+
+      }).catch((error)=&gt;{
+        reject(error);
+      });
+
+    });
+  }
+
+  /**
+  Returns all the contents associated to a provider
+  @return {Promise}
+  */
+  get_contents(){
+    const _self=this;
+    return new Promise((resolve,reject)=&gt;{
+      _self.get_user_info().then((result)=&gt;{
+        _self._db_connection.sendQuery(_self._profile_queries.GET.contents_proveedor,result).then((data)=&gt;{
+          resolve(data);
+        })
+        .catch((err)=&gt;{
+          reject(err);
+        });
+      })
+      .catch((err)=&gt;{
+        reject(err);
+      });
+    });
+
+
+  }
+
+
+  /**
+  Check if one course is completely certified
+  @param {Form} form - Form that contains the info of the content to be checked
+  @return {Promise}
+  */
+  _check_course_certified(form){
+    const _self=this;
+    return new Promise(function(resolve, reject) {
+      _self._db_connection.sendQuery(_self._common_queries.GET.course_certified,{id_contenido:form.id_contenido}).then((data)=&gt;{
+
+        if(data[0][&quot;count(*)&quot;]&gt;0 &amp;&amp; data[1][&quot;count(*)&quot;]&gt;0 &amp;&amp;
+        data[0][&quot;count(*)&quot;]-data[1][&quot;count(*)&quot;]===0){
+          // Send email of confirmation
+          _self._microservice_client.send_email({type:&quot;course_certified&quot;,datos_curso:form}).then(()=&gt;{
+            resolve(true);
+          });
+        }
+      })
+      .catch((error)=&gt;{
+        reject(error);
+      });
+    });
+
+  }
+
+  /**
+  Returns all the contents associated to the catalog
+  @return {Promise}
+  */
+  get_catalogo(){
+    const _self=this;
+    return new Promise(function(resolve, reject) {
+      _self._db_connection.sendQuery(_self._common_queries.GET.content_catalogo).then((data)=&gt;{
+        resolve(data);
+      })
+      .catch((error)=&gt;{
+        reject(error);
+      });
+    });
+  }
+
+
+  /**
+  Loads all the generic info relative to the application
+  @return {Promise}
+  */
+  get_platform_generic_info(){
+    const _self=this;
+    return new Promise((resolve,reject)=&gt;{
+      _self._db_connection.sendQuery(_self._profile_queries.GET.generic_information,null).then((data)=&gt;{
+
+        let generic_info={
+          platforms:data[0],
+          evaluationSystems:data[1],
+          contentTypes:data[2],
+          states:data[3],
+          tabla_compatibilidades:data[4],
+          educationLevels:data[5],
+          exploitedRights:data[6],
+          tipoProveedores:data[7],
+          proyectos:data[8],
+          idiomas:data[9],
+          puntos_control:data[10],
+          valores_certificacion:data[11],
+          tecnologias:data[12],
+          tipo_desarrollo:data[13],
+          servidores_contenidos:data[14],
+          proveedores:data[15],
+          categorias:data[16],
+          habilidades:data[17],
+          recursos:data[18]
+        };
+        let arrayPromisesSubcategories=[];
+        for (let i = 0; i &lt; generic_info.categorias.length; i++) {
+          arrayPromisesSubcategories[i]=_self._db_connection.sendQuery(_self._common_queries.GET.subcategorias,generic_info.categorias[i]);
+        }
+        Promise.all(arrayPromisesSubcategories).then((values)=&gt;{
+          for (let i = 0; i &lt; generic_info.categorias.length; i++) {
+            generic_info.categorias[i].subcategorias=values[i];
+          }
+          _self._close_connections();
+          resolve(generic_info);
+        })
+        .catch((err)=&gt;{
+          reject(err);
+        });
+
+      })
+      .catch((err)=&gt;{
+        reject(err);
+      });
+    });
+  }
+
+
+  /**
+  Returns the user&#x27;s avatar using base64 codification
+  @param {string} filename - Route of the avatar on the FTP
+  @return {Promise}
+  */
+  get_avatar(filename){
+    const _self=this;
+    return new Promise((resolve,reject)=&gt;{
+      _self._file.downloadImageInBase64(filename).then((data)=&gt;{
+        resolve(data);
+      })
+      .catch((err)=&gt;{
+        reject(err);
+      });
+    });
+
+  }
+
+  /**
+  Method used to modify the user avatar
+  @param {Form} form - Form that contains all the user info
+  @param {File} file - File to be upload
+  @return {Promise}
+  */
+  modify_avatar(form,file){
+
+    const _self=this;
+
+    return new Promise((resolve,reject)=&gt;{
+
+      _self._file.uploadContentFile(file,form,_self._file._config.avatarUpload.directory,_self._file._config.avatarUpload.extensionsAllowed,true).then(()=&gt;{
+        _self._db_connection.sendQuery(_self._common_queries.UPDATE.avatar,form).then(()=&gt;{
+          _self._id_usuario=form.id_usuario;
+          _self._logOnDB(&quot;user.modify_avatar&quot;);
+          resolve(true);
+        });
+      })
+      .catch((err)=&gt;{
+        reject(err);
+      });
+
+    });
+  }
+
+
+  /**
+  Method used to modify the personal info of the user
+  @param {object} form - Form that contains all the user info
+  @return {Promise}
+  */
+  modify_personal_info(form){
+    const _self=this;
+
+    return new Promise((resolve,reject)=&gt;{
+      _self._db_connection.sendQuery(_self._common_queries.UPDATE.personalInfo,form).then(()=&gt;{
+        _self._logOnDB(&quot;user.modify_info&quot;);
+        _self._close_connections();
+        resolve(true);
+      })
+      .catch((err)=&gt;{
+        reject(err);
+      });
+    });
+  }
+
+  /**
+  Method used to modify the password of the user
+  @param {object} fields - Form that contains all the user info
+  @return {Promise}
+  */
+  modify_password(fields){
+
+    const _self=this;
+
+    return new Promise((resolve,reject)=&gt;{
+      _self._db_connection.sendQuery(_self._common_queries.UPDATE.password,fields).then(()=&gt;{
+
+        _self._logOnDB(&quot;user.modify_password&quot;);
+        resolve(true);
+      })
+      .catch((err)=&gt;{
+        reject(err);
+      });
+    });
+  }
+
+  /**
+  IMPORTANT! This method creates a new course on the platform.
+  @param {Form} form - Form that contains all the info of the new course, among the
+  @return {Promise}
+  */
+  create_course(form){
+
+    const _self=this;
+    console.log(form);
+    return new Promise((resolve,reject)=&gt;{
+
+      form[&quot;multiple_insert_query&quot;]=eval(&quot;[&quot;+ form.tableTechnologies +&quot;]&quot;);
+      form[&quot;table_platforms&quot;]=eval(&quot;[&quot;+ form.tablePlatforms +&quot;]&quot;);
+      form[&quot;servidores_contenidos&quot;]=form[&#x27;tableServCont&#x27;]?eval(&quot;[&quot;+form[&#x27;tableServCont&#x27;]+&quot;]&quot;):eval(&quot;[]&quot;);
+      form[&quot;recursos&quot;]=eval(&quot;[&quot;+form[&quot;tableRecursos&quot;]+&quot;]&quot;);
+
+
+      _self._db_connection.sendQuery(_self._common_queries.GET.info_proveedor,form).then((data)=&gt;{
+
+
+        form[&#x27;carpeta_proveedor&#x27;]=data[0].carpeta_proveedor;
+        _self._file.uploadContentFile(form[&#x27;file_to_upload&#x27;],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=&gt;{
+          console.log(&quot;[*] Adding new content.....&quot;);
+          _self._db_connection.insert_new_content(form,_self._profile_queries).then(()=&gt;{
+
+            console.log(&quot;[*] EXTRACTING ZIP....&quot;);
+            _self._file._ftp.extractZIP(form[&#x27;file_to_upload&#x27;],form[&#x27;ruta_zip&#x27;]).then((data)=&gt;{
+              if(data){
+                form[&#x27;rutaEjecucion&#x27;]=data;
+                _self._db_connection.sendQuery(_self._profile_queries.UPDATE.rutaEjecucion,{
+                  rutaEjecucion:&quot;http://&quot;+form[&#x27;rutaEjecucion&#x27;],
+                  id_contenido:form[&#x27;id_contenido&#x27;]
+                }).then(()=&gt;{
+
+                  _self._microservice_client.send_email({type:&quot;new_course&quot;,datos_curso:form}).then(()=&gt;{
+                    _self._check_course_certified(form).then(()=&gt;{
+                      _self._close_connections();
+                    })
+                    .catch(()=&gt;{
+                      _self._close_connections();
+                    });
+                  })
+                  .catch((error)=&gt;{
+                    console.error(error);
+                    _self._close_connections();
+                  });
+
+
+                })
+                .catch((err)=&gt;{
+                  console.log(err);
+                  _self._close_connections();
+                });
+              }
+
+
+
+            })
+            .catch((err)=&gt;{
+              console.error(&quot;*****  ERROR EXTRACTING ZIP  *****&quot;);
+              console.error(err);
+            });
+
+            resolve(true);
+
+          })
+          .catch((err)=&gt;{
+            reject(err);
+          });
+        })
+        .catch((err)=&gt;{
+          reject(err);
+        });
+      })
+      .catch((err)=&gt;{
+        reject(err);
+      });
+
+
+    });
+  }
+
+
+
+  modify_course(form){
+
+    const _self=this;
+
+    return new Promise((resolve,reject)=&gt;{
+      // Once the form is parsed, we call the &quot;close&quot; function to send back the response
+
+      form[&quot;fecha_alta&quot;]=_self._file._returnActualDate();
+      form[&quot;multiple_insert_query&quot;]=eval(&quot;[&quot;+ form.tableTechnologies +&quot;]&quot;);
+      form[&quot;table_platforms&quot;]=eval(&quot;[&quot;+ form.tablePlatforms +&quot;]&quot;);
+      form[&quot;servidores_contenidos&quot;]=form[&#x27;tableServCont&#x27;]?eval(&quot;[&quot;+form[&#x27;tableServCont&#x27;]+&quot;]&quot;):eval(&quot;[]&quot;);
+      form[&quot;recursos&quot;]=eval(&quot;[&quot;+form[&quot;tableRecursos&quot;]+&quot;]&quot;);
+
+      _self._db_connection.sendQuery(_self._common_queries.GET.info_proveedor,form).then((data)=&gt;{
+        form[&quot;carpeta_proveedor&quot;]=data[0].carpeta_proveedor;
+        // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
+        _self.get_content_by_id(form[&quot;id_contenido&quot;]).then((content)=&gt;{
+          if(form[&#x27;file_to_upload&#x27;]){
+            _self._file.uploadContentFile(form[&#x27;file_to_upload&#x27;],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=&gt;{
+                _self._db_connection.update_content(content,_self._profile_queries,form,true).then(()=&gt;{
+
+                  _self._file._ftp.extractZIP(form[&#x27;file_to_upload&#x27;],form[&#x27;ruta_zip&#x27;]).then((data)=&gt;{
+                    if(data){
+                      form[&#x27;rutaEjecucion&#x27;]=data;
+                      _self._db_connection.sendQuery(_self._profile_queries.UPDATE.rutaEjecucion,{
+                        rutaEjecucion:&quot;http://&quot;+form[&#x27;rutaEjecucion&#x27;],
+                        id_contenido:form[&#x27;id_contenido&#x27;]
+                      }).then(()=&gt;{
+
+                        _self._microservice_client.send_email(&quot;upload_course&quot;);
+
+                        _self._db_connection._close_connection();
+                      })
+                      .catch((err)=&gt;{
+                        console.log(err);
+                      });
+                    }
+                    console.log(&quot;ZIP EXTRACTED CORRECTLY....&quot;);
+
+                  })
+                  .catch((err)=&gt;{
+                    console.error(&quot;*****  ERROR EXTRACTING ZIP  *****&quot;);
+                    console.error(err);
+                  });
+                  resolve(true);
+
+                })
+                .catch((err)=&gt;{
+                  reject(err);
+                });
+
+            })
+            .catch((err)=&gt;{
+              reject(err);
+            });
+          }else{
+            // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
+            _self._db_connection.update_content(content,_self._profile_queries,form).then(()=&gt;{
+
+              resolve(true);
+            })
+            .catch((err)=&gt;{
+              reject(err);
+            });
+          }
+        })
+        .catch((error)=&gt;{
+          reject(error);
+        });
+
+      })
+      .catch((err)=&gt;{
+        reject(err);
+      });
+
+
+    });
+
+  }
+
+
+  //END OF THE USER CLASS --&gt; DONT TOUCH THE BRACKET
+}
+module.exports=User;
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

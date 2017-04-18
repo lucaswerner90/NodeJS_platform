@@ -1,5 +1,7 @@
-/** @module authentication/config */
 /**
+@module authentication/config
+*/
+/*
 Here we export our default config for the authentication token.
 Used to access to our API
 */

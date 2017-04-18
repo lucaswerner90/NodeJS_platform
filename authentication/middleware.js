@@ -8,19 +8,13 @@ const jwt=require('jwt-simple');
 const moment=require('moment');
 const config=require('./config');
 
-/*
-
-  En este fichero lo que se hace es detectar si el usuario está logueado:
-
-  -Si esta logueado se pasa directamente a la siguiente funcion que maneja el server
-  -Si no está logueado se manda una respuesta al servidor informandop de que no está logueado y se corta la pila de llamadas
-
-*/
-
 
 
 /**
 This method check if the user request has the correct authorization header and the correct token
+@param {Request} req
+@param {Response} res
+@param {Function} next
 */
 exports.ensureAuthenticated=function(req,res,next){
 

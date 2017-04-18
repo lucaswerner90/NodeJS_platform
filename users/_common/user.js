@@ -1,15 +1,22 @@
 "use strict";
 
-
 const Database=require('../../db/database');
 const File=require('../../files/_fileModel');
 const DBCommonQueries=require('../../db/queries/user/_common.json');
 const ClientMicroservice=require('../../microservices/client');
 
+/**
+@class
+*/
 class User{
 
-
+ /**
+ @constructor
+ @param {number} id_usuario - User ID
+ @param {object} queries - User's profile queries
+ */
   constructor(id_usuario=-1,queries){
+
     this._id_usuario=parseInt(id_usuario);
     this._db_connection=new Database();
     this._file=new File();
@@ -23,7 +30,10 @@ class User{
 
   }
 
-
+  /**
+  Close the connections associated to the user
+  @return {null}
+  */
   _close_connections(){
     const _self=this;
     _self._db_connection._close_connection();
@@ -31,7 +41,10 @@ class User{
 
   }
 
-
+  /**
+  Returns the role associated to a specific user ID
+  @return {Promise}
+  */
   _get_type_of_user(){
 
     const _self=this;
@@ -55,11 +68,21 @@ class User{
     });
   }
 
+  /**
+  Download the zip file associated to every content
+  @param {string} filename - Route of the file to download
+  @param {Response} response - The server response to associate the Buffer of the file to download
+  */
   download_zip(filename,response){
     const _self=this;
     _self._file.downloadFile(filename,response);
   }
 
+
+  /**
+  Returns the info relative to each user (name,provider,etc...)
+  @return {Promise}
+  */
   get_user_info(){
 
     const _self=this;
@@ -73,6 +96,11 @@ class User{
     });
   }
 
+  /***
+  Returns basic info of the user to be used once the user is already logged
+  @param {object} params - Contains the user_id that comes from the form
+  @return {Promise}
+  */
   get_login_info(params){
     let _self=this;
     return new Promise(function(resolve, reject) {
@@ -103,6 +131,12 @@ class User{
     });
 
   }
+
+  /**
+  Returns the extended content info that is used on the edit content page
+  @param {number} id_contenido - ID of the content
+  @return {Promise}
+  */
   get_content_by_id(id_contenido){
     const _self=this;
     return new Promise((resolve,reject)=>{
@@ -133,6 +167,10 @@ class User{
     });
   }
 
+  /**
+  Returns all the contents associated to a provider
+  @return {Promise}
+  */
   get_contents(){
     const _self=this;
     return new Promise((resolve,reject)=>{
@@ -152,6 +190,12 @@ class User{
 
   }
 
+
+  /**
+  Check if one course is completely certified
+  @param {Form} form - Form that contains the info of the content to be checked
+  @return {Promise}
+  */
   _check_course_certified(form){
     const _self=this;
     return new Promise(function(resolve, reject) {
@@ -162,10 +206,7 @@ class User{
           // Send email of confirmation
           _self._microservice_client.send_email({type:"course_certified",datos_curso:form}).then(()=>{
             resolve(true);
-          })
-          .catch((error)=>{
-            reject(error);
-          })
+          });
         }
       })
       .catch((error)=>{
@@ -175,7 +216,10 @@ class User{
 
   }
 
-
+  /**
+  Returns all the contents associated to the catalog
+  @return {Promise}
+  */
   get_catalogo(){
     const _self=this;
     return new Promise(function(resolve, reject) {
@@ -188,6 +232,11 @@ class User{
     });
   }
 
+
+  /**
+  Loads all the generic info relative to the application
+  @return {Promise}
+  */
   get_platform_generic_info(){
     const _self=this;
     return new Promise((resolve,reject)=>{
@@ -237,7 +286,11 @@ class User{
   }
 
 
-
+  /**
+  Returns the user's avatar using base64 codification
+  @param {string} filename - Route of the avatar on the FTP
+  @return {Promise}
+  */
   get_avatar(filename){
     const _self=this;
     return new Promise((resolve,reject)=>{
@@ -251,7 +304,12 @@ class User{
 
   }
 
-
+  /**
+  Method used to modify the user avatar
+  @param {Form} form - Form that contains all the user info
+  @param {File} file - File to be upload
+  @return {Promise}
+  */
   modify_avatar(form,file){
 
     const _self=this;
@@ -263,7 +321,7 @@ class User{
           _self._id_usuario=form.id_usuario;
           _self._logOnDB("user.modify_avatar");
           resolve(true);
-        })
+        });
       })
       .catch((err)=>{
         reject(err);
@@ -273,7 +331,11 @@ class User{
   }
 
 
-
+  /**
+  Method used to modify the personal info of the user
+  @param {object} form - Form that contains all the user info
+  @return {Promise}
+  */
   modify_personal_info(form){
     const _self=this;
 
@@ -289,7 +351,11 @@ class User{
     });
   }
 
-
+  /**
+  Method used to modify the password of the user
+  @param {object} fields - Form that contains all the user info
+  @return {Promise}
+  */
   modify_password(fields){
 
     const _self=this;
@@ -306,7 +372,11 @@ class User{
     });
   }
 
-
+  /**
+  IMPORTANT! This method creates a new course on the platform.
+  @param {Form} form - Form that contains all the info of the new course, among the
+  @return {Promise}
+  */
   create_course(form){
 
     const _self=this;
@@ -337,17 +407,17 @@ class User{
                 }).then(()=>{
 
                   _self._microservice_client.send_email({type:"new_course",datos_curso:form}).then(()=>{
-                    _self._check_course_certified(form).then((data)=>{
+                    _self._check_course_certified(form).then(()=>{
                       _self._close_connections();
                     })
-                    .catch((error)=>{
+                    .catch(()=>{
                       _self._close_connections();
                     });
                   })
                   .catch((error)=>{
                     console.error(error);
                     _self._close_connections();
-                  })
+                  });
 
 
                 })
@@ -469,7 +539,4 @@ class User{
 
   //END OF THE USER CLASS --> DONT TOUCH THE BRACKET
 }
-
-
-
 module.exports=User;

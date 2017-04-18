@@ -1,0 +1,710 @@
+{
+    "project": {},
+    "files": {
+        "authentication/config.js": {
+            "name": "authentication/config.js",
+            "modules": {
+                "authentication/config": 1
+            },
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "authentication/coreFunctions.js": {
+            "name": "authentication/coreFunctions.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "authentication/index.js": {
+            "name": "authentication/index.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "authentication/middleware.js": {
+            "name": "authentication/middleware.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "files/index.js": {
+            "name": "files/index.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "public/gulpfile.babel.js": {
+            "name": "public/gulpfile.babel.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "users/_common/user.js": {
+            "name": "users/_common/user.js",
+            "modules": {},
+            "classes": {
+                "*Class that defines the basic behaviour of every user": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "index.js": {
+            "name": "index.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "authentication/config": {
+            "name": "authentication/config",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "*Class that defines the basic behaviour of every user": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "users/_common/user.js",
+            "line": 8
+        }
+    },
+    "classes": {
+        "*Class that defines the basic behaviour of every user": {
+            "name": "*Class that defines the basic behaviour of every user",
+            "shortname": "*Class that defines the basic behaviour of every user",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "authentication/config",
+            "namespace": "",
+            "file": "users/_common/user.js",
+            "line": 8
+        }
+    },
+    "elements": {},
+    "classitems": [
+        {
+            "file": "authentication/coreFunctions.js",
+            "line": 1,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "authentication/coreFunctions.js",
+            "line": 3,
+            "description": "Import of the client part of the microservice which calls the microservices of the server",
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "authentication/index.js",
+            "line": 1,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "authentication/index.js",
+            "line": 8,
+            "description": "Creation of the router",
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "authentication/index.js",
+            "line": 17,
+            "description": "Logging or signup operation had been sent to server",
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "authentication/middleware.js",
+            "line": 1,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "authentication/middleware.js",
+            "line": 2,
+            "description": "Here are implemented the main functions that creates/check the web token used for the user.",
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "authentication/middleware.js",
+            "line": 13,
+            "description": "This method check if the user request has the correct authorization header and the correct token",
+            "params": [
+                {
+                    "name": "req",
+                    "description": "",
+                    "type": "Request"
+                },
+                {
+                    "name": "res",
+                    "description": "",
+                    "type": "Response"
+                },
+                {
+                    "name": "next",
+                    "description": "",
+                    "type": "Function"
+                }
+            ],
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "files/index.js",
+            "line": 18,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "files/index.js",
+            "line": 19,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "files/index.js",
+            "line": 22,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "public/gulpfile.babel.js",
+            "line": 30,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "public/gulpfile.babel.js",
+            "line": 32,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "public/gulpfile.babel.js",
+            "line": 44,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "public/gulpfile.babel.js",
+            "line": 46,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "public/gulpfile.babel.js",
+            "line": 63,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "public/gulpfile.babel.js",
+            "line": 65,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "public/gulpfile.babel.js",
+            "line": 79,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "public/gulpfile.babel.js",
+            "line": 81,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "public/gulpfile.babel.js",
+            "line": 87,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "public/gulpfile.babel.js",
+            "line": 89,
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 14,
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "id_usuario",
+                    "description": "- User ID",
+                    "type": "Number"
+                },
+                {
+                    "name": "queries",
+                    "description": "- User's profile queries",
+                    "type": "Object"
+                }
+            ],
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 34,
+            "description": "Close the connections associated to the user",
+            "return": {
+                "description": "",
+                "type": "Null"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 45,
+            "description": "Returns the role associated to a specific user ID",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 72,
+            "description": "Download the zip file associated to every content",
+            "params": [
+                {
+                    "name": "filename",
+                    "description": "- Route of the file to download",
+                    "type": "String"
+                },
+                {
+                    "name": "response",
+                    "description": "- The server response to associate the Buffer of the file to download",
+                    "type": "Response"
+                }
+            ],
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 83,
+            "description": "Returns the info relative to each user (name,provider,etc...)",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 100,
+            "description": "Returns basic info of the user to be used once the user is already logged",
+            "params": [
+                {
+                    "name": "params",
+                    "description": "- Contains the user_id that comes from the form",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 136,
+            "description": "Returns the extended content info that is used on the edit content page",
+            "params": [
+                {
+                    "name": "id_contenido",
+                    "description": "- ID of the content",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 171,
+            "description": "Returns all the contents associated to a provider",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 195,
+            "description": "Check if one course is completely certified",
+            "params": [
+                {
+                    "name": "form",
+                    "description": "- Form that contains the info of the content to be checked",
+                    "type": "Form"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 220,
+            "description": "Returns all the contents associated to the catalog",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 237,
+            "description": "Loads all the generic info relative to the application",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 290,
+            "description": "Returns the user's avatar using base64 codification",
+            "params": [
+                {
+                    "name": "filename",
+                    "description": "- Route of the avatar on the FTP",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 308,
+            "description": "Method used to modify the user avatar",
+            "params": [
+                {
+                    "name": "form",
+                    "description": "- Form that contains all the user info",
+                    "type": "Form"
+                },
+                {
+                    "name": "file",
+                    "description": "- File to be upload",
+                    "type": "File"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 335,
+            "description": "Method used to modify the personal info of the user",
+            "params": [
+                {
+                    "name": "form",
+                    "description": "- Form that contains all the user info",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 355,
+            "description": "Method used to modify the password of the user",
+            "params": [
+                {
+                    "name": "fields",
+                    "description": "- Form that contains all the user info",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "users/_common/user.js",
+            "line": 376,
+            "description": "IMPORTANT! This method creates a new course on the platform.",
+            "params": [
+                {
+                    "name": "form",
+                    "description": "- Form that contains all the info of the new course, among the",
+                    "type": "Form"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "*Class that defines the basic behaviour of every user",
+            "module": "authentication/config"
+        },
+        {
+            "file": "index.js",
+            "line": 3,
+            "description": "Class used to init the server as a microservice itself",
+            "class": "",
+            "module": "authentication/config"
+        },
+        {
+            "file": "index.js",
+            "line": 8,
+            "is_constructor": 1,
+            "class": "",
+            "module": "authentication/config"
+        },
+        {
+            "file": "index.js",
+            "line": 14,
+            "description": "Method that runs our server as a microservice",
+            "class": "",
+            "module": "authentication/config"
+        },
+        {
+            "file": "index.js",
+            "line": 23,
+            "params": [
+                {
+                    "name": "file",
+                    "description": "- Route to the file that we want to instantiate as a separate service.",
+                    "type": "String"
+                }
+            ],
+            "class": "",
+            "module": "authentication/config"
+        },
+        {
+            "file": "index.js",
+            "line": 47,
+            "description": "Line that runs the object {ServerStart}",
+            "class": "",
+            "module": "authentication/config"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type",
+            "line": " authentication/coreFunctions.js:1"
+        },
+        {
+            "message": "Missing item type\nImport of the client part of the microservice which calls the microservices of the server",
+            "line": " authentication/coreFunctions.js:3"
+        },
+        {
+            "message": "Missing item type",
+            "line": " authentication/index.js:1"
+        },
+        {
+            "message": "Missing item type\nCreation of the router",
+            "line": " authentication/index.js:8"
+        },
+        {
+            "message": "Missing item type\nLogging or signup operation had been sent to server",
+            "line": " authentication/index.js:17"
+        },
+        {
+            "message": "Missing item type",
+            "line": " authentication/middleware.js:1"
+        },
+        {
+            "message": "Missing item type\nHere are implemented the main functions that creates/check the web token used for the user.",
+            "line": " authentication/middleware.js:2"
+        },
+        {
+            "message": "Missing item type\nThis method check if the user request has the correct authorization header and the correct token",
+            "line": " authentication/middleware.js:13"
+        },
+        {
+            "message": "Missing item type",
+            "line": " files/index.js:18"
+        },
+        {
+            "message": "Missing item type",
+            "line": " files/index.js:19"
+        },
+        {
+            "message": "Missing item type",
+            "line": " files/index.js:22"
+        },
+        {
+            "message": "Missing item type",
+            "line": " public/gulpfile.babel.js:30"
+        },
+        {
+            "message": "Missing item type",
+            "line": " public/gulpfile.babel.js:32"
+        },
+        {
+            "message": "Missing item type",
+            "line": " public/gulpfile.babel.js:44"
+        },
+        {
+            "message": "Missing item type",
+            "line": " public/gulpfile.babel.js:46"
+        },
+        {
+            "message": "Missing item type",
+            "line": " public/gulpfile.babel.js:63"
+        },
+        {
+            "message": "Missing item type",
+            "line": " public/gulpfile.babel.js:65"
+        },
+        {
+            "message": "Missing item type",
+            "line": " public/gulpfile.babel.js:79"
+        },
+        {
+            "message": "Missing item type",
+            "line": " public/gulpfile.babel.js:81"
+        },
+        {
+            "message": "Missing item type",
+            "line": " public/gulpfile.babel.js:87"
+        },
+        {
+            "message": "Missing item type",
+            "line": " public/gulpfile.babel.js:89"
+        },
+        {
+            "message": "Missing item type",
+            "line": " users/_common/user.js:14"
+        },
+        {
+            "message": "Missing item type\nClose the connections associated to the user",
+            "line": " users/_common/user.js:34"
+        },
+        {
+            "message": "Missing item type\nReturns the role associated to a specific user ID",
+            "line": " users/_common/user.js:45"
+        },
+        {
+            "message": "Missing item type\nDownload the zip file associated to every content",
+            "line": " users/_common/user.js:72"
+        },
+        {
+            "message": "Missing item type\nReturns the info relative to each user (name,provider,etc...)",
+            "line": " users/_common/user.js:83"
+        },
+        {
+            "message": "Missing item type\nReturns basic info of the user to be used once the user is already logged",
+            "line": " users/_common/user.js:100"
+        },
+        {
+            "message": "Missing item type\nReturns the extended content info that is used on the edit content page",
+            "line": " users/_common/user.js:136"
+        },
+        {
+            "message": "Missing item type\nReturns all the contents associated to a provider",
+            "line": " users/_common/user.js:171"
+        },
+        {
+            "message": "Missing item type\nCheck if one course is completely certified",
+            "line": " users/_common/user.js:195"
+        },
+        {
+            "message": "Missing item type\nReturns all the contents associated to the catalog",
+            "line": " users/_common/user.js:220"
+        },
+        {
+            "message": "Missing item type\nLoads all the generic info relative to the application",
+            "line": " users/_common/user.js:237"
+        },
+        {
+            "message": "Missing item type\nReturns the user's avatar using base64 codification",
+            "line": " users/_common/user.js:290"
+        },
+        {
+            "message": "Missing item type\nMethod used to modify the user avatar",
+            "line": " users/_common/user.js:308"
+        },
+        {
+            "message": "Missing item type\nMethod used to modify the personal info of the user",
+            "line": " users/_common/user.js:335"
+        },
+        {
+            "message": "Missing item type\nMethod used to modify the password of the user",
+            "line": " users/_common/user.js:355"
+        },
+        {
+            "message": "Missing item type\nIMPORTANT! This method creates a new course on the platform.",
+            "line": " users/_common/user.js:376"
+        },
+        {
+            "message": "Missing item type\nClass used to init the server as a microservice itself",
+            "line": " index.js:3"
+        },
+        {
+            "message": "Missing item type",
+            "line": " index.js:8"
+        },
+        {
+            "message": "Missing item type\nMethod that runs our server as a microservice",
+            "line": " index.js:14"
+        },
+        {
+            "message": "Missing item type",
+            "line": " index.js:23"
+        },
+        {
+            "message": "Missing item type\nLine that runs the object {ServerStart}",
+            "line": " index.js:47"
+        }
+    ]
+}
