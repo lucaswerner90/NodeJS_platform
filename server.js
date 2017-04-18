@@ -3,6 +3,10 @@
 */
 'use strict';
 // Declare of the express's app
+
+process.env.NODE_ENV=process.env.NODE_ENV || 'DEV';
+
+
 const express = require('express');
 const compression = require('compression');
 const app=express();

@@ -402,7 +402,7 @@ class User{
               if(data){
                 form['rutaEjecucion']=data;
                 _self._db_connection.sendQuery(_self._profile_queries.UPDATE.rutaEjecucion,{
-                  rutaEjecucion:"http://"+form['rutaEjecucion'],
+                  rutaEjecucion:form['rutaEjecucion'],
                   id_contenido:form['id_contenido']
                 }).then(()=>{
 
