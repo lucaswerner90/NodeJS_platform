@@ -18,11 +18,17 @@ class User{
   constructor(id_usuario=-1,queries){
 
     this._id_usuario=parseInt(id_usuario);
+    this._microservice_client=new ClientMicroservice();
     this._db_connection=new Database();
     this._file=new File();
     this._profile_queries=queries;
     this._common_queries=DBCommonQueries;
-    this._microservice_client=new ClientMicroservice();
+    /*
+    this._microservice_client.send_query('select * from contenidos').then((data)=>{
+      console.log("De la bbdd: "+data);
+    });
+    */
+
   }
 
 
@@ -53,7 +59,7 @@ class User{
 
     return new Promise((resolve,reject)=>{
       _self.get_user_info().then((result)=>{
-        _self._db_connection.sendQuery(_self._common_queries.GET.type_of_user,{
+        _self._microservice_client.send_query(_self._common_queries.GET.type_of_user,{
           id_perfil:result.id_perfil}
         ).then((data)=>{
           resolve(data[0].descripcion);
@@ -87,7 +93,7 @@ class User{
 
     const _self=this;
     return new Promise((resolve,reject)=>{
-      _self._db_connection.sendQuery(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
+      _self._microservice_client.send_query(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
         resolve(data[0]);
       })
       .catch((err)=>{
@@ -105,7 +111,7 @@ class User{
     let _self=this;
     return new Promise(function(resolve, reject) {
 
-      _self._db_connection.sendQuery(_self._common_queries.GET.login_info,params).then((rows)=>{
+      _self._microservice_client.send_query(_self._common_queries.GET.login_info,params).then((rows)=>{
         if(rows.length===0){
           // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
           // indicando que no esta autorizado y el token como null.
@@ -141,12 +147,12 @@ class User{
     const _self=this;
     return new Promise((resolve,reject)=>{
       let arrayPromises=[];
-      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_id,{id_contenido:id_contenido}));
-      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.tableOfCompatibilities,{id_contenido:id_contenido}));
-      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_platforms,{id_contenido:id_contenido}));
-      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_servers,{id_contenido:id_contenido}));
-      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_recursos,{id_contenido:id_contenido}));
-      arrayPromises.push(_self._db_connection.sendQuery(_self._common_queries.GET.content_categorias_subcategorias,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_id,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.tableOfCompatibilities,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_platforms,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_servers,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_recursos,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_categorias_subcategorias,{id_contenido:id_contenido}));
 
 
       Promise.all(arrayPromises).then((values)=>{
@@ -175,7 +181,7 @@ class User{
     const _self=this;
     return new Promise((resolve,reject)=>{
       _self.get_user_info().then((result)=>{
-        _self._db_connection.sendQuery(_self._profile_queries.GET.contents_proveedor,result).then((data)=>{
+        _self._microservice_client.send_query(_self._profile_queries.GET.contents_proveedor,result).then((data)=>{
           resolve(data);
         })
         .catch((err)=>{
@@ -199,7 +205,7 @@ class User{
   _check_course_certified(form){
     const _self=this;
     return new Promise(function(resolve, reject) {
-      _self._db_connection.sendQuery(_self._common_queries.GET.course_certified,{id_contenido:form.id_contenido}).then((data)=>{
+      _self._microservice_client.send_query(_self._common_queries.GET.course_certified,{id_contenido:form.id_contenido}).then((data)=>{
 
         if(data[0]["count(*)"]>0 && data[1]["count(*)"]>0 &&
         data[0]["count(*)"]-data[1]["count(*)"]===0){
@@ -223,7 +229,7 @@ class User{
   get_catalogo(){
     const _self=this;
     return new Promise(function(resolve, reject) {
-      _self._db_connection.sendQuery(_self._common_queries.GET.content_catalogo).then((data)=>{
+      _self._microservice_client.send_query(_self._common_queries.GET.content_catalogo).then((data)=>{
         resolve(data);
       })
       .catch((error)=>{
@@ -240,7 +246,7 @@ class User{
   get_platform_generic_info(){
     const _self=this;
     return new Promise((resolve,reject)=>{
-      _self._db_connection.sendQuery(_self._profile_queries.GET.generic_information,null).then((data)=>{
+      _self._microservice_client.send_query(_self._profile_queries.GET.generic_information,null).then((data)=>{
 
         let generic_info={
           platforms:data[0],
@@ -265,7 +271,7 @@ class User{
         };
         let arrayPromisesSubcategories=[];
         for (let i = 0; i < generic_info.categorias.length; i++) {
-          arrayPromisesSubcategories[i]=_self._db_connection.sendQuery(_self._common_queries.GET.subcategorias,generic_info.categorias[i]);
+          arrayPromisesSubcategories[i]=_self._microservice_client.send_query(_self._common_queries.GET.subcategorias,generic_info.categorias[i]);
         }
         Promise.all(arrayPromisesSubcategories).then((values)=>{
           for (let i = 0; i < generic_info.categorias.length; i++) {
@@ -317,7 +323,7 @@ class User{
     return new Promise((resolve,reject)=>{
 
       _self._file.uploadContentFile(file,form,_self._file._config.avatarUpload.directory,_self._file._config.avatarUpload.extensionsAllowed,true).then(()=>{
-        _self._db_connection.sendQuery(_self._common_queries.UPDATE.avatar,form).then(()=>{
+        _self._microservice_client.send_query(_self._common_queries.UPDATE.avatar,form).then(()=>{
           _self._id_usuario=form.id_usuario;
           _self._logOnDB("user.modify_avatar");
           resolve(true);
@@ -340,7 +346,7 @@ class User{
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-      _self._db_connection.sendQuery(_self._common_queries.UPDATE.personalInfo,form).then(()=>{
+      _self._microservice_client.send_query(_self._common_queries.UPDATE.personalInfo,form).then(()=>{
         _self._logOnDB("user.modify_info");
         _self._close_connections();
         resolve(true);
@@ -361,7 +367,7 @@ class User{
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-      _self._db_connection.sendQuery(_self._common_queries.UPDATE.password,fields).then(()=>{
+      _self._microservice_client.send_query(_self._common_queries.UPDATE.password,fields).then(()=>{
 
         _self._logOnDB("user.modify_password");
         resolve(true);
@@ -389,7 +395,7 @@ class User{
       form["recursos"]=eval("["+form["tableRecursos"]+"]");
 
 
-      _self._db_connection.sendQuery(_self._common_queries.GET.info_proveedor,form).then((data)=>{
+      _self._microservice_client.send_query(_self._common_queries.GET.info_proveedor,form).then((data)=>{
 
 
         form['carpeta_proveedor']=data[0].carpeta_proveedor;
@@ -401,7 +407,7 @@ class User{
             _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then((data)=>{
               if(data){
                 form['rutaEjecucion']=data;
-                _self._db_connection.sendQuery(_self._profile_queries.UPDATE.rutaEjecucion,{
+                _self._microservice_client.send_query(_self._profile_queries.UPDATE.rutaEjecucion,{
                   rutaEjecucion:form['rutaEjecucion'],
                   id_contenido:form['id_contenido']
                 }).then(()=>{
@@ -469,7 +475,7 @@ class User{
       form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
       form["recursos"]=eval("["+form["tableRecursos"]+"]");
 
-      _self._db_connection.sendQuery(_self._common_queries.GET.info_proveedor,form).then((data)=>{
+      _self._microservice_client.send_query(_self._common_queries.GET.info_proveedor,form).then((data)=>{
         form["carpeta_proveedor"]=data[0].carpeta_proveedor;
         // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
         _self.get_content_by_id(form["id_contenido"]).then((content)=>{
@@ -480,7 +486,7 @@ class User{
                   _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then((data)=>{
                     if(data){
                       form['rutaEjecucion']=data;
-                      _self._db_connection.sendQuery(_self._profile_queries.UPDATE.rutaEjecucion,{
+                      _self._microservice_client.send_query(_self._profile_queries.UPDATE.rutaEjecucion,{
                         rutaEjecucion:"http://"+form['rutaEjecucion'],
                         id_contenido:form['id_contenido']
                       }).then(()=>{

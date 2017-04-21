@@ -7,9 +7,10 @@
     "start": "DEBUG=express* PORT=5000 ENVIRONMENT=dev nodemon --exitcrash --inspect server.js",
     "test": "PORT=3000 mocha  --watch ./**/*.spec.js -R list",
     "coverage": "PORT=3000 istanbul cover _mocha -- -u  exports -R spec ./**/*.spec.js",
+    "git:clean_submodule":"cd public && git stash && cd ..",
     "git:download":"git fetch && git pull",
     "git:upload":"git add -A && git commit -m 'Last version' && git push origin master && git push ted master",
-    "git:submodule":"cd public && git fetch && git pull && cd ..",
+    "git:submodule":"npm run git:clean_submodule && cd public && git fetch && git pull && cd ..",
     "git:update_all":"npm run git:submodule && npm run git:download",
     "documentation": "yuidoc . -o documentation/code"
   },
