@@ -4,6 +4,7 @@
     "contents_proveedor":"select c.id_contenido,codigo_proyecto,(select proveedores.Empresa from proveedores where proveedores.id_proveedor=c.id_proveedor) as proveedor,c.titulo,c.duracion,c.id_pais,c.fecha_publicacion,c.id_tipo_desarrollo, pr.id_proyecto from contenidos c left join relacion_contenidos_proyectos rcp on rcp.id_contenido=c.id_contenido left join  proyectos pr on rcp.id_proyecto=pr.id_proyecto"
   },
   "INSERT":{
+    "content_categorias":"INSERT INTO relacion_contenido_categorias_subcategorias (id_contenido, id_categoria, id_subcategoria) VALUES [multiple_insert_query];",
     "content":"INSERT INTO catalogo_contenidos.contenidos (participantes,notas_produccion,indice_contenidos,notas_contenidos,id_pais,id_proveedor,notas,titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado,catalogo_ted,url_image,id_tipo_desarrollo,responsive,licencia) VALUES ([participantes],[notas_produccion],[indice_contenidos],[notas_contenidos],[id_pais],[id_proveedor],[notas],[titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado],[catalogo_ted],[url_image],[id_tipo_desarrollo],[responsive],[licencia]);",
     "contentRelation":"INSERT INTO relacion_contenidos_proyectos (id_contenido,id_proyecto) VALUES ([id_contenido], [id_proyecto]);",
     "tableOfCompatibilities":"INSERT INTO resultado_certificacion_contenido (id_contenido,id_usuario,id_punto_control,id_tc,valor) VALUES [multiple_insert_query];",
@@ -14,7 +15,6 @@
     "content_servidor":"INSERT INTO relacion_contenido_servidor (id_contenido,id_servidor) VALUES [multiple_insert_query];",
     "content_recursos":"INSERT INTO relacion_contenidos_recursos (id_contenido,id_recurso) VALUES [multiple_insert_query];",
     "content_education":"INSERT INTO relacion_contenido_nivel (id_contenido,id_nivel) VALUES ([id_contenido],[id_nivel]);",
-    "content_categorias_subcategorias":"INSERT INTO relacion_contenido_categorias_subcategorias (id_subcategoria, id_categoria,id_contenido) VALUES [multiple_insert_query];",
     "content_licencia":"INSERT INTO licencias (id_contenido,fecha_inicio,fecha_fin,numero_licencias) VALUES ([id_contenido],[fecha_inicio],[fecha_fin],[numero_licencias]);"
   },
   "UPDATE":{

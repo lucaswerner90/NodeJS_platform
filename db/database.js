@@ -24,7 +24,7 @@ class Database{
     _self._connection.destroy();
   }
 
-  _log_actions(action,obj){
+  _log_actions(action="",obj={}){
     //
     // const _self=this;
     //
@@ -40,28 +40,11 @@ class Database{
     // });
   }
 
-  _replace_characters(cadena){
+  _replace_characters(cadena=""){
     const regex = /[\[\^{}`*+\\=º;"\]]+/g;
-    return cadena.toString().replace(regex, "");
+    return (cadena.indexOf('data:image/')>-1)?cadena:cadena.toString().replace(regex, "");
   }
 
-  _create_search_query(query,obj){
-    let index=0;
-    let searchQuery="";
-    for(const prop in obj) {
-      if(prop!=='id_usuario'){
-        index++;
-        if (index>1) {
-          searchQuery+=" AND ";
-        }
-        searchQuery+=`${prop} LIKE "%${obj[prop]}%"`;
-      }
-    }
-    searchQuery+=';';
-    searchQuery=query.split(`[search_query]`).join(searchQuery);
-
-    return searchQuery;
-  }
 
 
   _replace_variables_on_query(queries,obj){
@@ -105,6 +88,16 @@ class Database{
     return {multiple_insert_query:finalQuery};
   }
 
+  createInsertCategories(obj,id_contenido){
+    let finalQuery="";
+    for (let i = 0; i < obj.length; i++) {
+      if(i>0) finalQuery+=`, `;
+
+      finalQuery+=`(${parseInt(id_contenido)},${parseInt(obj[i].id_categoria)},${obj[i].id_subcategoria})`;
+    }
+    return {multiple_insert_query:finalQuery};
+  }
+
 
   createInsertContentServer(obj,id_contenido){
     let finalQuery="";
@@ -139,10 +132,8 @@ class Database{
 
       query=_self._replace_variables_on_query(query,object);
 
-
       // Use the connection
       _self._connection.query(query, function(err, rows) {
-
         // In case of error
         if(err){
           reject(err);
@@ -188,6 +179,12 @@ class Database{
 
           let additional_queries=[];
 
+          if(camposFormulario.categorias && camposFormulario.categorias.length>0){
+            additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_categorias,{
+              multiple_insert_query:_self.createInsertCategories(camposFormulario.categorias,camposFormulario.id_contenido).multiple_insert_query}));
+          }
+
+          debugger;
           additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.tableOfCompatibilities,
             {
             multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
@@ -258,6 +255,9 @@ class Database{
             additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.screenshot,camposFormulario));
           }
 
+          if(camposFormulario['catalogo_ted']===1){
+            global.CONTROL.catalogo=[];
+          }
 
           additional_queries=additional_queries.join(" ");
 
@@ -288,6 +288,14 @@ class Database{
       camposFormulario['fecha_publicacion']=(new Date()).toISOString().substring(0, 19).replace('T', ' ');
       additional_queries.push(_self._replace_variables_on_query((update_file)?user_queries.UPDATE.content:user_queries.UPDATE.contentNoFile,camposFormulario));
 
+      if(camposFormulario.categorias && camposFormulario.categorias.length>0){
+        if(content.categorias && content.categorias.length>0){
+          additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_categorias,{id_contenido:camposFormulario.id_contenido}));
+        }
+        additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_categorias,{
+          multiple_insert_query:_self.createInsertCategories(camposFormulario.categorias,camposFormulario.id_contenido).multiple_insert_query}));
+      }
+
       if(camposFormulario.recursos.length>0){
         if(content.recursos.length>0){
           additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_recursos,
@@ -305,7 +313,6 @@ class Database{
       if(camposFormulario.licencia==1){
 
         camposFormulario['fecha_fin']=new Date(camposFormulario['fecha_fin']).toISOString().slice(0, 19).replace('T', ' ');
-        debugger;
         camposFormulario['fecha_inicio']=new Date(camposFormulario['fecha_inicio']).toISOString().slice(0, 19).replace('T', ' ');
 
         if(content.licencia==1){
@@ -415,11 +422,12 @@ class Database{
       }
 
 
-
+      if(camposFormulario['catalogo_ted']===1){
+        global.CONTROL.catalogo=[];
+      }
 
       additional_queries=additional_queries.join(" ");
 
-      console.log(additional_queries);
       _self.sendQuery(additional_queries).then(()=>{
         resolve(true);
       })

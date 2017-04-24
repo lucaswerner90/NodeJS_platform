@@ -8,7 +8,7 @@ class DatabaseMicroservice{
   constructor () {
     console.log("[RUNNING] Database microservice");
     this._db=new Database();
-    
+
     seneca.add('role:db,cmd:send_query',(parameters,result)=>{
       this._db.sendQuery(parameters.query,parameters.obj).then((data)=>{
         result( null, {answer:data} );

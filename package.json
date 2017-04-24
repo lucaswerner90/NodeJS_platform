@@ -9,7 +9,7 @@
     "coverage": "PORT=3000 istanbul cover _mocha -- -u  exports -R spec ./**/*.spec.js",
     "git:clean_submodule":"cd public && git stash && cd ..",
     "git:download":"git fetch && git pull",
-    "git:upload":"git add -A && git commit -m 'Last version' && git push origin master && git push ted master",
+    "git:upload":"git add -A && git commit -m 'Last production version' && git push origin master && git push ted master",
     "git:submodule":"npm run git:clean_submodule && cd public && git fetch && git pull && cd ..",
     "git:update_all":"npm run git:submodule && npm run git:download",
     "documentation": "yuidoc . -o documentation/code"

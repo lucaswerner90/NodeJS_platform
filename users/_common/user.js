@@ -5,6 +5,7 @@ const File=require('../../files/_fileModel');
 const DBCommonQueries=require('../../db/queries/user/_common.json');
 const ClientMicroservice=require('../../microservices/client');
 
+global.CONTROL=require('./control');
 /**
 @class
 */
@@ -23,11 +24,6 @@ class User{
     this._file=new File();
     this._profile_queries=queries;
     this._common_queries=DBCommonQueries;
-    /*
-    this._microservice_client.send_query('select * from contenidos').then((data)=>{
-      console.log("De la bbdd: "+data);
-    });
-    */
 
   }
 
@@ -58,19 +54,24 @@ class User{
     if(_self._id_usuario===-1) return "Administrador";
 
     return new Promise((resolve,reject)=>{
-      _self.get_user_info().then((result)=>{
-        _self._microservice_client.send_query(_self._common_queries.GET.type_of_user,{
-          id_perfil:result.id_perfil}
-        ).then((data)=>{
-          resolve(data[0].descripcion);
+      // if(global.CONTROL.users[_self._id_usuario]===undefined){
+        _self.get_user_info().then((result)=>{
+          _self._microservice_client.send_query(_self._common_queries.GET.type_of_user,{
+            id_perfil:result.id_perfil}
+          ).then((data)=>{
+            resolve(data[0].descripcion);
+          })
+          .catch((err)=>{
+            reject(err);
+          });
         })
         .catch((err)=>{
           reject(err);
         });
-      })
-      .catch((err)=>{
-        reject(err);
-      });
+      // }else{
+      //   resolve(global.CONTROL.users[_self._id_usuario].descripcion);
+      // }
+
     });
   }
 
@@ -93,12 +94,13 @@ class User{
 
     const _self=this;
     return new Promise((resolve,reject)=>{
-      _self._microservice_client.send_query(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
-        resolve(data[0]);
-      })
-      .catch((err)=>{
-        reject(err);
-      });
+        _self._microservice_client.send_query(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
+          resolve(data[0]);
+        })
+        .catch((err)=>{
+          reject(err);
+        });
+
     });
   }
 
@@ -137,7 +139,6 @@ class User{
     });
 
   }
-
   /**
   Returns the extended content info that is used on the edit content page
   @param {number} id_contenido - ID of the content
@@ -156,7 +157,7 @@ class User{
 
 
       Promise.all(arrayPromises).then((values)=>{
-        let content=values[0][0];
+        const content=values[0][0];
         content.compatibilities_table=values[1];
         content.platforms=values[2];
         content.servidores_contenidos=values[3];
@@ -180,13 +181,19 @@ class User{
   get_contents(){
     const _self=this;
     return new Promise((resolve,reject)=>{
+      //Object.keys(global.CONTROL.users[_self._id_usuario]).length===0
       _self.get_user_info().then((result)=>{
-        _self._microservice_client.send_query(_self._profile_queries.GET.contents_proveedor,result).then((data)=>{
-          resolve(data);
-        })
-        .catch((err)=>{
-          reject(err);
-        });
+        if(global.CONTROL.proveedor[result.id_proveedor]===undefined){
+          _self._microservice_client.send_query(_self._profile_queries.GET.contents_proveedor,result).then((data)=>{
+
+            global.CONTROL.proveedor[result.id_proveedor]=data;
+
+            resolve(data);
+          });
+        }else{
+          resolve(global.CONTROL.proveedor[result.id_proveedor]);
+        }
+
       })
       .catch((err)=>{
         reject(err);
@@ -321,13 +328,15 @@ class User{
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-
       _self._file.uploadContentFile(file,form,_self._file._config.avatarUpload.directory,_self._file._config.avatarUpload.extensionsAllowed,true).then(()=>{
-        _self._microservice_client.send_query(_self._common_queries.UPDATE.avatar,form).then(()=>{
+        _self._microservice_client.send_query(_self._common_queries.UPDATE.avatar,form).then((data)=>{
           _self._id_usuario=form.id_usuario;
           _self._logOnDB("user.modify_avatar");
           resolve(true);
-        });
+        })
+        .catch((error)=>{
+          reject(error);
+        })
       })
       .catch((err)=>{
         reject(err);
@@ -347,8 +356,8 @@ class User{
 
     return new Promise((resolve,reject)=>{
       _self._microservice_client.send_query(_self._common_queries.UPDATE.personalInfo,form).then(()=>{
+
         _self._logOnDB("user.modify_info");
-        _self._close_connections();
         resolve(true);
       })
       .catch((err)=>{
@@ -386,74 +395,61 @@ class User{
   create_course(form){
 
     const _self=this;
-    console.log(form);
     return new Promise((resolve,reject)=>{
 
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
       form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
       form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
       form["recursos"]=eval("["+form["tableRecursos"]+"]");
+      form["categorias"]=eval(form["categorias"]);
 
+      if(form['catalogo_ted']==1){
+        global.CONTROL.catalogo=[];
+      }
 
       _self._microservice_client.send_query(_self._common_queries.GET.info_proveedor,form).then((data)=>{
 
 
         form['carpeta_proveedor']=data[0].carpeta_proveedor;
         _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
-          console.log("[*] Adding new content.....");
           _self._db_connection.insert_new_content(form,_self._profile_queries).then(()=>{
 
-            console.log("[*] EXTRACTING ZIP....");
+
+            global.CONTROL.proveedor[form['id_proveedor']]=undefined;
+
             _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then((data)=>{
+
+
               if(data){
                 form['rutaEjecucion']=data;
+
+
                 _self._microservice_client.send_query(_self._profile_queries.UPDATE.rutaEjecucion,{
                   rutaEjecucion:form['rutaEjecucion'],
                   id_contenido:form['id_contenido']
                 }).then(()=>{
 
+
+
                   _self._microservice_client.send_email({type:"new_course",datos_curso:form}).then(()=>{
+
+
                     _self._check_course_certified(form).then(()=>{
                       _self._close_connections();
-                    })
-                    .catch(()=>{
-                      _self._close_connections();
                     });
-                  })
-                  .catch((error)=>{
-                    console.error(error);
-                    _self._close_connections();
+
                   });
 
-
-                })
-                .catch((err)=>{
-                  console.log(err);
-                  _self._close_connections();
                 });
+
               }
-
-
-
-            })
-            .catch((err)=>{
-              console.error("*****  ERROR EXTRACTING ZIP  *****");
-              console.error(err);
             });
-
             resolve(true);
-
-          })
-          .catch((err)=>{
-            reject(err);
+          }).catch((error)=>{
+            console.error(error);
+            reject(error);
           });
-        })
-        .catch((err)=>{
-          reject(err);
         });
-      })
-      .catch((err)=>{
-        reject(err);
       });
 
 
@@ -474,14 +470,19 @@ class User{
       form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
       form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
       form["recursos"]=eval("["+form["tableRecursos"]+"]");
-
+      form["categorias"]=eval(form["categorias"]);
       _self._microservice_client.send_query(_self._common_queries.GET.info_proveedor,form).then((data)=>{
         form["carpeta_proveedor"]=data[0].carpeta_proveedor;
         // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
         _self.get_content_by_id(form["id_contenido"]).then((content)=>{
+
+          global.CONTROL.proveedor[form['id_proveedor']]=undefined;
+
           if(form['file_to_upload']){
             _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
                 _self._db_connection.update_content(content,_self._profile_queries,form,true).then(()=>{
+
+
 
                   _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then((data)=>{
                     if(data){
@@ -491,26 +492,18 @@ class User{
                         id_contenido:form['id_contenido']
                       }).then(()=>{
 
-                        _self._microservice_client.send_email("upload_course");
 
+                        _self._microservice_client.send_email("upload_course");
                         _self._db_connection._close_connection();
+
                       })
                       .catch((err)=>{
                         console.log(err);
                       });
                     }
-                    console.log("ZIP EXTRACTED CORRECTLY....");
 
-                  })
-                  .catch((err)=>{
-                    console.error("*****  ERROR EXTRACTING ZIP  *****");
-                    console.error(err);
                   });
                   resolve(true);
-
-                })
-                .catch((err)=>{
-                  reject(err);
                 });
 
             })

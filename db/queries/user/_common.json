@@ -23,5 +23,6 @@
   },
   "INSERT":{
     "content_licencia":"INSERT INTO licencias SET id_contenido=[id_contenido],fecha_inicio=[fecha_inicio],fecha_fin=[fecha_fin],numero_licencias=[numero_licencias];"
+
   }
 }

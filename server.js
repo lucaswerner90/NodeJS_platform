@@ -39,6 +39,8 @@ app.use(compression());
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin","*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
   next();
 });
 
@@ -55,8 +57,9 @@ app.use(BODY_PARSER.json({limit: '500mb'}));
 
 // app.use(express.static('public'));
 // maxAge defined by static files:
-const maxage_cache=86400*24*7;
-
+// const maxage_cache=86400*24*7;
+const maxage_cache=0;
+ 
 for (let i = 0; i < CONFIG_SERVER.STATIC_ROUTES.length; i++) {
   app.use(CONFIG_SERVER.STATIC_ROUTES[i],express.static(CONFIG_SERVER.STATIC_DIR,{
     maxage:maxage_cache

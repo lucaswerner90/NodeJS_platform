@@ -15,9 +15,11 @@ class LoginMicroservice{
     const _self=this;
     seneca.add('role:authentication,cmd:login',function (parameters,result){
       _self.logUser(parameters.data).then((data)=>{
+        console.log("Parameters:   "+ parameters.data);
         result( null, {answer:data} );
       })
       .catch((err)=>{
+        console.error(err);
         result( null, {error:err} );
       });
     })
@@ -62,8 +64,10 @@ class LoginMicroservice{
 
   logUser(datos){
     const _self=this;
+    console.log(datos);
     return new Promise(function(resolve, reject) {
       _self.existeUsuario(datos).then((data)=>{
+        console.log(data);
         // Si el usuario se encuentra dentro del sistema de la base de datos entonces
         // devolvemos el token que usará para mantener la sesion en la plataforma
         data.token=_self.createToken(Math.random());
@@ -73,7 +77,6 @@ class LoginMicroservice{
       .catch((err)=>{
         // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
         // indicando que no esta autorizado y el token como null.
-
         reject(err);
       });
     });

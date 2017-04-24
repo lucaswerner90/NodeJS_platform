@@ -94,7 +94,6 @@ class File{
           if(!avatar){
             formFields["ruta_zip"]=_self._fileRoute("zip",formFields,_self._ftp._configuration.ftpConnection.equivalent_url,newFilename);
           }
-          removeVariables();
           resolve(true);
         })
         .catch((err)=>{

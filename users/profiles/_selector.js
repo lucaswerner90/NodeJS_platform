@@ -12,44 +12,42 @@ class Selector extends User{
     super(id_usuario);
   }
 
+  return_user_object(data){
+
+    const _self=this;
+
+    switch (data) {
+      case "Administrador":
+        return(new Admin(_self._id_usuario));
+      case "Proveedor externo":
+        return(new Extern(_self._id_usuario));
+      case "Proveedor interno":
+        return(new Intern(_self._id_usuario));
+      case "Cliente":
+        return(new Client(_self._id_usuario));
+      default:
+        return(new Consult(_self._id_usuario));
+
+    }
+  }
+
   return_user(){
-    let _self=this;
-
-
+    const _self=this;
 
     return new Promise((resolve,reject)=>{
 
-
-      if(_self._id_usuario===-1){
-        resolve(new Admin(_self._id_usuario));
-      }
-
-
-      this._get_type_of_user().then((data)=>{
-        this._db_connection._close_connection();
-        switch (data) {
-
-          case "Administrador":
-            resolve(new Admin(_self._id_usuario));
-            break;
-          case "Proveedor externo":
-            resolve(new Extern(_self._id_usuario));
-            break;
-          case "Proveedor interno":
-            resolve(new Intern(_self._id_usuario));
-            break;
-          case "Cliente":
-            resolve(new Client(_self._id_usuario));
-            break;
-          default:
-            resolve(new Consult(_self._id_usuario));
-            break;
-
+        if(_self._id_usuario===-1){
+          resolve(new Admin(_self._id_usuario));
         }
-      })
-      .catch((err)=>{
-        reject(err);
-      });
+        this._get_type_of_user().then((data)=>{
+
+          resolve(_self.return_user_object(data));
+        })
+        .catch((err)=>{
+          reject(err);
+        });
+
+
     });
 
   }

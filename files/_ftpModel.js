@@ -184,22 +184,15 @@ class FTPModel{
         uploadPipe.on("close",function(){
           Promise.all(arrayDirectories).then(()=>{
             setTimeout(()=>{
-              console.log(`[!] On the promises extracting files.......`);
               let arrayFilesPromises=[];
               for (let i = 0; i < arrayFiles.length; i++) {
                 arrayFilesPromises.push(_self._createFile(arrayFiles[i].data,pathToFTP+arrayFiles[i].entry.path));
               }
               Promise.all(arrayFilesPromises).then(()=>{
                 uploadPipe.removeAllListeners();
-                console.log(`[****] ZIP Extracted....`);
                 _self._FTPDisconnect();
                 resolve(index_file);
               })
-              .catch((err)=>{
-                uploadPipe.removeAllListeners();
-                _self._FTPDisconnect();
-                reject(err);
-              });
             },3000);
           })
           .catch((err)=>{
@@ -287,7 +280,6 @@ class FTPModel{
         if(_self._checkIfDirExists(PATH.parse(FTPPath).name,list)){
           const newDirname=PATH.dirname(PATH.dirname(FTPPath))+"/"+"_backup_"+_self._appendDateToFilename()+"_"+PATH.parse(FTPPath).name;
           _self._renameFolder(PATH.parse(FTPPath).dir,newDirname).then(()=>{
-            console.log("Renamed...."+PATH.parse(FTPPath).dir+"  to  "+newDirname);
             _self._createDir(PATH.dirname(FTPPath)).then(()=>{
               _self._createFile(file,FTPPath).then(()=>{
                 resolve(true);

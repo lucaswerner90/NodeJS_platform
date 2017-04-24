@@ -17,8 +17,6 @@ This method check if the user request has the correct authorization header and t
 @param {Function} next
 */
 exports.ensureAuthenticated=function(req,res,next){
-
-  if(req.originalUrl.indexOf("/download/filepath=")==-1){
     if(!req.headers.authorization){
 
       return res
@@ -48,7 +46,6 @@ exports.ensureAuthenticated=function(req,res,next){
     req.user=payload.sub;
 
 
-  }
 
   //Si se da el caso de que el usuario está logueado correctamente entonces avanzamos al siguiente manejador de ruta
   next();

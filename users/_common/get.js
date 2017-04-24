@@ -9,6 +9,7 @@ const User=require('./user');
 const Selector=require('../profiles/_selector');
 
 
+
 router.get('/avatar/file=:filename',(req,res)=>{
   let user=new User();
   user.get_avatar(req.params.filename).then((data)=>{
@@ -24,12 +25,17 @@ router.get('/avatar/file=:filename',(req,res)=>{
 router.get('/user_info/id_usuario=:id_usuario',(req,res)=>{
   let user=new User(req.params.id_usuario);
   user.get_user_info().then((datos)=>{
-    user.get_avatar(datos.urlAvatar).then((data)=>{
-      datos.urlAvatar=data;
-      user._close_connections();
-      user=null;
+    if(datos.urlAvatar){
+      user.get_avatar(datos.urlAvatar).then((data)=>{
+        datos.urlAvatar=data;
+        user._close_connections();
+        user=null;
+        res.send(datos);
+      });
+    }else{
       res.send(datos);
-    })
+    }
+
   })
   .catch((err)=>{
     res.send({error:err});
@@ -38,34 +44,47 @@ router.get('/user_info/id_usuario=:id_usuario',(req,res)=>{
 
 
 router.get('/catalogo',(req,res)=>{
-  let user=new User();
-  user.get_catalogo().then((data)=>{
-    user._close_connections();
-    user=null;
-    res.send(data);
-  })
-  .catch((err)=>{
-    res.send({error:err});
-  });
-});
-
-
-router.get('/generic_info',(req,res)=>{
-  let select_user=new Selector(req.body.id_usuario);
-  select_user.return_user().then((profile)=>{
-    let user=profile;
-    user.get_platform_generic_info().then((data)=>{
+  if(global.CONTROL.catalogo.length===0){
+    let user=new User();
+    user.get_catalogo().then((data)=>{
       user._close_connections();
-      select_user=null;
+      user=null;
+      global.CONTROL.catalogo=data;
       res.send(data);
     })
     .catch((err)=>{
       res.send({error:err});
     });
-  })
-  .catch((err)=>{
-    res.send({error:err});
-  });
+  }else{
+    res.send(global.CONTROL.catalogo);
+  }
+
+
+});
+
+
+router.get('/generic_info',(req,res)=>{
+  if(Object.keys(global.CONTROL.generic_info).length===0){
+    let select_user=new Selector(req.body.id_usuario);
+    select_user.return_user().then((profile)=>{
+      let user=profile;
+      user.get_platform_generic_info().then((data)=>{
+        user._close_connections();
+        select_user=null;
+        global.CONTROL.generic_info=data;
+        res.send(data);
+      })
+      .catch((err)=>{
+        res.send({error:err});
+      });
+    })
+    .catch((err)=>{
+      res.send({error:err});
+    });
+  }else{
+    res.send(global.CONTROL.generic_info);
+  }
+
 
 });
 
@@ -96,7 +115,7 @@ router.post('/contents',(req,res)=>{
 
 
 router.get('/download/filepath=:filepath',(req,res)=>{
-  if(req.headers && req.headers.referer && req.headers.referer.indexOf('editar-contenido')>-1){
+  if(req.headers && req.headers.referer && req.headers.referer.endsWith('editar-contenido')>-1){
     let user=new User();
     user.download_zip(req.params.filepath,res);
     user=null;
