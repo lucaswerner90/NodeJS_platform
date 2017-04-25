@@ -41,8 +41,11 @@ class Database{
   }
 
   _replace_characters(cadena=""){
-    const regex = /[\[\^{}`*+\\=º;"\]]+/g;
-    return (cadena.indexOf('data:image/')>-1)?cadena:cadena.toString().replace(regex, "");
+    if(cadena.toString().startsWith("data:image")){
+      return cadena;
+    }
+    const regex = /[\[\^{}`*+\\=º"\]]+/g;
+    return cadena.toString().replace(regex, "");
   }
 
 
@@ -131,7 +134,6 @@ class Database{
       }
 
       query=_self._replace_variables_on_query(query,object);
-
       // Use the connection
       _self._connection.query(query, function(err, rows) {
         // In case of error
@@ -278,6 +280,7 @@ class Database{
     const _self=this;
 
     return new Promise(function(resolve, reject) {
+      console.log(camposFormulario);
 
       let additional_queries=[];
       camposFormulario["notas"]=(camposFormulario.notas)?camposFormulario.notas:"Notas por defecto";
@@ -286,6 +289,7 @@ class Database{
       camposFormulario["participantes"]=(camposFormulario.participantes)?camposFormulario.participantes:"Notas por defecto";
       camposFormulario["notas_contenidos"]=(camposFormulario.notas_contenidos)?camposFormulario.notas_contenidos:"Notas por defecto";
       camposFormulario['fecha_publicacion']=(new Date()).toISOString().substring(0, 19).replace('T', ' ');
+
       additional_queries.push(_self._replace_variables_on_query((update_file)?user_queries.UPDATE.content:user_queries.UPDATE.contentNoFile,camposFormulario));
 
       if(camposFormulario.categorias && camposFormulario.categorias.length>0){

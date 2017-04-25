@@ -244,11 +244,7 @@ class FTPModel{
               _self._FTPDisconnect();
               reject(`Error transmitting the file...`);
             });
-
-            fileStream.once("data",(chunk)=>{
-              console.log(chunk);
-            });
-
+            
             // We returned a readableStream to pass it to the response
             resolve(fileStream);
 

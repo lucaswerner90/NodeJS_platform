@@ -15,11 +15,10 @@ class LoginMicroservice{
     const _self=this;
     seneca.add('role:authentication,cmd:login',function (parameters,result){
       _self.logUser(parameters.data).then((data)=>{
-        console.log("Parameters:   "+ parameters.data);
         result( null, {answer:data} );
       })
       .catch((err)=>{
-        console.error(err);
+        console.error(`[LOGIN MICROSERVICE 1] ${err}`);
         result( null, {error:err} );
       });
     })
@@ -32,6 +31,7 @@ class LoginMicroservice{
       result( null, {answer:data} );
     })
     .catch((err)=>{
+      console.error(`[LOGIN MICROSERVICE 2] ${err}`);
       result( null, {error:err} );
     });
   }
@@ -56,6 +56,7 @@ class LoginMicroservice{
         resolve(data);
       })
       .catch((err)=>{
+        console.error(`[LOGIN MICROSERVICE 3] ${err}`);
         reject(err);
       });
     });
@@ -64,10 +65,8 @@ class LoginMicroservice{
 
   logUser(datos){
     const _self=this;
-    console.log(datos);
     return new Promise(function(resolve, reject) {
       _self.existeUsuario(datos).then((data)=>{
-        console.log(data);
         // Si el usuario se encuentra dentro del sistema de la base de datos entonces
         // devolvemos el token que usará para mantener la sesion en la plataforma
         data.token=_self.createToken(Math.random());

@@ -25,17 +25,7 @@ router.get('/avatar/file=:filename',(req,res)=>{
 router.get('/user_info/id_usuario=:id_usuario',(req,res)=>{
   let user=new User(req.params.id_usuario);
   user.get_user_info().then((datos)=>{
-    if(datos.urlAvatar){
-      user.get_avatar(datos.urlAvatar).then((data)=>{
-        datos.urlAvatar=data;
-        user._close_connections();
-        user=null;
-        res.send(datos);
-      });
-    }else{
-      res.send(datos);
-    }
-
+    res.send(datos);
   })
   .catch((err)=>{
     res.send({error:err});

@@ -39,15 +39,16 @@ class Microservices {
     });
 
     bat.stderr.on('data', (data) => {
-      console.log(data.toString());
+      console.error(`[SENECA FILE]  ${file}`);
+      console.error(`[ERROR]  ${data.toString()}`);
     });
 
     bat.once('exit', (code) => {
       if(code===1){
         bat.removeAllListeners();
         bat=null;
-        _self._startProcess(file);
       }
+      _self._startProcess(file);
     });
   }
 }

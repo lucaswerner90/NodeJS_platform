@@ -119,20 +119,8 @@ class User{
           // indicando que no esta autorizado y el token como null.
           reject({token:null});
         }else{
-          if(rows[0].urlAvatar!==null){
-            _self._file.downloadImageInBase64(rows[0].urlAvatar).then((data)=>{
-              rows[0].imgAvatar=data;
-              resolve({userInfo:rows[0]});
-
-            })
-            .catch((err)=>{
-              reject(err);
-            });
-          }else{
-            // Si el usuario se encuentra dentro del sistema de la base de datos entonces
-            // devolvemos el token que usará para mantener la sesion en la plataforma
-            resolve({userInfo:rows[0]});
-          }
+          rows[0].imgAvatar=rows[0].urlAvatar;
+          resolve({userInfo:rows[0]});
 
         }
       });
@@ -154,6 +142,7 @@ class User{
       arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_servers,{id_contenido:id_contenido}));
       arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_recursos,{id_contenido:id_contenido}));
       arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_categorias_subcategorias,{id_contenido:id_contenido}));
+      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_licencias,{id_contenido:id_contenido}));
 
 
       Promise.all(arrayPromises).then((values)=>{
@@ -163,7 +152,7 @@ class User{
         content.servidores_contenidos=values[3];
         content.recursos=values[4];
         content.categorias=values[5];
-
+        Object.assign(content,values[6][0]);
         resolve(content);
 
 
@@ -323,24 +312,19 @@ class User{
   @param {File} file - File to be upload
   @return {Promise}
   */
-  modify_avatar(form,file){
+  modify_avatar(form){
 
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-      _self._file.uploadContentFile(file,form,_self._file._config.avatarUpload.directory,_self._file._config.avatarUpload.extensionsAllowed,true).then(()=>{
-        _self._microservice_client.send_query(_self._common_queries.UPDATE.avatar,form).then((data)=>{
-          _self._id_usuario=form.id_usuario;
-          _self._logOnDB("user.modify_avatar");
-          resolve(true);
-        })
-        .catch((error)=>{
-          reject(error);
-        })
+      _self._microservice_client.send_query(_self._common_queries.UPDATE.avatar,form).then((data)=>{
+        _self._id_usuario=form.id_usuario;
+        _self._logOnDB("user.modify_avatar");
+        resolve(true);
       })
-      .catch((err)=>{
-        reject(err);
-      });
+      .catch((error)=>{
+        reject(error);
+      })
 
     });
   }
@@ -464,7 +448,7 @@ class User{
 
     return new Promise((resolve,reject)=>{
       // Once the form is parsed, we call the "close" function to send back the response
-
+      debugger;
       form["fecha_alta"]=_self._file._returnActualDate();
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
       form["table_platforms"]=eval("["+ form.tablePlatforms +"]");

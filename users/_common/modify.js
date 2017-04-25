@@ -13,7 +13,6 @@ router.post('/course',(req,res)=>{
     let select_user=new Selector(formulario._campos['id_usuario']);
     select_user.return_user().then((profile)=>{
       let user=profile;
-      debugger;
       user.modify_course(formulario._campos).then(()=>{
         formulario=null;
         select_user=null;
@@ -85,21 +84,16 @@ router.post('/change_password',(req,res)=>{
 
 
 router.post('/avatar',(req,res)=>{
-
-  let formulario=new Form(req,function(){
-    let select_user=new Selector(formulario._campos['id_usuario']);
-    select_user.return_user().then((profile)=>{
-      let user=profile;
-      user.modify_avatar(formulario._campos,formulario._campos["avatarImage"]).then(()=>{
-        select_user=null;
-        res.send({status:true});
-      });
-    })
-    .catch((err)=>{
+  let select_user=new Selector(req.body['id_usuario']);
+  select_user.return_user().then((profile)=>{
+    let user=profile;
+    user.modify_avatar(req.body,req.body["urlAvatar"]).then(()=>{
       select_user=null;
-      res.send({error:err});
+      res.send({status:true});
     });
-  },function(err){
+  })
+  .catch((err)=>{
+    select_user=null;
     res.send({error:err});
   });
 
