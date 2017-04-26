@@ -5,10 +5,6 @@ class Microservices {
 
 
   constructor() {
-
-    console.log("***********   [MICROSERVICES] ****************");
-    console.log("Inside the microservices...");
-    console.log("**********************************************");
   }
 
 
@@ -35,20 +31,23 @@ class Microservices {
 
     const _self=this;
     bat.stdout.on('data', (data) => {
-      console.log(data.toString());
+      // if(process.env.NODE_ENV==='DEV'){
+      //   console.log(data.toString());
+      // }
+
     });
 
     bat.stderr.on('data', (data) => {
-      console.error(`[SENECA FILE]  ${file}`);
-      console.error(`[ERROR]  ${data.toString()}`);
+      //console.error(`[SENECA FILE]  ${file}`);
+      //console.error(`[ERROR]  ${data.toString()}`);
     });
 
     bat.once('exit', (code) => {
       if(code===1){
         bat.removeAllListeners();
         bat=null;
+        _self._startProcess(file);
       }
-      _self._startProcess(file);
     });
   }
 }

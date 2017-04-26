@@ -25,8 +25,12 @@ class ClientMicroservice{
     const _self=this;
     return new Promise((resolve, reject)=> {
       _self._db_client.act({ role: 'db', cmd: 'send_query', query:query,obj:obj},(error,result)=>{
-        if(error) reject(error);
-        resolve(result.answer);
+        if(result){
+          resolve(result.answer);
+        }else{
+          reject(error);
+        }
+
       });
     });
   }

@@ -1,0 +1,1661 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for express-authenticate/users/_common/user.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">All files</a> / <a href="index.html">express-authenticate/users/_common</a> user.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">3.47% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>6/173</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/26</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/81</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">3.49% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>6/172</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use strict";
+&nbsp;
+const Database=require('../../db/database');
+const File=require('../../files/_fileModel');
+const DBCommonQueries=require('../../db/queries/user/_common.json');
+const ClientMicroservice=require('../../microservices/client');
+&nbsp;
+global.CONTROL=require('./control');
+/**
+@class
+*/
+class User{
+&nbsp;
+ /**
+ @constructor
+ @param {number} id_usuario - User ID
+ @param {object} queries - User's profile queries
+ */
+<span class="fstat-no" title="function not covered" >  co</span>nstructor(id_usuario=<span class="branch-0 cbranch-no" title="branch not covered" >-1,</span>queries){
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    this._id_usuario=parseInt(id_usuario);</span>
+<span class="cstat-no" title="statement not covered" >    this._microservice_client=new ClientMicroservice();</span>
+<span class="cstat-no" title="statement not covered" >    this._db_connection=new Database();</span>
+<span class="cstat-no" title="statement not covered" >    this._file=new File();</span>
+<span class="cstat-no" title="statement not covered" >    this._profile_queries=queries;</span>
+<span class="cstat-no" title="statement not covered" >    this._common_queries=DBCommonQueries;</span>
+&nbsp;
+  }
+&nbsp;
+&nbsp;
+<span class="fstat-no" title="function not covered" >  _l</span>ogOnDB(){
+&nbsp;
+  }
+&nbsp;
+  /**
+  Close the connections associated to the user
+  @return {null}
+  */
+<span class="fstat-no" title="function not covered" >  _c</span>lose_connections(){
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >    _self._db_connection._close_connection();</span>
+<span class="cstat-no" title="statement not covered" >    _self._file._close_connection();</span>
+&nbsp;
+  }
+&nbsp;
+  /**
+  Returns the role associated to a specific user ID
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  _g</span>et_type_of_user(){
+&nbsp;
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if(_self._id_usuario===-1) <span class="cstat-no" title="statement not covered" >return "Administrador";</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve,reject)=&gt;{</span>
+      // if(global.CONTROL.users[_self._id_usuario]===undefined){
+<span class="cstat-no" title="statement not covered" >        _self.get_user_info().then(<span class="fstat-no" title="function not covered" >(r</span>esult)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >          _self._microservice_client.send_query(_self._common_queries.GET.type_of_user,{</span>
+            id_perfil:result.id_perfil}
+          ).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{
+<span class="cstat-no" title="statement not covered" >            resolve(data[0].descripcion);</span>
+          })
+          .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >            reject(err);</span>
+          });
+        })
+        .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >          reject(err);</span>
+        });
+      // }else{
+      //   resolve(global.CONTROL.users[_self._id_usuario].descripcion);
+      // }
+&nbsp;
+    });
+  }
+&nbsp;
+  /**
+  Download the zip file associated to every content
+  @param {string} filename - Route of the file to download
+  @param {Response} response - The server response to associate the Buffer of the file to download
+  */
+<span class="fstat-no" title="function not covered" >  do</span>wnload_zip(filename,response){
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >    _self._file.downloadFile(filename,response);</span>
+  }
+&nbsp;
+&nbsp;
+  /**
+  Returns the info relative to each user (name,provider,etc...)
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  ge</span>t_user_info(){
+&nbsp;
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve,reject)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >        _self._microservice_client.send_query(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >          resolve(data[0]);</span>
+        })
+        .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >          reject(err);</span>
+        });
+&nbsp;
+    });
+  }
+&nbsp;
+  /***
+  Returns basic info of the user to be used once the user is already logged
+  @param {object} params - Contains the user_id that comes from the form
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  ge</span>t_login_info(params){
+    let _self=<span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >fu</span>nction(resolve, reject) {</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      _self._microservice_client.send_query(_self._common_queries.GET.login_info,params).then(<span class="fstat-no" title="function not covered" >(r</span>ows)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >        if(rows.length===0){</span>
+          // Si no se encuentra registrado en la base de datos se le devuelve un codigo 401
+          // indicando que no esta autorizado y el token como null.
+<span class="cstat-no" title="statement not covered" >          reject({token:null});</span>
+        }else{
+<span class="cstat-no" title="statement not covered" >          rows[0].imgAvatar=rows[0].urlAvatar;</span>
+<span class="cstat-no" title="statement not covered" >          rows[0].urlAvatar=undefined;</span>
+<span class="cstat-no" title="statement not covered" >          resolve({userInfo:rows[0]});</span>
+&nbsp;
+        }
+      });
+    });
+&nbsp;
+  }
+  /**
+  Returns the extended content info that is used on the edit content page
+  @param {number} id_contenido - ID of the content
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  ge</span>t_content_by_id(id_contenido){
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve,reject)=&gt;{</span>
+      let arrayPromises=<span class="cstat-no" title="statement not covered" >[];</span>
+<span class="cstat-no" title="statement not covered" >      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_id,{id_contenido:id_contenido}));</span>
+<span class="cstat-no" title="statement not covered" >      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.tableOfCompatibilities,{id_contenido:id_contenido}));</span>
+<span class="cstat-no" title="statement not covered" >      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_platforms,{id_contenido:id_contenido}));</span>
+<span class="cstat-no" title="statement not covered" >      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_servers,{id_contenido:id_contenido}));</span>
+<span class="cstat-no" title="statement not covered" >      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_recursos,{id_contenido:id_contenido}));</span>
+<span class="cstat-no" title="statement not covered" >      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_categorias_subcategorias,{id_contenido:id_contenido}));</span>
+<span class="cstat-no" title="statement not covered" >      arrayPromises.push(_self._microservice_client.send_query(_self._common_queries.GET.content_licencias,{id_contenido:id_contenido}));</span>
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      Promise.all(arrayPromises).then(<span class="fstat-no" title="function not covered" >(v</span>alues)=&gt;{</span>
+        const content=<span class="cstat-no" title="statement not covered" >values[0][0];</span>
+<span class="cstat-no" title="statement not covered" >        content.compatibilities_table=values[1];</span>
+<span class="cstat-no" title="statement not covered" >        content.platforms=values[2];</span>
+<span class="cstat-no" title="statement not covered" >        content.servidores_contenidos=values[3];</span>
+<span class="cstat-no" title="statement not covered" >        content.recursos=values[4];</span>
+<span class="cstat-no" title="statement not covered" >        content.categorias=values[5];</span>
+<span class="cstat-no" title="statement not covered" >        Object.assign(content,values[6][0]);</span>
+<span class="cstat-no" title="statement not covered" >        resolve(content);</span>
+&nbsp;
+&nbsp;
+      }).catch(<span class="fstat-no" title="function not covered" >(e</span>rror)=&gt;{
+<span class="cstat-no" title="statement not covered" >        reject(error);</span>
+      });
+&nbsp;
+    });
+  }
+&nbsp;
+  /**
+  Returns all the contents associated to a provider
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  ge</span>t_contents(){
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve,reject)=&gt;{</span>
+      //Object.keys(global.CONTROL.users[_self._id_usuario]).length===0
+<span class="cstat-no" title="statement not covered" >      _self.get_user_info().then(<span class="fstat-no" title="function not covered" >(r</span>esult)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >        if(global.CONTROL.proveedor[result.id_proveedor]===undefined){</span>
+<span class="cstat-no" title="statement not covered" >          _self._microservice_client.send_query(_self._profile_queries.GET.contents_proveedor,result).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            global.CONTROL.proveedor[result.id_proveedor]=data;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            resolve(data);</span>
+          });
+        }else{
+<span class="cstat-no" title="statement not covered" >          resolve(global.CONTROL.proveedor[result.id_proveedor]);</span>
+        }
+&nbsp;
+      })
+      .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >        reject(err);</span>
+      });
+    });
+&nbsp;
+&nbsp;
+  }
+&nbsp;
+&nbsp;
+  /**
+  Check if one course is completely certified
+  @param {Form} form - Form that contains the info of the content to be checked
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  _c</span>heck_course_certified(form){
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >fu</span>nction(resolve, reject) {</span>
+<span class="cstat-no" title="statement not covered" >      _self._microservice_client.send_query(_self._common_queries.GET.course_certified,{id_contenido:form.id_contenido}).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if(data[0]["count(*)"]&gt;0 &amp;&amp; data[1]["count(*)"]&gt;0 &amp;&amp;</span>
+        data[0]["count(*)"]-data[1]["count(*)"]===0){
+          // Send email of confirmation
+<span class="cstat-no" title="statement not covered" >          _self._microservice_client.send_email({type:"course_certified",datos_curso:form}).then(<span class="fstat-no" title="function not covered" >()</span>=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >            resolve(true);</span>
+          });
+        }
+      })
+      .catch(<span class="fstat-no" title="function not covered" >(e</span>rror)=&gt;{
+<span class="cstat-no" title="statement not covered" >        reject(error);</span>
+      });
+    });
+&nbsp;
+  }
+&nbsp;
+  /**
+  Returns all the contents associated to the catalog
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  ge</span>t_catalogo(){
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >fu</span>nction(resolve, reject) {</span>
+<span class="cstat-no" title="statement not covered" >      _self._microservice_client.send_query(_self._common_queries.GET.content_catalogo).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >        resolve(data);</span>
+      })
+      .catch(<span class="fstat-no" title="function not covered" >(e</span>rror)=&gt;{
+<span class="cstat-no" title="statement not covered" >        reject(error);</span>
+      });
+    });
+  }
+&nbsp;
+&nbsp;
+  /**
+  Loads all the generic info relative to the application
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  ge</span>t_platform_generic_info(){
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve,reject)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >      _self._microservice_client.send_query(_self._profile_queries.GET.generic_information,null).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+&nbsp;
+        let generic_info=<span class="cstat-no" title="statement not covered" >{</span>
+          platforms:data[0],
+          evaluationSystems:data[1],
+          contentTypes:data[2],
+          states:data[3],
+          tabla_compatibilidades:data[4],
+          educationLevels:data[5],
+          exploitedRights:data[6],
+          tipoProveedores:data[7],
+          proyectos:data[8],
+          idiomas:data[9],
+          puntos_control:data[10],
+          valores_certificacion:data[11],
+          tecnologias:data[12],
+          tipo_desarrollo:data[13],
+          servidores_contenidos:data[14],
+          proveedores:data[15],
+          categorias:data[16],
+          habilidades:data[17],
+          recursos:data[18]
+        };
+        let arrayPromisesSubcategories=<span class="cstat-no" title="statement not covered" >[];</span>
+<span class="cstat-no" title="statement not covered" >        for (let i = 0; i &lt; generic_info.categorias.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >          arrayPromisesSubcategories[i]=_self._microservice_client.send_query(_self._common_queries.GET.subcategorias,generic_info.categorias[i]);</span>
+        }
+<span class="cstat-no" title="statement not covered" >        Promise.all(arrayPromisesSubcategories).then(<span class="fstat-no" title="function not covered" >(v</span>alues)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >          for (let i = 0; i &lt; generic_info.categorias.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >            generic_info.categorias[i].subcategorias=values[i];</span>
+          }
+<span class="cstat-no" title="statement not covered" >          _self._close_connections();</span>
+<span class="cstat-no" title="statement not covered" >          resolve(generic_info);</span>
+        })
+        .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >          reject(err);</span>
+        });
+&nbsp;
+      })
+      .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >        reject(err);</span>
+      });
+    });
+  }
+&nbsp;
+&nbsp;
+  /**
+  Returns the user's avatar using base64 codification
+  @param {string} filename - Route of the avatar on the FTP
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  ge</span>t_avatar(filename){
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve,reject)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >      _self._file.downloadImageInBase64(filename).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >        resolve(data);</span>
+      })
+      .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >        reject(err);</span>
+      });
+    });
+&nbsp;
+  }
+&nbsp;
+  /**
+  Method used to modify the user avatar
+  @param {Form} form - Form that contains all the user info
+  @param {File} file - File to be upload
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  mo</span>dify_avatar(form){
+&nbsp;
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve,reject)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >      _self._microservice_client.send_query(_self._common_queries.UPDATE.avatar,form).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >        _self._id_usuario=form.id_usuario;</span>
+<span class="cstat-no" title="statement not covered" >        _self._logOnDB("user.modify_avatar");</span>
+<span class="cstat-no" title="statement not covered" >        resolve(true);</span>
+      })
+      .catch(<span class="fstat-no" title="function not covered" >(e</span>rror)=&gt;{
+<span class="cstat-no" title="statement not covered" >        reject(error);</span>
+      })
+&nbsp;
+    });
+  }
+&nbsp;
+&nbsp;
+  /**
+  Method used to modify the personal info of the user
+  @param {object} form - Form that contains all the user info
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  mo</span>dify_personal_info(form){
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve,reject)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >      _self._microservice_client.send_query(_self._common_queries.UPDATE.personalInfo,form).then(<span class="fstat-no" title="function not covered" >()</span>=&gt;{</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        _self._logOnDB("user.modify_info");</span>
+<span class="cstat-no" title="statement not covered" >        resolve(true);</span>
+      })
+      .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >        reject(err);</span>
+      });
+    });
+  }
+&nbsp;
+  /**
+  Method used to modify the password of the user
+  @param {object} fields - Form that contains all the user info
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  mo</span>dify_password(fields){
+&nbsp;
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve,reject)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >      _self._microservice_client.send_query(_self._common_queries.UPDATE.password,fields).then(<span class="fstat-no" title="function not covered" >()</span>=&gt;{</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        _self._logOnDB("user.modify_password");</span>
+<span class="cstat-no" title="statement not covered" >        resolve(true);</span>
+      })
+      .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >        reject(err);</span>
+      });
+    });
+  }
+&nbsp;
+  /**
+  IMPORTANT! This method creates a new course on the platform.
+  @param {Form} form - Form that contains all the info of the new course, among the
+  @return {Promise}
+  */
+<span class="fstat-no" title="function not covered" >  cr</span>eate_course(form){
+&nbsp;
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve,reject)=&gt;{</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");</span>
+<span class="cstat-no" title="statement not covered" >      form["table_platforms"]=eval("["+ form.tablePlatforms +"]");</span>
+<span class="cstat-no" title="statement not covered" >      form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");</span>
+<span class="cstat-no" title="statement not covered" >      form["recursos"]=eval("["+form["tableRecursos"]+"]");</span>
+<span class="cstat-no" title="statement not covered" >      form["categorias"]=eval(form["categorias"]);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if(form['catalogo_ted']==1){</span>
+<span class="cstat-no" title="statement not covered" >        global.CONTROL.catalogo=[];</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      _self._microservice_client.send_query(_self._common_queries.GET.info_proveedor,form).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        form['carpeta_proveedor']=data[0].carpeta_proveedor;</span>
+<span class="cstat-no" title="statement not covered" >        _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(<span class="fstat-no" title="function not covered" >()</span>=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >          _self._db_connection.insert_new_content(form,_self._profile_queries).then(<span class="fstat-no" title="function not covered" >()</span>=&gt;{</span>
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            global.CONTROL.proveedor[form['id_proveedor']]=undefined;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >              if(data){</span>
+<span class="cstat-no" title="statement not covered" >                form['rutaEjecucion']=data;</span>
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                _self._microservice_client.send_query(_self._profile_queries.UPDATE.rutaEjecucion,{</span>
+                  rutaEjecucion:form['rutaEjecucion'],
+                  id_contenido:form['id_contenido']
+                }).then(<span class="fstat-no" title="function not covered" >()</span>=&gt;{
+&nbsp;
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                  _self._microservice_client.send_email({type:"new_course",datos_curso:form}).then(<span class="fstat-no" title="function not covered" >()</span>=&gt;{</span>
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    _self._check_course_certified(form).then(<span class="fstat-no" title="function not covered" >()</span>=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >                      _self._close_connections();</span>
+                    });
+&nbsp;
+                  });
+&nbsp;
+                });
+&nbsp;
+              }
+            });
+<span class="cstat-no" title="statement not covered" >            resolve(true);</span>
+          }).catch(<span class="fstat-no" title="function not covered" >(e</span>rror)=&gt;{
+<span class="cstat-no" title="statement not covered" >            console.error(error);</span>
+<span class="cstat-no" title="statement not covered" >            reject(error);</span>
+          });
+        });
+      });
+&nbsp;
+&nbsp;
+    });
+  }
+&nbsp;
+&nbsp;
+&nbsp;
+<span class="fstat-no" title="function not covered" >  mo</span>dify_course(form){
+&nbsp;
+    const _self=<span class="cstat-no" title="statement not covered" >this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve,reject)=&gt;{</span>
+      // Once the form is parsed, we call the "close" function to send back the response
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      form["fecha_alta"]=_self._file._returnActualDate();</span>
+<span class="cstat-no" title="statement not covered" >      form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");</span>
+<span class="cstat-no" title="statement not covered" >      form["table_platforms"]=eval("["+ form.tablePlatforms +"]");</span>
+<span class="cstat-no" title="statement not covered" >      form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      form["recursos"]=eval("["+form["tableRecursos"]+"]");</span>
+<span class="cstat-no" title="statement not covered" >      form["categorias"]=eval(form["categorias"]);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if(form["catalogo_ted"]==1){</span>
+<span class="cstat-no" title="statement not covered" >        global.CONTROL.catalogo=[];</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      _self._microservice_client.send_query(_self._common_queries.GET.info_proveedor,form).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >        form["carpeta_proveedor"]=data[0].carpeta_proveedor;</span>
+        // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
+<span class="cstat-no" title="statement not covered" >        _self.get_content_by_id(form["id_contenido"]).then(<span class="fstat-no" title="function not covered" >(c</span>ontent)=&gt;{</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          global.CONTROL.proveedor[form['id_proveedor']]=undefined;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          if(form['file_to_upload']){</span>
+<span class="cstat-no" title="statement not covered" >            _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(<span class="fstat-no" title="function not covered" >()</span>=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >                _self._db_connection.update_content(content,_self._profile_queries,form,true).then(<span class="fstat-no" title="function not covered" >()</span>=&gt;{</span>
+&nbsp;
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                  _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >                    if(data){</span>
+<span class="cstat-no" title="statement not covered" >                      form['rutaEjecucion']=data;</span>
+<span class="cstat-no" title="statement not covered" >                      _self._microservice_client.send_query(_self._profile_queries.UPDATE.rutaEjecucion,{</span>
+                        rutaEjecucion:"http://"+form['rutaEjecucion'],
+                        id_contenido:form['id_contenido']
+                      }).then(<span class="fstat-no" title="function not covered" >()</span>=&gt;{
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        _self._microservice_client.send_email("upload_course");</span>
+<span class="cstat-no" title="statement not covered" >                        _self._db_connection._close_connection();</span>
+&nbsp;
+                      })
+                      .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >                        console.log(err);</span>
+                      });
+                    }
+&nbsp;
+                  });
+<span class="cstat-no" title="statement not covered" >                  resolve(true);</span>
+                });
+&nbsp;
+            })
+            .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >              reject(err);</span>
+            });
+          }else{
+            // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
+<span class="cstat-no" title="statement not covered" >            _self._db_connection.update_content(content,_self._profile_queries,form).then(<span class="fstat-no" title="function not covered" >()</span>=&gt;{</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >              resolve(true);</span>
+            })
+            .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >              reject(err);</span>
+            });
+          }
+        })
+        .catch(<span class="fstat-no" title="function not covered" >(e</span>rror)=&gt;{
+<span class="cstat-no" title="statement not covered" >          reject(error);</span>
+        });
+&nbsp;
+      })
+      .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >        reject(err);</span>
+      });
+&nbsp;
+&nbsp;
+    });
+&nbsp;
+  }
+&nbsp;
+&nbsp;
+  //END OF THE USER CLASS --&gt; DONT TOUCH THE BRACKET
+}
+module.exports=User;
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Apr 25 2017 19:10:45 GMT+0200 (CEST)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

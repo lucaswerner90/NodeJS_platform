@@ -135,6 +135,7 @@ class Database{
 
       query=_self._replace_variables_on_query(query,object);
       // Use the connection
+
       _self._connection.query(query, function(err, rows) {
         // In case of error
         if(err){
@@ -186,7 +187,6 @@ class Database{
               multiple_insert_query:_self.createInsertCategories(camposFormulario.categorias,camposFormulario.id_contenido).multiple_insert_query}));
           }
 
-          debugger;
           additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.tableOfCompatibilities,
             {
             multiple_insert_query:_self.createCompatibilityTableForInsertCourseQuery(camposFormulario.multiple_insert_query,camposFormulario.id_contenido,camposFormulario.id_usuario).multiple_insert_query,
@@ -294,7 +294,7 @@ class Database{
 
       if(camposFormulario.categorias && camposFormulario.categorias.length>0){
         if(content.categorias && content.categorias.length>0){
-          additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_categorias,{id_contenido:camposFormulario.id_contenido}));
+          additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_categorias_subcategorias,{id_contenido:camposFormulario.id_contenido}));
         }
         additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_categorias,{
           multiple_insert_query:_self.createInsertCategories(camposFormulario.categorias,camposFormulario.id_contenido).multiple_insert_query}));
@@ -316,8 +316,10 @@ class Database{
       // Campos licencia en el contenido
       if(camposFormulario.licencia==1){
 
-        camposFormulario['fecha_fin']=new Date(camposFormulario['fecha_fin']).toISOString().slice(0, 19).replace('T', ' ');
+
         camposFormulario['fecha_inicio']=new Date(camposFormulario['fecha_inicio']).toISOString().slice(0, 19).replace('T', ' ');
+        camposFormulario['fecha_fin']=(camposFormulario['fecha_fin'])?new Date(camposFormulario['fecha_fin']).toISOString().slice(0, 19).replace('T', ' '):camposFormulario['fecha_inicio'];
+
 
         if(content.licencia==1){
           additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_licencia,{id_contenido:camposFormulario.id_contenido}));
@@ -423,11 +425,6 @@ class Database{
         }else{
           additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.contentRelation,camposFormulario));
         }
-      }
-
-
-      if(camposFormulario['catalogo_ted']===1){
-        global.CONTROL.catalogo=[];
       }
 
       additional_queries=additional_queries.join(" ");

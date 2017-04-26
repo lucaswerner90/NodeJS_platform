@@ -8,6 +8,16 @@ process.env.NODE_ENV=process.env.NODE_ENV || 'DEV';
 
 
 const express = require('express');
+
+/*Used to create the HTTP/2 Protocol*/
+const fs=require('fs');
+const spdy = require('spdy');
+const options = {
+    key: fs.readFileSync(__dirname + '/server.key'),
+    cert:  fs.readFileSync(__dirname + '/server.crt')
+}
+/**********************************/
+
 const compression = require('compression');
 const app=express();
 const CONFIG_SERVER=require('./CONFIG_SERVER.json');
@@ -32,7 +42,10 @@ const middlewareAuthentication=require('./authentication/middleware');
 
 const microservices=require('./microservices/index');
 
-microservices.runAllServices();
+
+
+
+
 
 app.use(compression());
 
@@ -59,7 +72,7 @@ app.use(BODY_PARSER.json({limit: '500mb'}));
 // maxAge defined by static files:
 // const maxage_cache=86400*24*7;
 const maxage_cache=0;
- 
+
 for (let i = 0; i < CONFIG_SERVER.STATIC_ROUTES.length; i++) {
   app.use(CONFIG_SERVER.STATIC_ROUTES[i],express.static(CONFIG_SERVER.STATIC_DIR,{
     maxage:maxage_cache
@@ -79,6 +92,13 @@ app.use((req, res, next)=> {
 });
 
 
+//For test purposes
+if(!module.parent){
+  app.listen(PORT);
+}
 
-
-module.exports=app.listen(PORT);
+if(process.env.NODE_ENV==='test'){
+  module.exports=app;
+}else{
+  microservices.runAllServices();
+}

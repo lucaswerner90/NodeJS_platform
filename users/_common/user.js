@@ -120,6 +120,7 @@ class User{
           reject({token:null});
         }else{
           rows[0].imgAvatar=rows[0].urlAvatar;
+          rows[0].urlAvatar=undefined;
           resolve({userInfo:rows[0]});
 
         }
@@ -448,13 +449,19 @@ class User{
 
     return new Promise((resolve,reject)=>{
       // Once the form is parsed, we call the "close" function to send back the response
-      debugger;
+
       form["fecha_alta"]=_self._file._returnActualDate();
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
       form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
       form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
+
       form["recursos"]=eval("["+form["tableRecursos"]+"]");
       form["categorias"]=eval(form["categorias"]);
+
+      if(form["catalogo_ted"]==1){
+        global.CONTROL.catalogo=[];
+      }
+
       _self._microservice_client.send_query(_self._common_queries.GET.info_proveedor,form).then((data)=>{
         form["carpeta_proveedor"]=data[0].carpeta_proveedor;
         // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos

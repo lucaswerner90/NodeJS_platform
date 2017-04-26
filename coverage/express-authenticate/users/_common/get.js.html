@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for express-authenticate/users/_common/get.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">All files</a> / <a href="index.html">express-authenticate/users/_common</a> get.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">16.67% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>12/72</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/9</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/25</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">16.67% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>12/72</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use strict";
+&nbsp;
+const express=require('express');
+&nbsp;
+const router=express.Router();
+&nbsp;
+const User=require('./user');
+&nbsp;
+const Selector=require('../profiles/_selector');
+&nbsp;
+&nbsp;
+&nbsp;
+router.get('/avatar/file=:filename',<span class="fstat-no" title="function not covered" >(r</span>eq,res)=&gt;{
+  let user=<span class="cstat-no" title="statement not covered" >new User();</span>
+<span class="cstat-no" title="statement not covered" >  user.get_avatar(req.params.filename).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >    user._close_connections();</span>
+<span class="cstat-no" title="statement not covered" >    user=null;</span>
+<span class="cstat-no" title="statement not covered" >    res.send(data);</span>
+  })
+  .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >    res.send({error:err});</span>
+  });
+});
+&nbsp;
+router.get('/user_info/id_usuario=:id_usuario',<span class="fstat-no" title="function not covered" >(r</span>eq,res)=&gt;{
+  let user=<span class="cstat-no" title="statement not covered" >new User(req.params.id_usuario);</span>
+<span class="cstat-no" title="statement not covered" >  user.get_user_info().then(<span class="fstat-no" title="function not covered" >(d</span>atos)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >    res.send(datos);</span>
+  })
+  .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >    res.send({error:err});</span>
+  });
+});
+&nbsp;
+&nbsp;
+router.get('/catalogo',<span class="fstat-no" title="function not covered" >(r</span>eq,res)=&gt;{
+<span class="cstat-no" title="statement not covered" >  if(global.CONTROL.catalogo.length===0){</span>
+    let user=<span class="cstat-no" title="statement not covered" >new User();</span>
+<span class="cstat-no" title="statement not covered" >    user.get_catalogo().then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >      user._close_connections();</span>
+<span class="cstat-no" title="statement not covered" >      user=null;</span>
+<span class="cstat-no" title="statement not covered" >      global.CONTROL.catalogo=data;</span>
+<span class="cstat-no" title="statement not covered" >      res.send(data);</span>
+    })
+    .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >      res.send({error:err});</span>
+    });
+  }else{
+<span class="cstat-no" title="statement not covered" >    res.send(global.CONTROL.catalogo);</span>
+  }
+&nbsp;
+&nbsp;
+});
+&nbsp;
+&nbsp;
+router.get('/generic_info',<span class="fstat-no" title="function not covered" >(r</span>eq,res)=&gt;{
+<span class="cstat-no" title="statement not covered" >  if(Object.keys(global.CONTROL.generic_info).length===0){</span>
+    let select_user=<span class="cstat-no" title="statement not covered" >new Selector(req.body.id_usuario);</span>
+<span class="cstat-no" title="statement not covered" >    select_user.return_user().then(<span class="fstat-no" title="function not covered" >(p</span>rofile)=&gt;{</span>
+      let user=<span class="cstat-no" title="statement not covered" >profile;</span>
+<span class="cstat-no" title="statement not covered" >      user.get_platform_generic_info().then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >        user._close_connections();</span>
+<span class="cstat-no" title="statement not covered" >        select_user=null;</span>
+<span class="cstat-no" title="statement not covered" >        global.CONTROL.generic_info=data;</span>
+<span class="cstat-no" title="statement not covered" >        res.send(data);</span>
+      })
+      .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >        res.send({error:err});</span>
+      });
+    })
+    .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >      res.send({error:err});</span>
+    });
+  }else{
+<span class="cstat-no" title="statement not covered" >    res.send(global.CONTROL.generic_info);</span>
+  }
+&nbsp;
+&nbsp;
+});
+&nbsp;
+&nbsp;
+// A esta funcion le tenemos que pasar el req.body.id_usuario y nosotros nos encargamos de obtener la info del user y el proveedor que le corresponde
+router.post('/contents',<span class="fstat-no" title="function not covered" >(r</span>eq,res)=&gt;{
+  let select_user=<span class="cstat-no" title="statement not covered" >new Selector(req.body.id_usuario);</span>
+<span class="cstat-no" title="statement not covered" >  select_user.return_user().then(<span class="fstat-no" title="function not covered" >(p</span>rofile)=&gt;{</span>
+    let user=<span class="cstat-no" title="statement not covered" >profile;</span>
+<span class="cstat-no" title="statement not covered" >    user.get_contents().then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >      user._close_connections();</span>
+<span class="cstat-no" title="statement not covered" >      select_user=null;</span>
+<span class="cstat-no" title="statement not covered" >      res.send(data);</span>
+    })
+    .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >      select_user=null;</span>
+<span class="cstat-no" title="statement not covered" >      user=null;</span>
+<span class="cstat-no" title="statement not covered" >      res.send({error:err});</span>
+    });
+  })
+  .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >    select_user=null;</span>
+<span class="cstat-no" title="statement not covered" >    res.send({error:err});</span>
+  });
+&nbsp;
+&nbsp;
+});
+&nbsp;
+&nbsp;
+router.get('/download/filepath=:filepath',<span class="fstat-no" title="function not covered" >(r</span>eq,res)=&gt;{
+<span class="cstat-no" title="statement not covered" >  if(req.headers &amp;&amp; req.headers.referer &amp;&amp; req.headers.referer.endsWith('editar-contenido')&gt;-1){</span>
+    let user=<span class="cstat-no" title="statement not covered" >new User();</span>
+<span class="cstat-no" title="statement not covered" >    user.download_zip(req.params.filepath,res);</span>
+<span class="cstat-no" title="statement not covered" >    user=null;</span>
+  }else{
+<span class="cstat-no" title="statement not covered" >    res.status(403).send({error:"NO! Solo desde la plataforma :)! PD: Un beso (K)  "});</span>
+  }
+&nbsp;
+&nbsp;
+});
+&nbsp;
+&nbsp;
+router.get('/content/id_content=:id_content',<span class="fstat-no" title="function not covered" >(r</span>eq,res)=&gt;{
+  let select_user=<span class="cstat-no" title="statement not covered" >new Selector(req.body.id_usuario);</span>
+<span class="cstat-no" title="statement not covered" >  select_user.return_user().then(<span class="fstat-no" title="function not covered" >(p</span>rofile)=&gt;{</span>
+    let user=<span class="cstat-no" title="statement not covered" >profile;</span>
+<span class="cstat-no" title="statement not covered" >    user.get_content_by_id(req.params.id_content).then(<span class="fstat-no" title="function not covered" >(d</span>ata)=&gt;{</span>
+<span class="cstat-no" title="statement not covered" >      user._close_connections();</span>
+<span class="cstat-no" title="statement not covered" >      select_user=null;</span>
+<span class="cstat-no" title="statement not covered" >      res.send(data);</span>
+    })
+    .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >      select_user=null;</span>
+<span class="cstat-no" title="statement not covered" >      user=null;</span>
+<span class="cstat-no" title="statement not covered" >      res.send({error:err});</span>
+    });
+  })
+  .catch(<span class="fstat-no" title="function not covered" >(e</span>rr)=&gt;{
+<span class="cstat-no" title="statement not covered" >    select_user=null;</span>
+<span class="cstat-no" title="statement not covered" >    res.send({error:err});</span>
+  });
+&nbsp;
+&nbsp;
+});
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+module.exports=router;
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Apr 25 2017 19:10:45 GMT+0200 (CEST)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

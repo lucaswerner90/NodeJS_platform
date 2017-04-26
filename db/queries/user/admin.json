@@ -30,7 +30,7 @@
     "content_education":"UPDATE relacion_contenido_nivel SET id_nivel=[id_nivel] WHERE id_contenido=[id_contenido];",
     "content_servidor":"DELETE relacion_contenido_servidor FROM relacion_contenido_servidor WHERE id_contenido=[id_contenido];INSERT INTO relacion_contenido_servidor (id_contenido,id_servidor) VALUES [multiple_insert_query];",
     "content_recursos":"UPDATE relacion_contenidos_recursos SET id_estado=0 WHERE id_contenido=[id_contenido];",
-    "content_categorias_subcategorias":"DELETE * FROM relacion_contenido_categorias_subcategorias WHERE id_contenido=[id_contenido];",
+    "content_categorias_subcategorias":"DELETE FROM relacion_contenido_categorias_subcategorias WHERE id_contenido=[id_contenido];",
     "content_licencia":"DELETE FROM licencias WHERE id_contenido=[id_contenido];"
   }
 }
