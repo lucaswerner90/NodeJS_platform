@@ -13,8 +13,9 @@ class Database{
     this._log_queries=LOG_QUERIES;
 
 
-    this._connection.once("error",function(error){
-      console.error(error);
+    this._connection.on("error",function(error){
+      console.error("[DATABASE ERROR] ---------> "+error);
+      this._connection = mysql.createConnection(this._configuration);
     });
 
   }
@@ -24,7 +25,7 @@ class Database{
     _self._connection.destroy();
   }
 
-  _log_actions(action="",obj={}){
+  _log_actions(){
     //
     // const _self=this;
     //
@@ -137,6 +138,8 @@ class Database{
       // Use the connection
 
       _self._connection.query(query, function(err, rows) {
+
+
         // In case of error
         if(err){
           reject(err);
@@ -373,33 +376,40 @@ class Database{
 
       }
 
-      if(content.id_nivel && camposFormulario.id_nivel){
-        additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_education,
-        {
-          id_contenido:camposFormulario.id_contenido,
-          id_nivel:camposFormulario.id_nivel
-        }));
-      }else if(camposFormulario.id_nivel){
-        additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_education,
-        {
-          id_contenido:camposFormulario.id_contenido,
-          id_nivel:camposFormulario.id_nivel
-        }));
+      if(camposFormulario.id_nivel){
+        if(content.id_nivel){
+          additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_education,
+          {
+            id_contenido:camposFormulario.id_contenido,
+            id_nivel:camposFormulario.id_nivel
+          }));
+        }else{
+          additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_education,
+          {
+            id_contenido:camposFormulario.id_contenido,
+            id_nivel:camposFormulario.id_nivel
+          }));
+        }
       }
 
-      if(content.id_habilidad && camposFormulario.id_habilidad){
-        additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_habilidades+user_queries.INSERT.content_habilidades,
-        {
-          id_contenido:camposFormulario.id_contenido,
-          id_habilidad:camposFormulario.id_habilidad
-        }));
-      }else if(camposFormulario.id_habilidad){
-        additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_habilidades,
-        {
-          id_contenido:camposFormulario.id_contenido,
-          id_habilidad:camposFormulario.id_habilidad
-        }));
+
+      if(camposFormulario.id_habilidad){
+          if(content.id_habilidad){
+            additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_habilidades,
+            {
+              id_contenido:camposFormulario.id_contenido,
+              id_habilidad:camposFormulario.id_habilidad
+            }));
+          }else{
+            additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_habilidades,
+            {
+              id_contenido:camposFormulario.id_contenido,
+              id_habilidad:camposFormulario.id_habilidad
+            }));
+          }
       }
+
+
 
 
       if(camposFormulario['screenshot']){

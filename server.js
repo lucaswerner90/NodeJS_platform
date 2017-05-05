@@ -9,13 +9,7 @@ process.env.NODE_ENV=process.env.NODE_ENV || 'DEV';
 
 const express = require('express');
 
-/*Used to create the HTTP/2 Protocol*/
-const fs=require('fs');
-const spdy = require('spdy');
-const options = {
-    key: fs.readFileSync(__dirname + '/server.key'),
-    cert:  fs.readFileSync(__dirname + '/server.crt')
-}
+
 /**********************************/
 
 const compression = require('compression');

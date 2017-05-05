@@ -4,10 +4,10 @@ const CONFIG_MICRO=require('./config.json');
 
 class ClientMicroservice{
   constructor(){
-    this._login_client=seneca().client(CONFIG_MICRO.login_microservice);
-    this._file_client=seneca().client(CONFIG_MICRO.filehandler_microservice);
-    this._db_client=seneca().client(CONFIG_MICRO.db_microservice);
-    this._email_client=seneca().client(CONFIG_MICRO.email_microservice);
+    this._login_client=seneca({debug:CONFIG_MICRO.main_conf.debug}).client(CONFIG_MICRO.login_microservice);
+    this._file_client=seneca({debug:CONFIG_MICRO.main_conf.debug}).client(CONFIG_MICRO.filehandler_microservice);
+    this._db_client=seneca({debug:CONFIG_MICRO.main_conf.debug}).client(CONFIG_MICRO.db_microservice);
+    this._email_client=seneca({debug:CONFIG_MICRO.main_conf.debug}).client(CONFIG_MICRO.email_microservice);
   }
 
 

@@ -454,7 +454,7 @@ class User{
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
       form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
       form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
-
+      form["url_image"]=form['url_image']?form['url_image']:"/images/catDefault.png";
       form["recursos"]=eval("["+form["tableRecursos"]+"]");
       form["categorias"]=eval(form["categorias"]);
 
