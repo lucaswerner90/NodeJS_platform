@@ -1,7 +1,7 @@
 "use strict";
 
 
-const DBQueries=require('../../db/queries/user/extern.json');
+const DBQueries=require('../../db/queries/user/intern.json');
 const User=require('../_common/user');
 
 class InternProfile extends User{

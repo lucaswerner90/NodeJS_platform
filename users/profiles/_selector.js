@@ -6,6 +6,14 @@ const Consult=require('./consulter');
 const User=require('../_common/user');
 
 
+const PROFILE_KEYS={
+  "admin":"administrador",
+  "externo":"proveedor externo",
+  "interno":"proveedor interno",
+  "cliente":"cliente"
+};
+
+
 class Selector extends User{
 
   constructor(id_usuario){
@@ -15,15 +23,14 @@ class Selector extends User{
   return_user_object(data){
 
     const _self=this;
-
-    switch (data) {
-      case "Administrador":
+    switch (data.toLowerCase()) {
+      case PROFILE_KEYS.admin:
         return(new Admin(_self._id_usuario));
-      case "Proveedor externo":
+      case PROFILE_KEYS.externo:
         return(new Extern(_self._id_usuario));
-      case "Proveedor interno":
+      case PROFILE_KEYS.interno:
         return(new Intern(_self._id_usuario));
-      case "Cliente":
+      case PROFILE_KEYS.cliente:
         return(new Client(_self._id_usuario));
       default:
         return(new Consult(_self._id_usuario));

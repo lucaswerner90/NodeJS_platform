@@ -10,7 +10,6 @@ const Selector=require('../profiles/_selector');
 // Deberemos pasarle los campos de busqueda y el id del proveedor pero no necesitamos el id del usuario
 router.post('/course',(req,res)=>{
 
-
   let formulario=new Form(req,()=>{
     let select_user=new Selector(formulario._campos["id_usuario"]);
     select_user.return_user().then((profile)=>{

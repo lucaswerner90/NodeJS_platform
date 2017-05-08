@@ -191,6 +191,7 @@ class FTPModel{
               Promise.all(arrayFilesPromises).then(()=>{
                 uploadPipe.removeAllListeners();
                 _self._FTPDisconnect();
+                console.info("[ZIP FILE] SUBIDO CORRECTAMENTE......");
                 resolve(index_file);
               })
             },3000);
@@ -244,7 +245,7 @@ class FTPModel{
               _self._FTPDisconnect();
               reject(`Error transmitting the file...`);
             });
-            
+
             // We returned a readableStream to pass it to the response
             resolve(fileStream);
 
@@ -274,7 +275,7 @@ class FTPModel{
         }
         // If the user's directory exists, we only need to upload the file...
         if(_self._checkIfDirExists(PATH.parse(FTPPath).name,list)){
-          const newDirname=PATH.dirname(PATH.dirname(FTPPath))+"/"+"_backup_"+_self._appendDateToFilename()+"_"+PATH.parse(FTPPath).name;
+          const newDirname=PATH.dirname(PATH.dirname(FTPPath))+"/"+PATH.parse(FTPPath).name+"_backup_"+_self._appendDateToFilename();
           _self._renameFolder(PATH.parse(FTPPath).dir,newDirname).then(()=>{
             _self._createDir(PATH.dirname(FTPPath)).then(()=>{
               _self._createFile(file,FTPPath).then(()=>{

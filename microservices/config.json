@@ -8,22 +8,23 @@
   },
   "login_microservice":{
     "timeout":5000,
-    "host":"127.0.0.1",
+    "host":"localhost",
     "port":"10101"
   },
   "filehandler_microservice":{
     "timeout":5000,
-    "host":"127.0.0.1",
+    "host":"localhost",
     "port":"10102"
   },
   "db_microservice":{
     "timeout":5000,
-    "host":"127.0.0.1",
+    "host":"localhost",
+    "pin":"role:db,cmd:*",
     "port":"10103"
   },
   "email_microservice":{
     "timeout":5000,
-    "host":"127.0.0.1",
+    "host":"localhost",
     "port":"10104"
   }
 }

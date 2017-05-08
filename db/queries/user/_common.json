@@ -18,7 +18,7 @@
     "content_platforms":"SELECT content_platforms.id_plataforma FROM relacion_contenido_plataforma as content_platforms WHERE id_contenido=[id_contenido];",
     "subcategorias":"select id_subcategoria,descripcion from subcategorias where id_estado=1 and id_categoria=[id_categoria];",
     "content_categorias_subcategorias":"select id_subcategoria,id_categoria from relacion_contenido_categorias_subcategorias where id_contenido=[id_contenido];",
-    "content_recursos":"select id_contenido,id_recurso from relacion_contenidos_recursos WHERE id_contenido=[id_contenido];",
+    "content_recursos":"select id_contenido,id_recurso from relacion_contenidos_recursos WHERE id_contenido=[id_contenido] and id_estado=1;",
     "content_catalogo":"select id_contenido,url_image,id_pais,titulo,rutaEjecucion,(select id_tecnologia from relacion_contenidos_tecnologias rel where rel.id_contenido=c.id_contenido) as id_tecnologia from contenidos c where catalogo_ted=1;",
     "course_certified":"select count(*) from resultado_certificacion_contenido where id_contenido=[id_contenido] and id_estado=1 union select count(*) as validadas from resultado_certificacion_contenido where id_contenido=[id_contenido] and valor=(select id_valor from valorestablacertificacion where descripcion='Certificado') and id_estado=1;"
   },

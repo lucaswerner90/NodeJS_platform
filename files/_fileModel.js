@@ -53,6 +53,10 @@ class File{
     }
   }
 
+  _fileDecompresionRoute(formFields,uploadDirectory,filename){
+    return uploadDirectory+"/"+formFields["carpeta_proveedor"]+"/"+filename.name+"/";
+  }
+
 
 
   uploadContentFile(file,formFields,uploadDirectory,extensionsAllowed,avatar=false){
@@ -79,6 +83,7 @@ class File{
         if(!avatar){
 
           formFields["fecha_alta"]=_self._returnActualDate();
+          formFields["ruta_descompresion"]=_self._fileDecompresionRoute(formFields,uploadDirectory,newFilename);
           formFields["ruta_zip"]=_self._fileRoute("zip",formFields,uploadDirectory,newFilename);
           ruta_file=formFields['ruta_zip'];
 

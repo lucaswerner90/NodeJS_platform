@@ -173,16 +173,10 @@ class User{
     return new Promise((resolve,reject)=>{
       //Object.keys(global.CONTROL.users[_self._id_usuario]).length===0
       _self.get_user_info().then((result)=>{
-        if(global.CONTROL.proveedor[result.id_proveedor]===undefined){
           _self._microservice_client.send_query(_self._profile_queries.GET.contents_proveedor,result).then((data)=>{
-
             global.CONTROL.proveedor[result.id_proveedor]=data;
-
             resolve(data);
           });
-        }else{
-          resolve(global.CONTROL.proveedor[result.id_proveedor]);
-        }
 
       })
       .catch((err)=>{
@@ -318,14 +312,14 @@ class User{
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-      _self._microservice_client.send_query(_self._common_queries.UPDATE.avatar,form).then((data)=>{
+      _self._microservice_client.send_query(_self._common_queries.UPDATE.avatar,form).then(()=>{
         _self._id_usuario=form.id_usuario;
         _self._logOnDB("user.modify_avatar");
         resolve(true);
       })
       .catch((error)=>{
         reject(error);
-      })
+      });
 
     });
   }
@@ -386,7 +380,7 @@ class User{
       form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
       form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
       form["recursos"]=eval("["+form["tableRecursos"]+"]");
-      form["categorias"]=eval(form["categorias"]);
+      form["categorias"]=(eval("["+form["categorias"]+"]"))?eval("["+form["categorias"]+"]").filter((x)=>x):[];
 
       if(form['catalogo_ted']==1){
         global.CONTROL.catalogo=[];
@@ -394,15 +388,13 @@ class User{
 
       _self._microservice_client.send_query(_self._common_queries.GET.info_proveedor,form).then((data)=>{
 
-
         form['carpeta_proveedor']=data[0].carpeta_proveedor;
         _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
           _self._db_connection.insert_new_content(form,_self._profile_queries).then(()=>{
 
-
             global.CONTROL.proveedor[form['id_proveedor']]=undefined;
 
-            _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then((data)=>{
+            _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_descompresion']).then((data)=>{
 
 
               if(data){
@@ -475,7 +467,7 @@ class User{
 
 
 
-                  _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_zip']).then((data)=>{
+                  _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_descompresion']).then((data)=>{
                     if(data){
                       form['rutaEjecucion']=data;
                       _self._microservice_client.send_query(_self._profile_queries.UPDATE.rutaEjecucion,{
@@ -484,8 +476,8 @@ class User{
                       }).then(()=>{
 
 
-                        _self._microservice_client.send_email("upload_course");
-                        _self._db_connection._close_connection();
+                        _self._microservice_client.send_email({type:"uploaded_course",datos_curso:form});
+                        _self._close_connections();
 
                       })
                       .catch((err)=>{

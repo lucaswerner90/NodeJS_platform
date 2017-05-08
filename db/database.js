@@ -141,7 +141,7 @@ class Database{
 
 
         // In case of error
-        if(err){
+        if(err!==null){
           reject(err);
         }
 
@@ -314,6 +314,8 @@ class Database{
           multiple_insert_query:_self.createInsertContentRecursos(camposFormulario.recursos,camposFormulario.id_contenido).multiple_insert_query
         }));
 
+      }else if(camposFormulario.recursos.length===0 && content.recursos.length>0){
+        additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_recursos,{id_contenido:camposFormulario.id_contenido}));
       }
 
       // Campos licencia en el contenido
@@ -374,6 +376,9 @@ class Database{
           }));
         }
 
+      }else if(camposFormulario.servidores_contenidos.length===0 && content.servidores_contenidos.length>0){
+        const onlyDelete=user_queries.UPDATE.content_servidor.split(";")[0]+";";
+        additional_queries.push(_self._replace_variables_on_query(onlyDelete,{id_contenido:camposFormulario.id_contenido}));
       }
 
       if(camposFormulario.id_nivel){

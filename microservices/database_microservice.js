@@ -5,16 +5,9 @@ const Database=require('../db/database');
 
 class DatabaseMicroservice{
 
-  _keepConnectionAlive(){
-    setInterval(function () {
-      this._db.sendQuery('SELECT 1',{}).then(()=>{
-      });
-    }, 10000);
-  }
   constructor () {
     console.log("[RUNNING] Database microservice");
     this._db=new Database();
-    this._keepConnectionAlive();
 
     seneca.add('role:db,cmd:send_query',(parameters,result)=>{
       this._db.sendQuery(parameters.query,parameters.obj).then((data)=>{

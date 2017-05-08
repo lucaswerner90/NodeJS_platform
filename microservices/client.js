@@ -1,6 +1,7 @@
 const seneca=require('seneca');
 const CONFIG_MICRO=require('./config.json');
 
+const CLIENT_TIMEOUT=99999;
 
 class ClientMicroservice{
   constructor(){
@@ -24,7 +25,7 @@ class ClientMicroservice{
   send_query(query="",obj={}){
     const _self=this;
     return new Promise((resolve, reject)=> {
-      _self._db_client.act({ role: 'db', cmd: 'send_query', query:query,obj:obj},(error,result)=>{
+      _self._db_client.act({timeout$:CLIENT_TIMEOUT, role: 'db', cmd: 'send_query', query:query,obj:obj},(error,result)=>{
         if(result){
           resolve(result.answer);
         }else{
@@ -39,7 +40,7 @@ class ClientMicroservice{
   login_user({body}){
     const _self=this;
     return new Promise((resolve, reject)=> {
-      _self._login_client.act({ role: 'authentication', cmd: 'login', data:body},(error,result)=>{
+      _self._login_client.act({timeout$:CLIENT_TIMEOUT, role: 'authentication', cmd: 'login', data:body},(error,result)=>{
         if(error) reject(error);
         resolve(result.answer);
       });
