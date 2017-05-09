@@ -25,6 +25,7 @@ router.get('/avatar/file=:filename',(req,res)=>{
 router.get('/user_info/id_usuario=:id_usuario',(req,res)=>{
   let user=new User(req.params.id_usuario);
   user.get_user_info().then((datos)=>{
+    user._close_connections();
     res.send(datos);
   })
   .catch((err)=>{

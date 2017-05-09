@@ -67,7 +67,7 @@ router.post('/change_password',(req,res)=>{
     let user=profile;
     user.modify_password(req.body).then(()=>{
       select_user=null;
-      user._db_connection._close_connection();
+      user._close_connections();
       res.send({status:true});
     })
     .catch((err)=>{
@@ -89,6 +89,7 @@ router.post('/avatar',(req,res)=>{
     let user=profile;
     user.modify_avatar(req.body,req.body["urlAvatar"]).then(()=>{
       select_user=null;
+      user._close_connections();
       res.send({status:true});
     });
   })

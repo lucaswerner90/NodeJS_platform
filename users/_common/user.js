@@ -5,17 +5,21 @@ const File=require('../../files/_fileModel');
 const DBCommonQueries=require('../../db/queries/user/_common.json');
 const ClientMicroservice=require('../../microservices/client');
 
+const JSDOM=require('jsdom').JSDOM;
+const { document } = (new JSDOM(`...`)).window;
+
+
 global.CONTROL=require('./control');
 /**
 @class
 */
 class User{
 
- /**
- @constructor
- @param {number} id_usuario - User ID
- @param {object} queries - User's profile queries
- */
+  /**
+  @constructor
+  @param {number} id_usuario - User ID
+  @param {object} queries - User's profile queries
+  */
   constructor(id_usuario=-1,queries){
 
     this._id_usuario=parseInt(id_usuario);
@@ -26,6 +30,28 @@ class User{
     this._common_queries=DBCommonQueries;
 
   }
+
+
+  _resizedataURL(data, wantedWidth, wantedHeight){
+    // We create an image to receive the Data URI
+    const img = document.createElement('img');
+    img.onload=function(){
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      // We set the dimensions at the wanted size.
+      canvas.width = wantedWidth;
+      canvas.height = wantedHeight;
+
+      // We resize the image with the canvas method drawImage();
+      ctx.drawImage(img, 0, 0, wantedWidth, wantedHeight);
+
+      return canvas.toDataURL('image/jpeg',0.8);
+    }
+    img.src = data;
+    // We put the Data URI in the image's src attribute
+  }
+
 
 
   _logOnDB(){
@@ -55,19 +81,19 @@ class User{
 
     return new Promise((resolve,reject)=>{
       // if(global.CONTROL.users[_self._id_usuario]===undefined){
-        _self.get_user_info().then((result)=>{
-          _self._microservice_client.send_query(_self._common_queries.GET.type_of_user,{
-            id_perfil:result.id_perfil}
-          ).then((data)=>{
-            resolve(data[0].descripcion);
-          })
-          .catch((err)=>{
-            reject(err);
-          });
+      _self.get_user_info().then((result)=>{
+        _self._microservice_client.send_query(_self._common_queries.GET.type_of_user,{
+          id_perfil:result.id_perfil}
+        ).then((data)=>{
+          resolve(data[0].descripcion);
         })
         .catch((err)=>{
           reject(err);
         });
+      })
+      .catch((err)=>{
+        reject(err);
+      });
       // }else{
       //   resolve(global.CONTROL.users[_self._id_usuario].descripcion);
       // }
@@ -94,12 +120,12 @@ class User{
 
     const _self=this;
     return new Promise((resolve,reject)=>{
-        _self._microservice_client.send_query(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
-          resolve(data[0]);
-        })
-        .catch((err)=>{
-          reject(err);
-        });
+      _self._microservice_client.send_query(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
+        resolve(data[0]);
+      })
+      .catch((err)=>{
+        reject(err);
+      });
 
     });
   }
@@ -173,10 +199,10 @@ class User{
     return new Promise((resolve,reject)=>{
       //Object.keys(global.CONTROL.users[_self._id_usuario]).length===0
       _self.get_user_info().then((result)=>{
-          _self._microservice_client.send_query(_self._profile_queries.GET.contents_proveedor,result).then((data)=>{
-            global.CONTROL.proveedor[result.id_proveedor]=data;
-            resolve(data);
-          });
+        _self._microservice_client.send_query(_self._profile_queries.GET.contents_proveedor,result).then((data)=>{
+          global.CONTROL.proveedor[result.id_proveedor]=data;
+          resolve(data);
+        });
 
       })
       .catch((err)=>{
@@ -312,6 +338,7 @@ class User{
     const _self=this;
 
     return new Promise((resolve,reject)=>{
+      form['urlAvatar']=_self._resizedataURL(form['urlAvatar'],200,200);
       _self._microservice_client.send_query(_self._common_queries.UPDATE.avatar,form).then(()=>{
         _self._id_usuario=form.id_usuario;
         _self._logOnDB("user.modify_avatar");
@@ -384,6 +411,7 @@ class User{
 
       if(form['catalogo_ted']==1){
         global.CONTROL.catalogo=[];
+        form["url_image"]=(form['url_image'])?_self._resizedataURL(form['url_image'],250,250):"/images/catDefault.png";
       }
 
       _self._microservice_client.send_query(_self._common_queries.GET.info_proveedor,form).then((data)=>{
@@ -446,7 +474,7 @@ class User{
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
       form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
       form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
-      form["url_image"]=form['url_image']?form['url_image']:"/images/catDefault.png";
+      form["url_image"]=(form['url_image'])?_self._resizedataURL(form['url_image'],250,250):"/images/catDefault.png";
       form["recursos"]=eval("["+form["tableRecursos"]+"]");
       form["categorias"]=eval(form["categorias"]);
 
@@ -463,31 +491,31 @@ class User{
 
           if(form['file_to_upload']){
             _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
-                _self._db_connection.update_content(content,_self._profile_queries,form,true).then(()=>{
+              _self._db_connection.update_content(content,_self._profile_queries,form,true).then(()=>{
 
 
 
-                  _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_descompresion']).then((data)=>{
-                    if(data){
-                      form['rutaEjecucion']=data;
-                      _self._microservice_client.send_query(_self._profile_queries.UPDATE.rutaEjecucion,{
-                        rutaEjecucion:"http://"+form['rutaEjecucion'],
-                        id_contenido:form['id_contenido']
-                      }).then(()=>{
+                _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_descompresion']).then((data)=>{
+                  if(data){
+                    form['rutaEjecucion']=data;
+                    _self._microservice_client.send_query(_self._profile_queries.UPDATE.rutaEjecucion,{
+                      rutaEjecucion:"http://"+form['rutaEjecucion'],
+                      id_contenido:form['id_contenido']
+                    }).then(()=>{
 
 
-                        _self._microservice_client.send_email({type:"uploaded_course",datos_curso:form});
-                        _self._close_connections();
+                      _self._microservice_client.send_email({type:"uploaded_course",datos_curso:form});
+                      _self._close_connections();
 
-                      })
-                      .catch((err)=>{
-                        console.log(err);
-                      });
-                    }
+                    })
+                    .catch((err)=>{
+                      console.log(err);
+                    });
+                  }
 
-                  });
-                  resolve(true);
                 });
+                resolve(true);
+              });
 
             })
             .catch((err)=>{
@@ -496,7 +524,7 @@ class User{
           }else{
             // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
             _self._db_connection.update_content(content,_self._profile_queries,form).then(()=>{
-
+              _self._close_connections();
               resolve(true);
             })
             .catch((err)=>{
