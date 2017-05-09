@@ -30,7 +30,7 @@ class EmailSender{
   send_email(type="new_course",info={}){
     const _self=this;
     const template=_self._config_template(type);
-    _self.mail_options.subject=template.subject;
+    _self.mail_options.subject=template.subject+" - "+info.titulo;
     let index_content="";
     return new Promise(function(resolve, reject) {
 
@@ -40,21 +40,23 @@ class EmailSender{
         index_content+=chunk.toString();
       });
       _self.mail_options.html.on('end', () => {
-          console.log("Titulo del curso: "+info.toString());
-          _self.mail_options.html=_self.replace_variables(index_content,{
-            titulo_curso:info.titulo,
-            num_certificados:"56",
-            num_contenidos:"110",
-            horas_formacion:"255",
-            ruta_ejecucion:info.rutaEjecucion
-          });
-          _self._smtpTransport.sendMail(_self.mail_options, function(error, response){
-              if(error){
-                reject(error);
-              }else{
-                resolve("Email sended...."+response.message);
-              }
-          });
+        _self.mail_options.html=_self.replace_variables(index_content,{
+          titulo_curso:info.titulo,
+          num_certificados:"56",
+          num_contenidos:"110",
+          horas_formacion:"255",
+          ruta_ejecucion:info.rutaEjecucion
+        });
+
+        _self.mail_options.to=_self.mail_options.to.join();
+        _self._smtpTransport.sendMail(_self.mail_options, function(error, response){
+          if(error){
+            reject(error);
+          }else{
+            resolve("Email sended...."+response.message);
+          }
+        });
+
 
 
 

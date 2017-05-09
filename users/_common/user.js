@@ -219,24 +219,19 @@ class User{
   @param {Form} form - Form that contains the info of the content to be checked
   @return {Promise}
   */
-  _check_course_certified(form){
-    const _self=this;
-    return new Promise(function(resolve, reject) {
-      _self._microservice_client.send_query(_self._common_queries.GET.course_certified,{id_contenido:form.id_contenido}).then((data)=>{
+  _check_course_certified(valores){
+    const VALOR_CERTIFICADO=4;
 
-        if(data[0]["count(*)"]>0 && data[1]["count(*)"]>0 &&
-        data[0]["count(*)"]-data[1]["count(*)"]===0){
-          // Send email of confirmation
-          _self._microservice_client.send_email({type:"course_certified",datos_curso:form}).then(()=>{
-            resolve(true);
-          });
+    if(valores && valores.length){
+      for (let i = 0; i < valores.length; i++) {
+        if(valores[i].id_valor!==VALOR_CERTIFICADO){
+          return false;
         }
-      })
-      .catch((error)=>{
-        reject(error);
-      });
-    });
-
+      }
+    }else{
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -419,11 +414,9 @@ class User{
         form['carpeta_proveedor']=data[0].carpeta_proveedor;
         _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
           _self._db_connection.insert_new_content(form,_self._profile_queries).then(()=>{
-
             global.CONTROL.proveedor[form['id_proveedor']]=undefined;
 
             _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_descompresion']).then((data)=>{
-
 
               if(data){
                 form['rutaEjecucion']=data;
@@ -433,20 +426,16 @@ class User{
                   rutaEjecucion:form['rutaEjecucion'],
                   id_contenido:form['id_contenido']
                 }).then(()=>{
-
-
-
                   _self._microservice_client.send_email({type:"new_course",datos_curso:form}).then(()=>{
-
-
-                    _self._check_course_certified(form).then(()=>{
-                      _self._close_connections();
-                    });
 
                   });
 
                 });
 
+              }else{
+                _self._microservice_client.send_email({type:"new_course",datos_curso:form}).then(()=>{
+
+                });
               }
             });
             resolve(true);
@@ -474,13 +463,10 @@ class User{
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
       form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
       form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
-      form["url_image"]=(form['url_image'])?_self._resizedataURL(form['url_image'],250,250):"/images/catDefault.png";
+      form["url_image"]=(form['url_image'].toString().startsWith("data:image"))?_self._resizedataURL(form['url_image'],250,250):"./images/catDefault.png";
       form["recursos"]=eval("["+form["tableRecursos"]+"]");
       form["categorias"]=eval(form["categorias"]);
 
-      if(form["catalogo_ted"]==1){
-        global.CONTROL.catalogo=[];
-      }
 
       _self._microservice_client.send_query(_self._common_queries.GET.info_proveedor,form).then((data)=>{
         form["carpeta_proveedor"]=data[0].carpeta_proveedor;
@@ -505,6 +491,13 @@ class User{
 
 
                       _self._microservice_client.send_email({type:"uploaded_course",datos_curso:form});
+
+                      if(!_self._check_course_certified(content["compatibilities_table"]) &&
+                      _self._check_course_certified(form["multiple_insert_query"])){
+                        console.log("[EMAIL] Se ha certificado el curso correctamente....mandando email");
+                        _self._microservice_client.send_email({type:"course_certified",datos_curso:form});
+                      }
+
                       _self._close_connections();
 
                     })
@@ -524,6 +517,13 @@ class User{
           }else{
             // Si no le pasamos un fichero, tenemos que mantener la misma ruta del zip que ya hay hasta el momento
             _self._db_connection.update_content(content,_self._profile_queries,form).then(()=>{
+
+              if(!_self._check_course_certified(content["compatibilities_table"]) &&
+              _self._check_course_certified(form["multiple_insert_query"])){
+                console.log("[EMAIL] Se ha certificado el curso correctamente....mandando email");
+                _self._microservice_client.send_email({type:"course_certified",datos_curso:form});
+              }
+
               _self._close_connections();
               resolve(true);
             })

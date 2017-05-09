@@ -38,8 +38,8 @@ class Microservices {
     });
 
     bat.stderr.on('data', (data) => {
-      //console.error(`[SENECA FILE]  ${file}`);
-      //console.error(`[ERROR]  ${data.toString()}`);
+      // console.error(`[SENECA FILE]  ${file}`);
+      // console.error(`[ERROR]  ${data.toString()}`);
     });
 
     bat.once('exit', (code) => {

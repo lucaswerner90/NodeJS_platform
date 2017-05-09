@@ -17,14 +17,15 @@
     "port":"10102"
   },
   "db_microservice":{
-    "timeout":5000,
+    "timeout":99999,
     "host":"localhost",
     "pin":"role:db,cmd:*",
     "port":"10103"
   },
   "email_microservice":{
-    "timeout":5000,
+    "timeout":99999,
     "host":"localhost",
+    "pin":"role:email,cmd:*",
     "port":"10104"
   }
 }

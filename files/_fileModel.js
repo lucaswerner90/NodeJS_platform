@@ -54,7 +54,7 @@ class File{
   }
 
   _fileDecompresionRoute(formFields,uploadDirectory,filename){
-    return uploadDirectory+"/"+formFields["carpeta_proveedor"]+"/"+filename.name+"/";
+    return uploadDirectory+"/"+formFields["carpeta_proveedor"]+"/"+filename.name+"/"+filename.name;
   }
 
 

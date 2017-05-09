@@ -283,8 +283,6 @@ class Database{
     const _self=this;
 
     return new Promise(function(resolve, reject) {
-      console.log(camposFormulario);
-
       let additional_queries=[];
       camposFormulario["notas"]=(camposFormulario.notas)?camposFormulario.notas:"Notas por defecto";
       camposFormulario["indice_contenidos"]=(camposFormulario.indice_contenidos)?camposFormulario.indice_contenidos:"Notas por defecto";
@@ -303,6 +301,9 @@ class Database{
           multiple_insert_query:_self.createInsertCategories(camposFormulario.categorias,camposFormulario.id_contenido).multiple_insert_query}));
       }
 
+      if(camposFormulario["catalogo_ted"]!=content["catalogo_TED"]){
+        global.CONTROL.catalogo=[];
+      }
       if(camposFormulario.recursos.length>0){
         if(content.recursos.length>0){
           additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_recursos,
@@ -322,7 +323,7 @@ class Database{
       if(camposFormulario.licencia==1){
 
 
-        camposFormulario['fecha_inicio']=new Date(camposFormulario['fecha_inicio']).toISOString().slice(0, 19).replace('T', ' ');
+        camposFormulario['fecha_inicio']=(camposFormulario['fecha_inicio'])?new Date(camposFormulario['fecha_inicio']).toISOString().slice(0, 19).replace('T', ' '):new Date().toISOString().slice(0, 19).replace('T', ' ');
         camposFormulario['fecha_fin']=(camposFormulario['fecha_fin'])?new Date(camposFormulario['fecha_fin']).toISOString().slice(0, 19).replace('T', ' '):camposFormulario['fecha_inicio'];
 
 
