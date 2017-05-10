@@ -35,20 +35,33 @@ router.get('/user_info/id_usuario=:id_usuario',(req,res)=>{
 
 
 router.get('/catalogo',(req,res)=>{
-  if(global.CONTROL.catalogo.length===0){
+  // if(global.CONTROL.catalogo.length===0){
     let user=new User();
     user.get_catalogo().then((data)=>{
       user._close_connections();
       user=null;
-      global.CONTROL.catalogo=data;
       res.send(data);
     })
     .catch((err)=>{
       res.send({error:err});
     });
-  }else{
-    res.send(global.CONTROL.catalogo);
-  }
+  // }else{
+  //   res.send(global.CONTROL.catalogo);
+  // }
+
+
+});
+
+router.get('/catalogo_image/:id_contenido',(req,res)=>{
+    let user=new User();
+    user.get_catalogo_image(req.params.id_contenido).then((data)=>{
+      user._close_connections();
+      user=null;
+      res.send(data);
+    })
+    .catch((err)=>{
+      res.send({error:err});
+    });
 
 
 });

@@ -32,26 +32,6 @@ class User{
   }
 
 
-  _resizedataURL(data, wantedWidth, wantedHeight){
-    // We create an image to receive the Data URI
-    const img = document.createElement('img');
-    img.onload=function(){
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-
-      // We set the dimensions at the wanted size.
-      canvas.width = wantedWidth;
-      canvas.height = wantedHeight;
-
-      // We resize the image with the canvas method drawImage();
-      ctx.drawImage(img, 0, 0, wantedWidth, wantedHeight);
-
-      return canvas.toDataURL('image/jpeg',0.8);
-    }
-    img.src = data;
-    // We put the Data URI in the image's src attribute
-  }
-
 
 
   _logOnDB(){
@@ -121,6 +101,24 @@ class User{
     const _self=this;
     return new Promise((resolve,reject)=>{
       _self._microservice_client.send_query(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
+        resolve(data[0]);
+      })
+      .catch((err)=>{
+        reject(err);
+      });
+
+    });
+  }
+
+  /**
+  Returns the info relative to each user (name,provider,etc...)
+  @return {Promise}
+  */
+  get_catalogo_image(id_contenido){
+
+    const _self=this;
+    return new Promise((resolve,reject)=>{
+      _self._microservice_client.send_query(_self._common_queries.GET.catalogo_image,{id_contenido}).then((data)=>{
         resolve(data[0]);
       })
       .catch((err)=>{
@@ -333,7 +331,6 @@ class User{
     const _self=this;
 
     return new Promise((resolve,reject)=>{
-      form['urlAvatar']=_self._resizedataURL(form['urlAvatar'],200,200);
       _self._microservice_client.send_query(_self._common_queries.UPDATE.avatar,form).then(()=>{
         _self._id_usuario=form.id_usuario;
         _self._logOnDB("user.modify_avatar");
@@ -463,7 +460,6 @@ class User{
       form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
       form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
       form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
-      form["url_image"]=(form['url_image'].toString().startsWith("data:image"))?_self._resizedataURL(form['url_image'],250,250):"./images/catDefault.png";
       form["recursos"]=eval("["+form["tableRecursos"]+"]");
       form["categorias"]=eval(form["categorias"]);
 
@@ -485,7 +481,7 @@ class User{
                   if(data){
                     form['rutaEjecucion']=data;
                     _self._microservice_client.send_query(_self._profile_queries.UPDATE.rutaEjecucion,{
-                      rutaEjecucion:"http://"+form['rutaEjecucion'],
+                      rutaEjecucion:form['rutaEjecucion'],
                       id_contenido:form['id_contenido']
                     }).then(()=>{
 

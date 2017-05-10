@@ -6,6 +6,7 @@
     "content_licencia":"DELETE FROM licencias WHERE id_contenido=[id_contenido];"
   },
   "GET":{
+    "catalogo_image":"select url_image from contenidos where id_contenido=[id_contenido];",
     "content_servers":"Select id_servidor from relacion_contenido_servidor where id_contenido=[id_contenido];",
     "content_licencias":"Select * from licencias where id_contenido=[id_contenido];",
     "login_info":"Select usuarios.*,proveedores.empresa,proveedores.carpeta_proveedor From usuarios,proveedores where usuarios.email=[userEmail] and usuarios.password=[userPassword] and id_estado=1 and proveedores.id_proveedor=usuarios.id_proveedor",
@@ -19,7 +20,7 @@
     "subcategorias":"select id_subcategoria,descripcion from subcategorias where id_estado=1 and id_categoria=[id_categoria];",
     "content_categorias_subcategorias":"select id_subcategoria,id_categoria from relacion_contenido_categorias_subcategorias where id_contenido=[id_contenido];",
     "content_recursos":"select id_contenido,id_recurso from relacion_contenidos_recursos WHERE id_contenido=[id_contenido] and id_estado=1;",
-    "content_catalogo":"select id_contenido,url_image,id_pais,titulo,rutaEjecucion,(select id_tecnologia from relacion_contenidos_tecnologias rel where rel.id_contenido=c.id_contenido) as id_tecnologia from contenidos c where catalogo_ted=1;",
+    "content_catalogo":"select id_contenido,id_pais,titulo,rutaEjecucion,(select id_tecnologia from relacion_contenidos_tecnologias rel where rel.id_contenido=c.id_contenido) as id_tecnologia from contenidos c where catalogo_ted=1;",
     "course_certified":"select count(*) from resultado_certificacion_contenido where id_contenido=[id_contenido] and id_estado=1 union select count(*) as validadas from resultado_certificacion_contenido where id_contenido=[id_contenido] and valor=(select id_valor from valorestablacertificacion where descripcion='Certificado') and id_estado=1;"
   },
   "INSERT":{
