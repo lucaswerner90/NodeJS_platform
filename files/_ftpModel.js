@@ -26,7 +26,7 @@ class FTPModel{
     const _self=this;
     if(_self._ftp){
       _self._ftp.removeAllListeners();
-      _self._ftp.destroy();
+      _self._ftp.end();
     }
 
   }

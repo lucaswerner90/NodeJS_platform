@@ -101,6 +101,7 @@ class User{
     const _self=this;
     return new Promise((resolve,reject)=>{
       _self._microservice_client.send_query(_self._common_queries.GET.user_info,{id_usuario:_self._id_usuario}).then((data)=>{
+
         resolve(data[0]);
       })
       .catch((err)=>{
@@ -178,8 +179,15 @@ class User{
         content.recursos=values[4];
         content.categorias=values[5];
         Object.assign(content,values[6][0]);
-        resolve(content);
 
+        if(content.catalogo_TED=="1"){
+          _self.get_catalogo_image(content.id_contenido).then((imagen)=>{
+            content.url_image=imagen.url_image;
+            resolve(content);
+          })
+        }else{
+          resolve(content);
+        }
 
       }).catch((error)=>{
         reject(error);
@@ -386,6 +394,24 @@ class User{
   }
 
   /**
+  Method used to parse the form used to create/modify a course
+  @param {object} formulario - Form that contains all the content info
+  @return {object}
+  */
+
+  _parseCourseForm(formulario){
+
+    const _self=this;
+    formulario["multiple_insert_query"]=eval("["+ formulario.tableTechnologies +"]");
+    formulario["table_platforms"]=eval("["+ formulario.tablePlatforms +"]");
+    formulario["servidores_contenidos"]=formulario['tableServCont']?eval("["+formulario['tableServCont']+"]"):eval("[]");
+    formulario["recursos"]=eval("["+formulario["tableRecursos"]+"]");
+    formulario["categorias"]=eval(formulario["categorias"]) ? eval(formulario["categorias"]) : [];
+    formulario["fecha_alta"]=_self._file._returnActualDate();
+
+    return formulario;
+  }
+  /**
   IMPORTANT! This method creates a new course on the platform.
   @param {Form} form - Form that contains all the info of the new course, among the
   @return {Promise}
@@ -395,16 +421,8 @@ class User{
     const _self=this;
     return new Promise((resolve,reject)=>{
 
-      form["multiple_insert_query"]=eval("["+ form.tableTechnologies +"]");
-      form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
-      form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
-      form["recursos"]=eval("["+form["tableRecursos"]+"]");
-      form["categorias"]=(eval("["+form["categorias"]+"]"))?eval("["+form["categorias"]+"]").filter((x)=>x):[];
+      form=_self._parseCourseForm(form);
 
-      if(form['catalogo_ted']==1){
-        global.CONTROL.catalogo=[];
-        form["url_image"]=(form['url_image'])?_self._resizedataURL(form['url_image'],250,250):"/images/catDefault.png";
-      }
 
       _self._microservice_client.send_query(_self._common_queries.GET.info_proveedor,form).then((data)=>{
 
@@ -437,7 +455,7 @@ class User{
             });
             resolve(true);
           }).catch((error)=>{
-            console.error(error);
+            console.log(error);
             reject(error);
           });
         });
@@ -461,7 +479,7 @@ class User{
       form["table_platforms"]=eval("["+ form.tablePlatforms +"]");
       form["servidores_contenidos"]=form['tableServCont']?eval("["+form['tableServCont']+"]"):eval("[]");
       form["recursos"]=eval("["+form["tableRecursos"]+"]");
-      form["categorias"]=eval(form["categorias"]);
+      form["categorias"]=eval(form["categorias"]) ? eval(form["categorias"]) : [];
 
 
       _self._microservice_client.send_query(_self._common_queries.GET.info_proveedor,form).then((data)=>{

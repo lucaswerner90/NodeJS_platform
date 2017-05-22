@@ -10,9 +10,13 @@
     "content_platform":"",
     "content_technology":"INSERT INTO relacion_contenidos_tecnologias (id_contenido,id_tecnologia) VALUES ([id_contenido],[id_tecnologia]);",
     "content_category_subcategory":"INSERT INTO relacion_contenido_categorias_subcategorias (id_contenido,id_categoria,id_subcategoria) VALUES [multiple_insert_query];",
-    "content_licencia":"INSERT INTO licencias (id_contenido,fecha_inicio,fecha_fin,numero_licencias) VALUES ([id_contenido],[fecha_inicio],[fecha_fin],[numero_licencias]);"
+    "content_licencia":"INSERT INTO licencias (id_contenido,fecha_inicio,fecha_fin,numero_licencias) VALUES ([id_contenido],[fecha_inicio],[fecha_fin],[numero_licencias]);",
+    "content_habilidades":"",
+    "content_education":""
   },
   "UPDATE":{
+    "content_categorias_subcategorias":"",
+    "content_recursos":"",
     "content":"UPDATE contenidos SET notas=[notas],titulo=[titulo], descripcion=[descripcion], ruta_zip=[ruta_zip],id_tipo_contenido=[id_tipo_contenido],id_pais=[id_pais],duracion=[duracion], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado],id_tipo_desarrollo=[id_tipo_desarrollo],licencia=[licencia],responsive=[responsive] WHERE id_contenido=[id_contenido];",
     "contentRelation":"",
     "rutaEjecucion":"UPDATE contenidos SET rutaEjecucion=[rutaEjecucion] WHERE id_contenido=[id_contenido];",
@@ -21,6 +25,9 @@
     "tableOfCompatibilities":"UPDATE resultado_certificacion_contenido SET id_estado=0 WHERE id_contenido=[id_contenido];",
     "content_platform":"",
     "content_technology":"DELETE FROM relacion_contenidos_tecnologias WHERE id_contenido=[id_contenido];INSERT INTO relacion_contenidos_tecnologias (id_contenido,id_tecnologia) VALUES ([id_contenido],[id_tecnologia]);",
-    "content_licencia":"DELETE FROM licencias WHERE id_contenido=[id_contenido];"
+    "content_licencia":"DELETE FROM licencias WHERE id_contenido=[id_contenido];",
+    "content_platform_delete":"DELETE from relacion_contenido_plataforma WHERE id_contenido=[id_contenido];",
+    "content_habilidades":"",
+    "content_education":""
   }
 }
