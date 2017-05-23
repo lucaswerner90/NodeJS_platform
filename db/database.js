@@ -416,10 +416,18 @@ class Database {
             }
 
             if (_self.modelContent.id_nivel != -1) {
-                additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_education, {
-                    id_contenido: _self.modelContent.id_contenido,
-                    id_nivel: _self.modelContent.id_nivel
-                }));
+                if (content.id_nivel !== null) {
+                    additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_education, {
+                        id_contenido: _self.modelContent.id_contenido,
+                        id_nivel: _self.modelContent.id_nivel
+                    }));
+                } else {
+                    additional_queries.push(_self._replace_variables_on_query(user_queries.INSERT.content_education, {
+                        id_contenido: _self.modelContent.id_contenido,
+                        id_nivel: _self.modelContent.id_nivel
+                    }));
+                }
+                
             }
 
             if (_self.modelContent.id_habilidad != -1) {

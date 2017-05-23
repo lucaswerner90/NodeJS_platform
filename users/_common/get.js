@@ -1,49 +1,55 @@
 "use strict";
 
-const express=require('express');
+const express = require('express');
 
-const router=express.Router();
+const router = express.Router();
 
-const User=require('./user');
+const User = require('./user');
 
-const Selector=require('../profiles/_selector');
-
-
-
-router.get('/avatar/file=:filename',(req,res)=>{
-  let user=new User();
-  user.get_avatar(req.params.filename).then((data)=>{
-    user._close_connections();
-    user=null;
-    res.send(data);
-  })
-  .catch((err)=>{
-    res.send({error:err});
-  });
-});
-
-router.get('/user_info/id_usuario=:id_usuario',(req,res)=>{
-  let user=new User(req.params.id_usuario);
-  user.get_user_info().then((datos)=>{
-    user._close_connections();
-    res.send(datos);
-  })
-  .catch((err)=>{
-    res.send({error:err});
-  });
-});
+const Selector = require('../profiles/_selector');
 
 
-router.get('/catalogo',(req,res)=>{
-  // if(global.CONTROL.catalogo.length===0){
-    let user=new User();
-    user.get_catalogo().then((data)=>{
+
+router.get('/avatar/file=:filename', (req, res) => {
+  let user = new User();
+  user.get_avatar(req.params.filename).then((data) => {
       user._close_connections();
-      user=null;
+      user = null;
       res.send(data);
     })
-    .catch((err)=>{
-      res.send({error:err});
+    .catch((err) => {
+      res.send({
+        error: err
+      });
+    });
+});
+
+router.get('/user_info/id_usuario=:id_usuario', (req, res) => {
+  let user = new User(req.params.id_usuario);
+  user.get_user_info().then((datos) => {
+      user._close_connections();
+      res.send(datos);
+    })
+    .catch((err) => {
+      res.send({
+        error: err
+      });
+    });
+});
+
+
+router.get('/catalogo', (req, res) => {
+  // if(global.CONTROL.catalogo.length===0){
+  let user = new User();
+  user.get_catalogo().then((data) => {
+      user._close_connections();
+      user = null;
+      res.send(data);
+    })
+    .catch((err) => {
+      res.send({
+        error: err
+      });
     });
   // }else{
   //   res.send(global.CONTROL.catalogo);
@@ -52,40 +58,46 @@ router.get('/catalogo',(req,res)=>{
 
 });
 
-router.get('/catalogo_image/:id_contenido',(req,res)=>{
-    let user=new User();
-    user.get_catalogo_image(req.params.id_contenido).then((data)=>{
+router.get('/catalogo_image/:id_contenido', (req, res) => {
+  let user = new User();
+  user.get_catalogo_image(req.params.id_contenido).then((data) => {
       user._close_connections();
-      user=null;
+      user = null;
       res.send(data);
     })
-    .catch((err)=>{
-      res.send({error:err});
+    .catch((err) => {
+      res.send({
+        error: err
+      });
     });
 
 
 });
 
 
-router.get('/generic_info',(req,res)=>{
-  if(Object.keys(global.CONTROL.generic_info).length===0){
-    let select_user=new Selector(req.body.id_usuario);
-    select_user.return_user().then((profile)=>{
-      let user=profile;
-      user.get_platform_generic_info().then((data)=>{
-        user._close_connections();
-        select_user=null;
-        global.CONTROL.generic_info=data;
-        res.send(data);
+router.get('/generic_info', (req, res) => {
+  if (Object.keys(global.CONTROL.generic_info).length === 0) {
+    let select_user = new Selector(req.body.id_usuario);
+    select_user.return_user().then((profile) => {
+        let user = profile;
+        user.get_platform_generic_info().then((data) => {
+            user._close_connections();
+            select_user = null;
+            global.CONTROL.generic_info = data;
+            res.send(data);
+          })
+          .catch((err) => {
+            res.send({
+              error: err
+            });
+          });
       })
-      .catch((err)=>{
-        res.send({error:err});
+      .catch((err) => {
+        res.send({
+          error: err
+        });
       });
-    })
-    .catch((err)=>{
-      res.send({error:err});
-    });
-  }else{
+  } else {
     res.send(global.CONTROL.generic_info);
   }
 
@@ -94,62 +106,72 @@ router.get('/generic_info',(req,res)=>{
 
 
 // A esta funcion le tenemos que pasar el req.body.id_usuario y nosotros nos encargamos de obtener la info del user y el proveedor que le corresponde
-router.post('/contents',(req,res)=>{
-  let select_user=new Selector(req.body.id_usuario);
-  select_user.return_user().then((profile)=>{
-    let user=profile;
-    user.get_contents().then((data)=>{
-      user._close_connections();
-      select_user=null;
-      res.send(data);
+router.post('/contents', (req, res) => {
+  let select_user = new Selector(req.body.id_usuario);
+  select_user.return_user().then((profile) => {
+      let user = profile;
+      user.get_contents().then((data) => {
+          user._close_connections();
+          select_user = null;
+          res.send(data);
+        })
+        .catch((err) => {
+          select_user = null;
+          user = null;
+          res.send({
+            error: err
+          });
+        });
     })
-    .catch((err)=>{
-      select_user=null;
-      user=null;
-      res.send({error:err});
+    .catch((err) => {
+      select_user = null;
+      res.send({
+        error: err
+      });
     });
-  })
-  .catch((err)=>{
-    select_user=null;
-    res.send({error:err});
-  });
 
 
 });
 
 
-router.get('/download/filepath=:filepath',(req,res)=>{
-  if(req.headers && req.headers.referer && req.headers.referer.endsWith('editar-contenido')>-1){
-    let user=new User();
-    user.download_zip(req.params.filepath,res);
-    user=null;
-  }else{
-    res.status(403).send({error:"NO! Solo desde la plataforma :)! PD: Un beso (K)  "});
+router.get('/download/filepath=:filepath', (req, res) => {
+  if (req.headers && req.headers.referer && req.headers.referer.endsWith('editar-contenido') > -1) {
+    let user = new User();
+    user.download_zip(req.params.filepath, res);
+    user = null;
+  } else {
+    res.status(403).send({
+      error: "NO! Solo desde la plataforma :)! PD: Un beso (K)  "
+    });
   }
 
 
 });
 
 
-router.get('/content/id_content=:id_content',(req,res)=>{
-  let select_user=new Selector(req.body.id_usuario);
-  select_user.return_user().then((profile)=>{
-    let user=profile;
-    user.get_content_by_id(req.params.id_content).then((data)=>{
-      user._close_connections();
-      select_user=null;
-      res.send(data);
+router.get('/content/id_content=:id_content', (req, res) => {
+  let select_user = new Selector(req.body.id_usuario);
+  select_user.return_user().then((profile) => {
+      let user = profile;
+      user.get_content_by_id(req.params.id_content).then((data) => {
+          user._close_connections();
+          select_user = null;
+          res.send(data);
+        })
+        .catch((err) => {
+          select_user = null;
+          user = null;
+          res.send({
+            error: err
+          });
+        });
     })
-    .catch((err)=>{
-      select_user=null;
-      user=null;
-      res.send({error:err});
+    .catch((err) => {
+      select_user = null;
+      res.send({
+        error: err
+      });
     });
-  })
-  .catch((err)=>{
-    select_user=null;
-    res.send({error:err});
-  });
 
 
 });
@@ -157,4 +179,4 @@ router.get('/content/id_content=:id_content',(req,res)=>{
 
 
 
-module.exports=router;
+module.exports = router;

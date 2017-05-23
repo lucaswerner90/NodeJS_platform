@@ -181,7 +181,7 @@ class User{
           _self.get_catalogo_image(content.id_contenido).then((imagen)=>{
             content.url_image=imagen.url_image;
             resolve(content);
-          })
+          });
         }else{
           resolve(content);
         }
@@ -395,7 +395,7 @@ class User{
   @param {object} formulario - Form that contains all the content info
   @return {object}
   */
-
+  
   _parseCourseForm(formulario){
 
     const _self=this;

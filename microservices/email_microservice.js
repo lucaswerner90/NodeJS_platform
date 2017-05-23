@@ -1,22 +1,26 @@
 'use strict';
-const CONFIG_MICRO=require('./config.json');
-const seneca=require('seneca')();
-const EmailSender=require('../email/email_sender');
+const CONFIG_MICRO = require('./config.json');
+const seneca = require('seneca')();
+const EmailSender = require('../email/email_sender');
 
-class EmailMicroservice{
+class EmailMicroservice {
 
-  constructor () {
+  constructor() {
     console.log("[RUNNING] Email microservice");
-    this._email=new EmailSender();
-    seneca.add('role:email,cmd:send',(parameters,result)=>{
-      this._email.send_email(parameters.data.type,parameters.data.datos_curso).then((data)=>{
-        result( null, {answer:data} );
+    this._email = new EmailSender();
+    seneca.add('role:email,cmd:send', (parameters, result) => {
+        this._email.send_email(parameters.data.type, parameters.data.datos_curso).then((data) => {
+            result(null, {
+              answer: data
+            });
+          })
+          .catch((err) => {
+            result(null, {
+              error: err
+            });
+          });
       })
-      .catch((err)=>{
-        result( null, {error:err} );
-      });
-    })
-    .listen(CONFIG_MICRO.email_microservice);
+      .listen(CONFIG_MICRO.email_microservice);
   }
 }
 
