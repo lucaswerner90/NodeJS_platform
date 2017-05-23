@@ -5,9 +5,6 @@ const File=require('../../files/_fileModel');
 const DBCommonQueries=require('../../db/queries/user/_common.json');
 const ClientMicroservice=require('../../microservices/client');
 
-const JSDOM=require('jsdom').JSDOM;
-const { document } = (new JSDOM(`...`)).window;
-
 
 global.CONTROL=require('./control');
 /**

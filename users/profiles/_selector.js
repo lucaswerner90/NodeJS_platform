@@ -46,8 +46,7 @@ class Selector extends User{
         if(_self._id_usuario===-1){
           resolve(new Admin(_self._id_usuario));
         }
-        this._get_type_of_user().then((data)=>{
-
+        _self._get_type_of_user().then((data)=>{
           resolve(_self.return_user_object(data));
         })
         .catch((err)=>{

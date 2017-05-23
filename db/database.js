@@ -303,12 +303,15 @@ class Database {
         return new Promise(function(resolve, reject) {
             let additional_queries = [];
 
+
+
             for (let prop in camposFormulario) {
                 if (camposFormulario[prop] !== null && camposFormulario[prop] !== undefined && camposFormulario[prop] !== "") {
                     _self.modelContent[prop] = camposFormulario[prop];
                 }
             }
-            debugger;
+
+
             additional_queries.push(_self._replace_variables_on_query((update_file) ? user_queries.UPDATE.content : user_queries.UPDATE.contentNoFile, _self.modelContent));
 
             if (_self.modelContent.categorias && _self.modelContent.categorias.length > 0) {

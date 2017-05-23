@@ -31,7 +31,7 @@ describe('Check authorization', function() {
     .end(function(err,res){
       checkAsserts(IT_CONFIG.expect.asserts);
       done();
-    })
+    });
   });
 
 

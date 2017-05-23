@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "DEBUG=express* PORT=5000 ENVIRONMENT=dev nodemon --exitcrash --inspect=9000 server.js",
+    "start": "DEBUG=express* PORT=5000 ENVIRONMENT=dev nodemon --exitcrash server.js",
     "test": "NODE_ENV=test mocha  --reporter landing --watch ./test/**/*.spec.js ",
     "coverage": "NODE_ENV=test nyc --reporter=html mocha --watch ./test/**/*.spec.js",
     "git:clean_submodule": "cd public && git stash && cd ..",
