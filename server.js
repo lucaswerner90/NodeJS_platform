@@ -17,6 +17,8 @@ const CONFIG_SERVER = require('./CONFIG_SERVER.json');
 const PORT = process.env.PORT || CONFIG_SERVER.PORT;
 // Inclusion of third-party middlewares
 const BODY_PARSER = require('body-parser');
+
+
 /*
   HERE IS WHERE WE CHARGE THE ROUTES THAT WE WILL USE IN THE SERVER APP
 */
@@ -66,7 +68,7 @@ app.use(BODY_PARSER.json({
 // app.use(express.static('public'));
 // maxAge defined by static files:
 // const maxage_cache=86400*24*7;
-const maxage_cache = 0;
+const maxage_cache = 86400 * 24 * 7;
 
 for (let i = 0; i < CONFIG_SERVER.STATIC_ROUTES.length; i++) {
   app.use(CONFIG_SERVER.STATIC_ROUTES[i], express.static(CONFIG_SERVER.STATIC_DIR, {
