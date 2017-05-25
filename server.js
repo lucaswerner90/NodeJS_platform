@@ -4,8 +4,7 @@
 'use strict';
 // Declare of the express's app
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'DEV';
-
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 const express = require('express');
 
@@ -41,7 +40,7 @@ const microservices = require('./microservices/index');
 
 
 
-app.use(compression());
+app.use(compression({ level: 9}));
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");

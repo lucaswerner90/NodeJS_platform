@@ -30,15 +30,12 @@ class Microservices {
 
     const _self = this;
     bat.stdout.on('data', (data) => {
-      // if(process.env.NODE_ENV==='DEV'){
-      //   console.log(data.toString());
-      // }
-
+      console.log(data.toString());
     });
 
     bat.stderr.on('data', (data) => {
-      // console.error(`[SENECA FILE]  ${file}`);
-      // console.error(`[ERROR]  ${data.toString()}`);
+      console.error(`[SENECA FILE]  ${file}`);
+      console.error(`[ERROR]  ${data.toString()}`);
     });
 
     bat.once('exit', (code) => {

@@ -224,7 +224,7 @@ class User{
   */
   _check_course_certified(valores){
     const VALOR_CERTIFICADO=4;
-
+    
     if(valores && valores.length){
       for (let i = 0; i < valores.length; i++) {
         if(valores[i].id_valor!==VALOR_CERTIFICADO){
@@ -239,7 +239,7 @@ class User{
 
   /**
   Returns all the contents associated to the catalog
-  @return {Promise}
+  @return {Promise} The data of the courses that are part of the Catalogo's section
   */
   get_catalogo(){
     const _self=this;

@@ -1,42 +1,39 @@
 {
-  "BASIC_CONF":{
-    "server_IP":"smtp://10.102.224.52"
+  "BASIC_CONF": {
+    "server_IP": "smtp://10.102.224.52"
   },
-  "MAIL_INFO":{
-    "from" : "noreply@telefonicalearningservices.com",
-    "to" : [
+  "MAIL_INFO": {
+    "from": "noreply@telefonicaed.com",
+    "to": [
       "sergio.amordemiguel@telefonica.com",
       "lucas.wernerseoane@telefonica.com",
-      "javier1.rodriguezandres@telefonica.com",
-      "erick.biaingalan@telefonica.com"
+      "javier1.rodriguezandres@telefonica.com"
     ],
-    "subject" : "Catalogo TED",
-    "attachDataUrls":true,
-    "attachments":[]
+    "subject": "Catalogo TED",
+    "attachDataUrls": true,
+    "attachments": []
   },
-  "USERS_MAIL":[
-    {
-      "CQA":"pop3_desarrollo3@pop3.intranet.tls"
+  "USERS_MAIL": [{
+      "CQA": "pop3_desarrollo3@pop3.intranet.tls"
     },
     {
-      "TEST_USER":"pop3_desarrollo3@pop3.intranet.tls"
+      "TEST_USER": "pop3_desarrollo3@pop3.intranet.tls"
     }
   ],
-  "TEMPLATES_CONF":[
-    {
-      "id":"new_course",
-      "folder_template":"/templates/new_course",
-      "subject":"Catalogo TED - Nuevo curso"
+  "TEMPLATES_CONF": [{
+      "id": "new_course",
+      "folder_template": "/templates/new_course",
+      "subject": "Catalogo TED - Nuevo curso"
     },
     {
-      "id":"uploaded_course",
-      "folder_template":"/templates/upload_course",
-      "subject":"Catalogo TED - Actualización curso"
+      "id": "uploaded_course",
+      "folder_template": "/templates/upload_course",
+      "subject": "Catalogo TED - Actualización curso"
     },
     {
-      "id":"course_certified",
-      "folder_template":"/templates/course_certified",
-      "subject":"Catalogo TED - Curso certificado"
+      "id": "course_certified",
+      "folder_template": "/templates/course_certified",
+      "subject": "Catalogo TED - Curso certificado"
     }
   ]
 

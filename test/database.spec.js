@@ -20,7 +20,7 @@ describe('Database', function() {
   it('Get all contents', (done) => {
 
     const IT_CONFIG=CONFIG.specs.database.get_contents;
-
+    
     server
     .post(IT_CONFIG.url)
     .set('Authorization', CONFIG.constants.auth_token)
@@ -64,6 +64,20 @@ describe('Database', function() {
     })
   });
 
+  it('Get catalog info', (done) => {
+
+    const IT_CONFIG = CONFIG.specs.database.get_catalogo;
+
+    server
+      .get(IT_CONFIG.url)
+      .set('Authorization', CONFIG.constants.auth_token)
+      .send(IT_CONFIG.set)
+      .expect(IT_CONFIG.expect.code)
+      .end(function (err, res) {
+        checkAsserts(IT_CONFIG.expect.asserts);
+        done();
+      })
+  });
 
 
 });

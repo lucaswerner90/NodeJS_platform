@@ -3,8 +3,18 @@ const CONFIG_MICRO = require('./config.json');
 const seneca = require('seneca')();
 const Database = require('../db/database');
 
+
+/**
+ * 
+ * 
+ * @class DatabaseMicroservice
+ */
 class DatabaseMicroservice {
 
+  /**
+   * @desc Creates an instance of DatabaseMicroservice.
+   * 
+   */
   constructor() {
     console.log("[RUNNING] Database microservice");
     this._db = new Database();

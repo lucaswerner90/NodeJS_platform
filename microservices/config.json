@@ -2,30 +2,29 @@
   "main_conf":{
     "dir":"./microservices",
     "debug":{
-      "unhead":false,
-      "deprecation":false
+     
     }
   },
   "login_microservice":{
-    "timeout":5000,
+    "timeout":99999,
     "host":"localhost",
-    "port":"10101"
+    "port":"10201"
   },
   "filehandler_microservice":{
-    "timeout":5000,
+    "timeout":99999,
     "host":"localhost",
-    "port":"10102"
+    "port":"10202"
   },
   "db_microservice":{
     "timeout":99999,
     "host":"localhost",
     "pin":"role:db,cmd:*",
-    "port":"10103"
+    "port":"10203"
   },
   "email_microservice":{
     "timeout":99999,
     "host":"localhost",
     "pin":"role:email,cmd:*",
-    "port":"10104"
+    "port":"10204"
   }
 }
