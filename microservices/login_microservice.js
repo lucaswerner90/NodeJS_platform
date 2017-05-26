@@ -29,20 +29,20 @@ class LoginMicroservice {
       .listen(CONFIG_MICRO.login_microservice);
   }
 
-  sendLogin(parameters, result) {
-    const _self = this;
-    _self.logUser(parameters.data).then((data) => {
-        result(null, {
-          answer: data
-        });
-      })
-      .catch((err) => {
-        console.error(`[LOGIN MICROSERVICE 2] ${err}`);
-        result(null, {
-          error: err
-        });
-      });
-  }
+  // sendLogin(parameters, result) {
+  //   const _self = this;
+  //   _self.logUser(parameters.data).then((data) => {
+  //       result(null, {
+  //         answer: data
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.error(`[LOGIN MICROSERVICE 2] ${err}`);
+  //       result(null, {
+  //         error: err
+  //       });
+  //     });
+  // }
 
 
   createToken(id) {

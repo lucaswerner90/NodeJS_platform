@@ -404,8 +404,13 @@ class User{
     formulario["servidores_contenidos"]=formulario['tableServCont']?eval("["+formulario['tableServCont']+"]"):eval("[]");
     formulario["recursos"]=eval("["+formulario["tableRecursos"]+"]");
     formulario["categorias"]=eval(formulario["categorias"]) ? eval(formulario["categorias"]) : [];
-    formulario["fecha_alta"]=_self._file._returnActualDate();
-
+    formulario["fecha_alta"] = _self._file._returnActualDate();
+    formulario["notas"] = (formulario["notas"]) ? formulario["notas"] : "Por defecto";
+    formulario["indice_contenidos"] = (formulario["indice_contenidos"]) ? formulario["indice_contenidos"] : "Por defecto";
+    formulario["notas_produccion"] = (formulario["notas_produccion"]) ? formulario["notas_produccion"] : "Por defecto";
+    formulario["participantes"] = (formulario["participantes"]) ? formulario["participantes"] : "Por defecto";
+    formulario["notas_contenidos"] = (formulario["notas_contenidos"]) ? formulario["notas_contenidos"] : "Por defecto";
+    
     return formulario;
   }
   /**

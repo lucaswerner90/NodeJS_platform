@@ -1,12 +1,30 @@
 const spawn = require('child_process').spawn;
 const fs = require('fs');
 const CONFIG = require('./config.json');
+
+
+/**
+ * 
+ * 
+ * @class Microservices
+ */
 class Microservices {
 
 
+  /**
+   * Creates an instance of Microservices.
+   * 
+   * @memberof Microservices
+   */
   constructor() {}
 
 
+  /**
+   * 
+   * 
+   * 
+   * @memberof Microservices
+   */
   runAllServices() {
     const _self = this;
     const regular_expression = /.*_microservice(\.js)$/;
@@ -25,17 +43,24 @@ class Microservices {
 
 
 
+  /**
+   * 
+   * 
+   * @param {any} file 
+   * 
+   * @memberof Microservices
+   */
   _startProcess(file) {
     let bat = spawn('node', [file]);
 
     const _self = this;
     bat.stdout.on('data', (data) => {
-      console.log(data.toString());
+      //console.log(data.toString());
     });
 
     bat.stderr.on('data', (data) => {
-      console.error(`[SENECA FILE]  ${file}`);
-      console.error(`[ERROR]  ${data.toString()}`);
+      // console.error(`[SENECA FILE]  ${file}`);
+      // console.error(`[ERROR]  ${data.toString()}`);
     });
 
     bat.once('exit', (code) => {

@@ -1,10 +1,10 @@
 {
-  "host"              : "10.102.225.73",
-  "port"              : 3306,
-  "user"              : "contenidos",
-  "password"          : "Contenid0s",
-  "database"          : "catalogo_contenidos",
-  "connectionLimit"   : 500,
-  "connectTimeout"    : 10000,
-  "multipleStatements":true
+  "host": "10.102.224.11",
+  "port": 3306,
+  "user": "webuser",
+  "password": "webpass",
+  "database": "catalogo_contenidos",
+  "connectionLimit": 500,
+  "connectTimeout": 10000,
+  "multipleStatements": true
 }

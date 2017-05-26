@@ -7,12 +7,14 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 const express = require('express');
+const app = express();
 
 
-/**********************************/
 
 const compression = require('compression');
-const app = express();
+
+
+
 const CONFIG_SERVER = require('./CONFIG_SERVER.json');
 const PORT = process.env.PORT || CONFIG_SERVER.PORT;
 // Inclusion of third-party middlewares
@@ -39,6 +41,15 @@ const microservices = require('./microservices/index');
 
 
 
+/************************************/
+const Raven = require('raven');
+// Must configure Raven before doing anything else with it
+Raven.config('https://ec7083da7dc3490a8e86707181b5d184:3321b8641a114839b747d31240cf9815@sentry.io/172245').install();
+// The request handler must be the first middleware on the app
+app.use(Raven.requestHandler());
+// The error handler must be before any other error middleware
+app.use(Raven.errorHandler());
+/**********************************/
 
 
 
