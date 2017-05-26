@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const CONFIGURATION_DB = require('./config.json');
+const CONFIGURATION_DB = require('./config_dev.json');
 const LOG_QUERIES = require('./queries/log.json');
 
 

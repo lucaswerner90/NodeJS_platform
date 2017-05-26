@@ -1,0 +1,25 @@
+config:
+  target: "http://localhost:5000"
+  phases:
+    -
+      duration: 10
+      arrivalRate: 5
+      name: "Warm-up"
+    -
+      duration: 60
+      arrivalRate: 50
+      name: "High load phase"
+
+  defaults:
+    headers:
+      Authorization: 'DatosBBDDCourseGenericInfo eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOjAuNjU3Nzk4MzAxMTY4NTYzMywiaWF0IjoxNDk1NzgxMTYxLCJleHAiOjE0OTgzNzMxNjF9.HXc_UWYzaUyFggLuviT2Jo95Boj6sZXNIhSLCpCC8cEFlGZdgparnb6nq0yQ-o9XmCWYNk_ng7NY6AEEqS_PLg'
+scenarios:
+  - flow:
+    - get:
+        url: "/api/user/get/generic_info"
+    - get:
+        url: "/api/user/get/catalogo"
+    - post:
+        url: "/api/user/get/contents"
+        json:
+          id_usuario: "55"

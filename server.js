@@ -4,17 +4,19 @@
 'use strict';
 // Declare of the express's app
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+process.env.NODE_ENV = 'production';
+// process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+
+
+
 
 const express = require('express');
-const app = express();
 
 
+/**********************************/
 
 const compression = require('compression');
-
-
-
+const app = express();
 const CONFIG_SERVER = require('./CONFIG_SERVER.json');
 const PORT = process.env.PORT || CONFIG_SERVER.PORT;
 // Inclusion of third-party middlewares
@@ -41,19 +43,53 @@ const microservices = require('./microservices/index');
 
 
 
-/************************************/
-const Raven = require('raven');
-// Must configure Raven before doing anything else with it
-Raven.config('https://ec7083da7dc3490a8e86707181b5d184:3321b8641a114839b747d31240cf9815@sentry.io/172245').install();
-// The request handler must be the first middleware on the app
-app.use(Raven.requestHandler());
-// The error handler must be before any other error middleware
-app.use(Raven.errorHandler());
-/**********************************/
+function multiClusterServer() {
+
+  const cluster = require('cluster');
+  const numCPUs = require('os').cpus().length;
+
+  if (cluster.isMaster) {
+    console.log(`Master ${process.pid} is running`);
 
 
+    console.log(`${numCPUs} CORES AVAILABLE`);
+    // Fork workers.
+    for (let i = 0; i < numCPUs; i++) {
+      cluster.fork();
+    }
 
-app.use(compression({ level: 9}));
+    cluster.on('exit', function (worker, code, signal) {
+      console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
+      console.log('Starting a new worker');
+      cluster.fork();
+    });
+  } else {
+    // Workers can share any TCP connection
+    // In this case it is an HTTP server
+    //For test purposes
+    if (!module.parent) {
+      app.listen(PORT);
+    }
+
+    if (process.env.NODE_ENV === 'test') {
+      module.exports = app;
+    } else {
+      microservices.runAllServices();
+    }
+
+
+    process.on('uncaughtException', function (err) {
+      console.log("uncaughtException:  " + err);
+    });
+
+  }
+
+}
+
+
+app.use(compression({
+  level: 9
+}));
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -110,13 +146,7 @@ app.use(function (error, req, res, next) {
   }
 });
 
-//For test purposes
-if (!module.parent) {
-  app.listen(PORT);
-}
 
-if (process.env.NODE_ENV === 'test') {
-  module.exports = app;
-} else {
-  microservices.runAllServices();
-}
+
+//Break!!!!!!!!!!!!!!!
+multiClusterServer();
