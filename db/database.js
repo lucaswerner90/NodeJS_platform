@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const CONFIGURATION_DB = require('./config_dev.json');
+const CONFIGURATION_DB = require('./config.json');
 const LOG_QUERIES = require('./queries/log.json');
 
 
@@ -73,7 +73,7 @@ class Database {
    * 
    * 
    * @param {string} [cadena=""] 
-   * @returns 
+   * @return {} 
    * 
    */
   _replace_characters(cadena = "") {
@@ -88,9 +88,9 @@ class Database {
   /**
    * 
    * 
-   * @param {any} queries 
-   * @param {any} obj 
-   * @returns 
+   * @param {string} queries 
+   * @param {object} obj 
+   * @return {string} 
    * 
    */
   _replace_variables_on_query(queries, obj) {
@@ -116,7 +116,7 @@ class Database {
    * @param {any} obj 
    * @param {any} id_contenido 
    * @param {any} id_usuario 
-   * @returns 
+   * @return {} 
    * 
    */
   createCompatibilityTableForInsertCourseQuery(obj, id_contenido, id_usuario) {
@@ -137,7 +137,7 @@ class Database {
    * 
    * @param {any} obj 
    * @param {any} id_contenido 
-   * @returns 
+   * @return {} 
    * 
    */
   createInsertContentPlatform(obj, id_contenido) {
@@ -160,7 +160,7 @@ class Database {
    * 
    * @param {any} obj 
    * @param {any} id_contenido 
-   * @returns 
+   * @return {} 
    * 
    */
   createInsertCategories(obj, id_contenido) {
@@ -181,7 +181,7 @@ class Database {
    * 
    * @param {any} obj 
    * @param {any} id_contenido 
-   * @returns 
+   * @return {} 
    * 
    */
   createInsertContentServer(obj, id_contenido) {
@@ -200,7 +200,7 @@ class Database {
    * 
    * @param {any} obj 
    * @param {any} id_contenido 
-   * @returns 
+   * @return {} 
    * 
    */
   createInsertContentRecursos(obj, id_contenido) {
@@ -221,7 +221,7 @@ class Database {
    * 
    * @param {any} query 
    * @param {any} [object={}] 
-   * @returns 
+   * @return {} 
    * 
    */
   sendQuery(query, object = {}) {
@@ -276,7 +276,7 @@ class Database {
    * 
    * @param {any} camposFormulario 
    * @param {any} user_queries 
-   * @returns 
+   * @return {} 
    * 
    */
   insert_new_content(camposFormulario, user_queries) {
@@ -390,7 +390,7 @@ class Database {
    * @param {any} user_queries 
    * @param {any} camposFormulario 
    * @param {boolean} [update_file=false] 
-   * @returns 
+   * @return {} 
    * 
    */
   update_content(content, user_queries, camposFormulario, update_file = false) {

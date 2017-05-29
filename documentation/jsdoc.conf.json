@@ -1,0 +1,58 @@
+{
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": [
+            "jsdoc",
+            "closure"
+        ]
+    },
+    "source": {
+        "include":[
+            "./server.js",
+            "./index.js",
+
+
+            "./authentication/config.js",
+            "./authentication/coreFunctions.js",
+            "./authentication/index.js",
+            "./authentication/middleware.js",
+
+
+            "./db/database.js",
+
+
+            "./email/email_sender.js",
+
+
+            "./files/_fileModel.js",
+            "./files/_form.js",
+            "./files/_ftpModel.js",
+
+
+            "./microservices/client.js",
+            "./microservices/database_microservice.js",
+            "./microservices/email_microservice.js",
+            "./microservices/filehandler_microservice.js",
+            "./microservices/index.js",
+            "./microservices/login_microservice.js",
+            "./microservices/websocket_microservice.js",
+
+
+            "./users/index.js",
+
+            "./users/_common/control.js",
+            "./users/_common/get.js",
+            "./users/_common/insert.js",
+            "./users/_common/modify.js",
+            "./users/_common/user.js",
+
+            "./users/profiles/_selector.js",
+            "./users/profiles/administrator.js",
+            "./users/profiles/client.js",
+            "./users/profiles/consulter.js",
+            "./users/profiles/extern.js",
+            "./users/profiles/intern.js"
+        ],
+        "exclude":["./node_modules","./.vscode","./.nyc_output"]
+    }
+}

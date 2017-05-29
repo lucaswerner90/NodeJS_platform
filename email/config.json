@@ -3,7 +3,7 @@
     "server_IP": "smtp://10.102.224.52"
   },
   "MAIL_INFO": {
-    "from": "noreply@telefonicaed.com",
+    "from": "noreply@telefonicalearningservices.com",
     "to": [
       "sergio.amordemiguel@telefonica.com",
       "lucas.wernerseoane@telefonica.com",

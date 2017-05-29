@@ -10,12 +10,6 @@ const CONFIG = require('./config.json');
  */
 class Microservices {
 
-
-  /**
-   * Creates an instance of Microservices.
-   * 
-   * @memberof Microservices
-   */
   constructor() {}
 
 

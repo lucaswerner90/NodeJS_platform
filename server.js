@@ -43,6 +43,10 @@ const microservices = require('./microservices/index');
 
 
 
+/**
+ * @desc Executes the NodeJS app on multiple cores
+ * 
+ */
 function multiClusterServer() {
 
   const cluster = require('cluster');

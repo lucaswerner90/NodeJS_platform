@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "PORT=5000 ENVIRONMENT=dev nodemon --exitcrash --inspect server.js",
+    "start": "DEBUG=express* PORT=5000 ENVIRONMENT=dev nodemon --exitcrash --inspect server.js",
     "test": "NODE_ENV=test mocha --timeout 15000 --watch ./test/**/*.spec.js ",
     "coverage": "NODE_ENV=test nyc --reporter=html mocha ./test/**/*.spec.js",
     "git:clean_submodule": "cd public && git stash && cd ..",
@@ -12,9 +12,9 @@
     "git:upload": "git add -A && git commit -m 'Last production version' && git push origin master && git push ted master",
     "git:submodule": "npm run git:clean_submodule && cd public && git fetch && git pull && cd ..",
     "git:update_all": "npm run git:submodule && npm run git:download",
-    "documentation": "yuidoc . -o documentation/code",
-    "performance:test":"artillery run -o ./test/performance/last_benchmark.json ./test/performance/artillery.yml",
-    "performance:report":"artillery report ./test/performance/last_benchmark.json"
+    "documentation": "./node_modules/.bin/jsdoc -c ./documentation/jsdoc.conf.json -d documentation/code",
+    "performance:test": "artillery run -o ./test/performance/last_benchmark.json ./test/performance/artillery.yml",
+    "performance:report": "artillery report ./test/performance/last_benchmark.json"
   },
   "author": "Lucas Werner",
   "license": "ISC",
@@ -31,20 +31,20 @@
     "mysql": "^2.11.1",
     "nodemailer": "^2.7.2",
     "nodemailer-smtp-transport": "^2.7.2",
-    "raven": "^2.0.2",
     "seneca": "^3.3.0",
+    "seneca-cluster": "0.0.1",
     "socket.io": "^1.7.3",
     "unzip": "^0.1.11"
   },
   "devDependencies": {
     "eslint": "^3.12.2",
+    "jsdoc": "^3.4.3",
     "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
     "nyc": "^10.2.0",
     "preprocessor": "^1.4.0",
     "request": "^2.79.0",
     "should": "^11.1.2",
-    "supertest": "^2.0.1",
-    "yuidocjs": "^0.10.2"
+    "supertest": "^2.0.1"
   }
 }

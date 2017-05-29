@@ -1,6 +1,17 @@
 const multiparty=require('multiparty');
 
+
 class Form{
+
+
+  /**
+   * Creates an instance of Form.
+   * @param {Request} request 
+   * @param {Function} callbackOnClose 
+   * @param {Function} callbackOnError 
+   * 
+   * @memberof Form
+   */
   constructor(request,callbackOnClose,callbackOnError){
 
     this._formulario = new multiparty.Form();
@@ -8,7 +19,7 @@ class Form{
 
 
 
-
+    
     this._formulario.on("file",(name,file)=>{
         if (file.originalFilename){
           this._campos[name]=file;
@@ -43,6 +54,12 @@ class Form{
   }
 
 
+  /**
+   * 
+   * 
+   * 
+   * @memberof Form
+   */
   clear(){
     this._formulario.removeAllListeners();
     this._formulario=null;

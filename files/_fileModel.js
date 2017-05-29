@@ -5,24 +5,48 @@ const FTP = require('./_ftpModel');
 const CONFIG = require('./config.json');
 
 
+/**
+ * 
+ * 
+ * @class File
+ */
 class File {
-
 
   constructor() {
     this._ftp = new FTP();
     this._config = CONFIG;
   }
 
+  /**
+   * 
+   * 
+   * 
+   * @memberof File
+   */
   _close_connection() {
     const _self = this;
     _self._ftp._close_connection();
   }
 
+  /**
+   * 
+   * 
+   * @returns {String} actual date string
+   * 
+   * @memberof File
+   */
   _returnActualDate() {
     return new Date().toISOString().slice(0, 19).replace('T', ' ');
   }
 
 
+  /**
+   * 
+   * 
+   * @returns {String} actual date to append to the filename
+   * 
+   * @memberof File
+   */
   _appendDateToFilename() {
     const fecha = new Date();
     const month = (fecha.getMonth() + 1 < 10) ? `0${fecha.getMonth()+1}` : fecha.getMonth() + 1;
@@ -34,6 +58,15 @@ class File {
   }
 
 
+  /**
+   * 
+   * 
+   * @param {any} extensions 
+   * @param {any} fileExtension 
+   * @returns {Boolean} if the extension is valid
+   * 
+   * @memberof File
+   */
   _checkFileExtension(extensions, fileExtension) {
     for (let i = 0; i < extensions.length; i++) {
       if (fileExtension.indexOf(extensions[i]) > -1) {
@@ -44,6 +77,17 @@ class File {
   }
 
 
+  /**
+   * 
+   * 
+   * @param {String} contentType 
+   * @param {Object} formFields 
+   * @param {String} uploadDirectory 
+   * @param {any} filename 
+   * @returns  {String} final route for the file
+   * 
+   * @memberof File
+   */
   _fileRoute(contentType, formFields, uploadDirectory, filename) {
     switch (contentType) {
       case "avatar":
@@ -53,12 +97,34 @@ class File {
     }
   }
 
+  /**
+   * 
+   * 
+   * @param {any} formFields 
+   * @param {any} uploadDirectory 
+   * @param {any} filename 
+   * @returns {String} Route where the zip will be decompressed
+   * 
+   * @memberof File
+   */
   _fileDecompresionRoute(formFields, uploadDirectory, filename) {
     return uploadDirectory + "/" + formFields["carpeta_proveedor"] + "/" + filename.name + "/" + filename.name;
   }
 
 
 
+  /**
+   * 
+   * 
+   * @param {any} file 
+   * @param {any} formFields 
+   * @param {any} uploadDirectory 
+   * @param {any} extensionsAllowed 
+   * @param {boolean} [avatar=false] 
+   * @returns {Promise}
+   * 
+   * @memberof File
+   */
   uploadContentFile(file, formFields, uploadDirectory, extensionsAllowed, avatar = false) {
 
     const _self = this;
@@ -114,6 +180,14 @@ class File {
     });
   }
 
+  /**
+   * 
+   * 
+   * @param {any} filepath 
+   * @returns {Promise}
+   * 
+   * @memberof File
+   */
   downloadImageInBase64(filepath) {
     const _self = this;
     return new Promise((resolve, reject) => {
@@ -139,6 +213,14 @@ class File {
   }
 
 
+  /**
+   * 
+   * 
+   * @param {any} filepath 
+   * @param {any} response 
+   * 
+   * @memberof File
+   */
   downloadFile(filepath, response) {
     const _self = this;
     _self._ftp.downloadFile(filepath).then((data) => {

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: files/_fileModel.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: files/_fileModel.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const PATH = require('path');
+const fs = require('fs');
+const BASE_64_ENCODER = require('base64-stream');
+const FTP = require('./_ftpModel');
+const CONFIG = require('./config.json');
+
+
+/**
+ * 
+ * 
+ * @class File
+ */
+class File {
+
+  constructor() {
+    this._ftp = new FTP();
+    this._config = CONFIG;
+  }
+
+  /**
+   * 
+   * 
+   * 
+   * @memberof File
+   */
+  _close_connection() {
+    const _self = this;
+    _self._ftp._close_connection();
+  }
+
+  /**
+   * 
+   * 
+   * @returns {String} actual date string
+   * 
+   * @memberof File
+   */
+  _returnActualDate() {
+    return new Date().toISOString().slice(0, 19).replace('T', ' ');
+  }
+
+
+  /**
+   * 
+   * 
+   * @returns {String} actual date to append to the filename
+   * 
+   * @memberof File
+   */
+  _appendDateToFilename() {
+    const fecha = new Date();
+    const month = (fecha.getMonth() + 1 &lt; 10) ? `0${fecha.getMonth()+1}` : fecha.getMonth() + 1;
+    const day = (fecha.getDate() + 1 &lt; 10) ? `0${fecha.getDate()+1}` : fecha.getDate() + 1;
+    const hours = (fecha.getHours() + 1 &lt; 10) ? `0${fecha.getHours()+1}` : fecha.getHours() + 1;
+    const minutes = (fecha.getMinutes() &lt; 10) ? `0${fecha.getMinutes()+1}` : fecha.getMinutes() + 1;
+    const seconds = (fecha.getSeconds() &lt; 10) ? `0${fecha.getSeconds()+1}` : fecha.getSeconds() + 1;
+    return `${fecha.getFullYear()}_${month}_${day}_${hours}_${minutes}_${seconds}`;
+  }
+
+
+  /**
+   * 
+   * 
+   * @param {any} extensions 
+   * @param {any} fileExtension 
+   * @returns {Boolean} if the extension is valid
+   * 
+   * @memberof File
+   */
+  _checkFileExtension(extensions, fileExtension) {
+    for (let i = 0; i &lt; extensions.length; i++) {
+      if (fileExtension.indexOf(extensions[i]) > -1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  /**
+   * 
+   * 
+   * @param {String} contentType 
+   * @param {Object} formFields 
+   * @param {String} uploadDirectory 
+   * @param {any} filename 
+   * @returns  {String} final route for the file
+   * 
+   * @memberof File
+   */
+  _fileRoute(contentType, formFields, uploadDirectory, filename) {
+    switch (contentType) {
+      case "avatar":
+        return uploadDirectory + "/" + formFields["id_usuario"] + "/avatar" + filename.ext;
+      case "zip":
+        return uploadDirectory + "/" + formFields["carpeta_proveedor"] + "/" + filename.name + "/" + filename.name + filename.ext;
+    }
+  }
+
+  /**
+   * 
+   * 
+   * @param {any} formFields 
+   * @param {any} uploadDirectory 
+   * @param {any} filename 
+   * @returns {String} Route where the zip will be decompressed
+   * 
+   * @memberof File
+   */
+  _fileDecompresionRoute(formFields, uploadDirectory, filename) {
+    return uploadDirectory + "/" + formFields["carpeta_proveedor"] + "/" + filename.name + "/" + filename.name;
+  }
+
+
+
+  /**
+   * 
+   * 
+   * @param {any} file 
+   * @param {any} formFields 
+   * @param {any} uploadDirectory 
+   * @param {any} extensionsAllowed 
+   * @param {boolean} [avatar=false] 
+   * @returns {Promise}
+   * 
+   * @memberof File
+   */
+  uploadContentFile(file, formFields, uploadDirectory, extensionsAllowed, avatar = false) {
+
+    const _self = this;
+
+    let newFilename;
+    let ruta_file = '';
+    let readableStream;
+
+    function removeVariables() {
+      newFilename = null;
+      ruta_file = null;
+      readableStream = null;
+    }
+
+    return new Promise((resolve, reject) => {
+      if (_self._checkFileExtension(extensionsAllowed, PATH.parse(file.originalFilename).ext)) {
+
+        newFilename = PATH.parse(file.originalFilename);
+
+
+        // If the file is a content, we've to manage it in a different way that if it is an image or something else.
+        if (!avatar) {
+
+          formFields["fecha_alta"] = _self._returnActualDate();
+          formFields["ruta_descompresion"] = _self._fileDecompresionRoute(formFields, uploadDirectory, newFilename);
+          formFields["ruta_zip"] = _self._fileRoute("zip", formFields, uploadDirectory, newFilename);
+          ruta_file = formFields['ruta_zip'];
+
+          // If it's an avatar we have to set the route properly on it
+        } else {
+          formFields['urlAvatar'] = _self._fileRoute("avatar", formFields, uploadDirectory, newFilename);
+          ruta_file = formFields['urlAvatar'];
+        }
+
+        // Create the readableStream to upload the file physically
+        readableStream = fs.createReadStream(file.path);
+        _self._ftp.uploadFile(readableStream, ruta_file).then(() => {
+            if (!avatar) {
+              formFields["ruta_zip"] = _self._fileRoute("zip", formFields, _self._ftp._configuration.ftpConnection.equivalent_url, newFilename);
+            }
+            resolve(true);
+          })
+          .catch((err) => {
+            removeVariables();
+            reject(err);
+          });
+      } else {
+        removeVariables();
+        reject({
+          error: "No file extension allowed"
+        });
+      }
+    });
+  }
+
+  /**
+   * 
+   * 
+   * @param {any} filepath 
+   * @returns {Promise}
+   * 
+   * @memberof File
+   */
+  downloadImageInBase64(filepath) {
+    const _self = this;
+    return new Promise((resolve, reject) => {
+      _self._ftp.downloadFile(filepath).then((data) => {
+          let imageData = `data:image/${PATH.parse(filepath).ext.slice(1)};base64,`;
+
+          data.pipe(BASE_64_ENCODER.encode()).on("data", (buf) => {
+              imageData += buf;
+            })
+            .once("error", (err) => {
+              reject(err);
+            })
+            .once("end", () => {
+              resolve(imageData);
+            });
+
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+
+  }
+
+
+  /**
+   * 
+   * 
+   * @param {any} filepath 
+   * @param {any} response 
+   * 
+   * @memberof File
+   */
+  downloadFile(filepath, response) {
+    const _self = this;
+    _self._ftp.downloadFile(filepath).then((data) => {
+
+        response.attachment(filepath);
+        // We pipe the file throught the readableStream object to the response
+        data.pipe(response).on("end", function () {
+          _self._ftp._FTPDisconnect();
+
+        });
+      })
+      .catch((err) => {
+        response.send(err);
+      });
+
+  }
+
+
+
+
+}
+
+
+module.exports = File;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authentication_config.html">authentication/config</a></li><li><a href="module-authentication_coreFunctions.html">authentication/coreFunctions</a></li><li><a href="module-authentication_index.html">authentication/index</a></li><li><a href="module-authentication_middleware.html">authentication/middleware</a></li></ul><h3>Classes</h3><ul><li><a href="ClientMicroservice.html">ClientMicroservice</a></li><li><a href="Database.html">Database</a></li><li><a href="DatabaseMicroservice.html">DatabaseMicroservice</a></li><li><a href="EmailMicroservice.html">EmailMicroservice</a></li><li><a href="EmailSender.html">EmailSender</a></li><li><a href="File.html">File</a></li><li><a href="Form.Form.html">Form</a></li><li><a href="FTPModel.html">FTPModel</a></li><li><a href="Microservices.html">Microservices</a></li><li><a href="ServerStart.html">ServerStart</a></li><li><a href="User.html">User</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon May 29 2017 12:01:47 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

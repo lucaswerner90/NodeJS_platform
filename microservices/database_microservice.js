@@ -8,13 +8,10 @@ const Database = require('../db/database');
  * 
  * 
  * @class DatabaseMicroservice
+ * @desc Creates an instance of DatabaseMicroservice.
  */
 class DatabaseMicroservice {
 
-  /**
-   * @desc Creates an instance of DatabaseMicroservice.
-   * 
-   */
   constructor() {
     console.log("[RUNNING] Database microservice");
     this._db = new Database();

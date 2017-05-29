@@ -1,12 +1,12 @@
 config:
   target: "http://localhost:5000"
   phases:
+    # -
+    #   duration: 10
+    #   arrivalRate: 5
+    #   name: "Warm-up"
     -
-      duration: 10
-      arrivalRate: 5
-      name: "Warm-up"
-    -
-      duration: 60
+      duration: 450
       arrivalRate: 50
       name: "High load phase"
 
@@ -19,7 +19,7 @@ scenarios:
         url: "/api/user/get/generic_info"
     - get:
         url: "/api/user/get/catalogo"
-    - post:
-        url: "/api/user/get/contents"
-        json:
-          id_usuario: "55"
+    # - post:
+    #     url: "/api/user/get/contents"
+    #     json:
+    #       id_usuario: "55"

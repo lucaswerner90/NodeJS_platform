@@ -1,21 +1,17 @@
+
+
 const seneca = require('seneca');
 
 const CONFIG_MICRO = require('./config.json');
 
 const CLIENT_TIMEOUT = 99999;
-
 /**
- * 
- * 
  * @class ClientMicroservice
  * @desc Control the execution of every microservice in the webapp
  */
 class ClientMicroservice {
 
-  /**
-   * Creates an instance of ClientMicroservice.
-   * 
-   */
+
   constructor() {
     this._login_client = seneca().client(CONFIG_MICRO.login_microservice);
     this._file_client = seneca().client(CONFIG_MICRO.filehandler_microservice);
@@ -79,7 +75,7 @@ class ClientMicroservice {
    * 
    * 
    * @param {Object} {body} 
-   * @returns 
+   * @returns {Promise}
    * @desc Control the login of the user to the platform
    */
   login_user({body}) {

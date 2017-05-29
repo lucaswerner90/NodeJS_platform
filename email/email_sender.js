@@ -2,12 +2,26 @@ const CONFIG=require('./config.json');
 const nodemailer=require('nodemailer');
 const fs=require('fs');
 
+/**
+ * 
+ * 
+ * @class EmailSender
+ */
 class EmailSender{
   constructor(){
     this._smtpTransport = nodemailer.createTransport(CONFIG.BASIC_CONF.server_IP);
     this.mail_options=CONFIG.MAIL_INFO;
   }
 
+  
+  /**
+   * 
+   * 
+   * @param {string} [id="new_course"] 
+   * @returns {string} 
+   * 
+   * @memberof EmailSender
+   */
   _config_template(id="new_course"){
     for (let i = 0; i < CONFIG.TEMPLATES_CONF.length; i++) {
       let template=CONFIG.TEMPLATES_CONF[i];
@@ -17,6 +31,15 @@ class EmailSender{
   }
 
 
+  /**
+   * 
+   * 
+   * @param {string} [html=""] 
+   * @param {object} info_content 
+   * @returns {string} Final email html template
+   * 
+   * @memberof EmailSender
+   */
   replace_variables(html="",info_content){
     const email_info=["titulo_curso","num_certificados","num_contenidos","horas_formacion","ruta_ejecucion"];
     for (let i = 0; i < email_info.length; i++) {
@@ -27,6 +50,15 @@ class EmailSender{
 
 
 
+  /**
+   * 
+   * 
+   * @param {string} [type="new_course"] 
+   * @param {object} [info={}] 
+   * @returns {Promise}
+   * 
+   * @memberof EmailSender
+   */
   send_email(type="new_course",info={}){
     const _self=this;
     const template=_self._config_template(type);

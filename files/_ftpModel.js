@@ -7,7 +7,13 @@ const fs = require('fs');
 
 
 
+/**
+ * 
+ * 
+ * @class FTPModel
+ */
 class FTPModel {
+
   constructor() {
     this._configuration = CONFIG;
     this._ftp = new FTP_CLIENT();
@@ -22,6 +28,12 @@ class FTPModel {
     });
   }
 
+  /**
+   * 
+   * 
+   * 
+   * @memberof FTPModel
+   */
   _close_connection() {
     const _self = this;
     if (_self._ftp) {
@@ -31,6 +43,13 @@ class FTPModel {
 
   }
 
+  /**
+   * 
+   * 
+   * @returns {String}
+   * 
+   * @memberof FTPModel
+   */
   _appendDateToFilename() {
     const fecha = new Date();
     const month = (fecha.getMonth() + 1 < 10) ? `0${fecha.getMonth()+1}` : fecha.getMonth() + 1;
@@ -42,6 +61,15 @@ class FTPModel {
   }
 
 
+  /**
+   * 
+   * 
+   * @param {String} dir 
+   * @param {Array} [path=[]] 
+   * @returns {Boolean}
+   * 
+   * @memberof FTPModel
+   */
   _checkIfDirExists(dir, path = []) {
     for (let i = 0; i < path.length; i++) {
       if (path[i].name === dir) {
@@ -51,6 +79,14 @@ class FTPModel {
     return false;
   }
 
+  /**
+   * 
+   * 
+   * @param {String} path 
+   * @returns {Promise}
+   * 
+   * @memberof FTPModel
+   */
   _createDir(path) {
     const _self = this;
 
@@ -65,6 +101,15 @@ class FTPModel {
     });
   }
 
+  /**
+   * 
+   * 
+   * @param {Buffer} path 
+   * @param {String} remotePath 
+   * @returns {Promise}
+   * 
+   * @memberof FTPModel
+   */
   _createFile(path, remotePath) {
 
     const _self = this;
@@ -83,11 +128,26 @@ class FTPModel {
     });
   }
 
+  /**
+   * 
+   * 
+   * 
+   * @memberof FTPModel
+   */
   _FTPDisconnect() {
     const _self = this;
     _self._ftp.end();
   }
 
+  /**
+   * 
+   * 
+   * @param {String} oldPath 
+   * @param {String} newPath 
+   * @returns {Promise}
+   * 
+   * @memberof FTPModel
+   */
   _renameFolder(oldPath, newPath) {
     const _self = this;
 
@@ -102,6 +162,14 @@ class FTPModel {
 
   }
 
+  /**
+   * 
+   * 
+   * @param {Buffer} entry 
+   * @returns {Promise}
+   * 
+   * @memberof FTPModel
+   */
   _readDataFile(entry) {
 
     return new Promise(function (resolve, reject) {
@@ -126,6 +194,15 @@ class FTPModel {
   }
 
 
+  /**
+   * 
+   * 
+   * @param {File} path 
+   * @param {String} remotePath 
+   * @returns {Promise}
+   * 
+   * @memberof FTPModel
+   */
   extractZIP(path, remotePath) {
 
     const _self = this;
@@ -212,6 +289,14 @@ class FTPModel {
     });
   }
 
+  /**
+   * 
+   * 
+   * @param {String} filePath 
+   * @returns {Promise} We returned a readableStream to pass it to the response
+   * 
+   * @memberof FTPModel
+   */
   downloadFile(filePath) {
     const _self = this;
 
@@ -262,6 +347,15 @@ class FTPModel {
     });
   }
 
+  /**
+   * 
+   * 
+   * @param {File} file 
+   * @param {String} FTPPath 
+   * @returns {Promise}
+   * 
+   * @memberof FTPModel
+   */
   uploadFile(file, FTPPath) {
     const _self = this;
 

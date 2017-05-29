@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: microservices/client.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: microservices/client.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>
+
+const seneca = require('seneca');
+
+const CONFIG_MICRO = require('./config.json');
+
+const CLIENT_TIMEOUT = 99999;
+/**
+ * @class ClientMicroservice
+ * @desc Control the execution of every microservice in the webapp
+ */
+class ClientMicroservice {
+
+
+  constructor() {
+    this._login_client = seneca().client(CONFIG_MICRO.login_microservice);
+    this._file_client = seneca().client(CONFIG_MICRO.filehandler_microservice);
+    this._db_client = seneca().client(CONFIG_MICRO.db_microservice);
+    this._email_client = seneca().client(CONFIG_MICRO.email_microservice);
+  }
+
+
+  /**
+   * 
+   * 
+   * @param {Object} data 
+   * @returns {Promise} Resolving if the email was sended or not
+   * @desc Sends an email after an specified action
+   */
+  send_email(data) {
+    const _self = this;
+    return new Promise((resolve, reject) => {
+      _self._email_client.act({
+        timeout$: CLIENT_TIMEOUT,
+        role: 'email',
+        cmd: 'send',
+        data: data
+      }, (error, result) => {
+        if (error) reject(error);
+        resolve(result.answer);
+      });
+    });
+  }
+
+  /**
+   * 
+   * 
+   * @param {string} [query=""] Query to be sended to the DB
+   * @param {any} [obj={}] Object with properties to be replaced on the selected query
+   * @returns {Promise} Promise with data about the query sended or error just in case query went wrong
+   * @desc Sends a query to the DB and returns the result of it or an error just in case there is one.
+   */
+  send_query(query = "", obj = {}) {
+    const _self = this;
+    return new Promise((resolve, reject) => {
+      _self._db_client.act({
+        timeout$: CLIENT_TIMEOUT,
+        role: 'db',
+        cmd: 'send_query',
+        query: query,
+        obj: obj
+      }, (error, result) => {
+        if (result) {
+          resolve(result.answer);
+        } else {
+          reject(error);
+        }
+
+      });
+    });
+  }
+
+
+  /**
+   * 
+   * 
+   * @param {Object} {body} 
+   * @returns {Promise}
+   * @desc Control the login of the user to the platform
+   */
+  login_user({body}) {
+    const _self = this;
+    return new Promise((resolve, reject) => {
+      _self._login_client.act({
+        role: 'authentication',
+        cmd: 'login',
+        data: body
+      }, (error, result) => {
+        if (error !== null) reject(error);
+        else resolve(result.answer);
+        
+      });
+    });
+  }
+
+
+  /**
+   * 
+   * 
+   * @param {String} filepath 
+   * @param {Response} response 
+   * @returns Returns the file selected through the FTP
+   * @desc Downlaod the file directly from the FTP
+   */
+  download_file(filepath, response) {
+    const _self = this;
+    return new Promise((resolve, reject) => {
+      _self._file_client.act({
+        role: 'ftp',
+        cmd: 'download',
+        filepath: filepath,
+        response: response
+      }, (error, result) => {
+        if (error) reject(error);
+        resolve(result.answer);
+      });
+    });
+  }
+
+
+  /**
+   * 
+   * 
+   * @param {Form} form 
+   * @returns {Promise} If the file was uploaded correctly
+   * @desc Uplaods a file to the FTP
+   */
+  upload_file(form) {
+    const _self = this;
+    return new Promise((resolve, reject) => {
+      _self._file_client.act({
+        role: 'ftp',
+        cmd: 'upload',
+        data: form
+      }, (error, result) => {
+        if (error) reject(error);
+        resolve(result.answer);
+      });
+    });
+  }
+
+
+}
+
+module.exports = ClientMicroservice;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authentication_config.html">authentication/config</a></li><li><a href="module-authentication_coreFunctions.html">authentication/coreFunctions</a></li><li><a href="module-authentication_index.html">authentication/index</a></li><li><a href="module-authentication_middleware.html">authentication/middleware</a></li></ul><h3>Classes</h3><ul><li><a href="ClientMicroservice.html">ClientMicroservice</a></li><li><a href="Database.html">Database</a></li><li><a href="DatabaseMicroservice.html">DatabaseMicroservice</a></li><li><a href="EmailMicroservice.html">EmailMicroservice</a></li><li><a href="EmailSender.html">EmailSender</a></li><li><a href="File.html">File</a></li><li><a href="Form.Form.html">Form</a></li><li><a href="FTPModel.html">FTPModel</a></li><li><a href="Microservices.html">Microservices</a></li><li><a href="ServerStart.html">ServerStart</a></li><li><a href="User.html">User</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon May 29 2017 12:01:47 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

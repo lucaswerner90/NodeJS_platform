@@ -3,6 +3,11 @@ const CONFIG_MICRO = require('./config.json');
 const seneca = require('seneca')();
 const EmailSender = require('../email/email_sender');
 
+/**
+ * 
+ * 
+ * @class EmailMicroservice
+ */
 class EmailMicroservice {
 
   constructor() {
