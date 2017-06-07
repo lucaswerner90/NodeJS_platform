@@ -4,6 +4,9 @@
     "contents_proveedor":"select c.id_contenido,codigo_proyecto,c.titulo,c.duracion,c.id_pais,c.fecha_publicacion,c.id_tipo_desarrollo, pr.id_proyecto from contenidos c left join relacion_contenidos_proyectos rcp on rcp.id_contenido=c.id_contenido left join  proyectos pr on rcp.id_proyecto=pr.id_proyecto where id_proveedor=[id_proveedor] and  c.id_estado!=4;"
   },
   "INSERT":{
+    "content_mooc":"INSERT INTO catalogo_contenidos.contenidos (participantes,notas_produccion,indice_contenidos,notas_contenidos,id_pais,id_proveedor,notas,titulo, descripcion, rutaEjecucion, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado,catalogo_ted,url_image,id_tipo_desarrollo,responsive,licencia) VALUES ([participantes],[notas_produccion],[indice_contenidos],[notas_contenidos],[id_pais],[id_proveedor],[notas],[titulo], [descripcion], [rutaEjecucion], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado],[catalogo_ted],[url_image],[id_tipo_desarrollo],[responsive],[licencia]);",
+
+
     "content":"INSERT INTO catalogo_contenidos.contenidos (participantes,notas_produccion,indice_contenidos,notas_contenidos,id_pais,id_proveedor,notas,titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado,catalogo_ted,url_image,id_tipo_desarrollo,responsive,licencia) VALUES ([participantes],[notas_produccion],[indice_contenidos],[notas_contenidos],[id_pais],[id_proveedor],[notas],[titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado],[catalogo_ted],[url_image],[id_tipo_desarrollo],[responsive],[licencia]);",
     "contentRelation":"INSERT INTO relacion_contenidos_proyectos (id_contenido,id_proyecto) VALUES ([id_contenido], [id_proyecto]);",
     "tableOfCompatibilities":"INSERT INTO resultado_certificacion_contenido (id_contenido,id_usuario,id_punto_control,id_tc,valor) VALUES [multiple_insert_query];",
@@ -18,6 +21,10 @@
     "content_licencia":"INSERT INTO licencias (id_contenido,fecha_inicio,fecha_fin,numero_licencias) VALUES ([id_contenido],[fecha_inicio],[fecha_fin],[numero_licencias]);"
   },
   "UPDATE":{
+    "content_mooc":"UPDATE contenidos SET url_image=[url_image],indice_contenidos=[indice_contenidos],participantes=[participantes],notas_produccion=[notas_produccion],notas_contenidos=[notas_contenidos],notas=[notas],titulo=[titulo], descripcion=[descripcion],licencia=[licencia], rutaEjecucion=[rutaEjecucion], id_tipo_contenido=[id_tipo_contenido],id_pais=[id_pais],duracion=[duracion],catalogo_ted=[catalogo_ted], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado],id_tipo_desarrollo=[id_tipo_desarrollo],responsive=[responsive] WHERE id_contenido=[id_contenido];",
+
+
+
     "content":"UPDATE contenidos SET url_image=[url_image],indice_contenidos=[indice_contenidos],participantes=[participantes],notas_produccion=[notas_produccion],notas_contenidos=[notas_contenidos],notas=[notas],titulo=[titulo], descripcion=[descripcion],licencia=[licencia], ruta_zip=[ruta_zip], id_tipo_contenido=[id_tipo_contenido],id_pais=[id_pais],duracion=[duracion],catalogo_ted=[catalogo_ted], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado],id_tipo_desarrollo=[id_tipo_desarrollo],responsive=[responsive] WHERE id_contenido=[id_contenido];",
     "contentRelation":"UPDATE relacion_contenidos_proyectos SET id_proyecto=[id_proyecto] WHERE id_contenido=[id_contenido];",
     "rutaEjecucion":"UPDATE contenidos SET rutaEjecucion=[rutaEjecucion] WHERE id_contenido=[id_contenido];",

@@ -76,30 +76,26 @@ router.get('/catalogo_image/:id_contenido', (req, res) => {
 
 
 router.get('/generic_info', (req, res) => {
-  if (Object.keys(global.CONTROL.generic_info).length === 0) {
-    let select_user = new Selector(req.body.id_usuario);
-    select_user.return_user().then((profile) => {
-        let user = profile;
-        user.get_platform_generic_info().then((data) => {
-            user._close_connections();
-            select_user = null;
-            global.CONTROL.generic_info = data;
-            res.send(data);
-          })
-          .catch((err) => {
-            res.send({
-              error: err
-            });
+  let select_user = new Selector(req.body.id_usuario);
+  select_user.return_user().then((profile) => {
+      let user = profile;
+      user.get_platform_generic_info().then((data) => {
+          user._close_connections();
+          select_user = null;
+          res.send(data);
+        })
+        .catch((err) => {
+          res.send({
+            error: err
           });
-      })
-      .catch((err) => {
-        res.send({
-          error: err
         });
+    })
+    .catch((err) => {
+      res.send({
+        error: err
       });
-  } else {
-    res.send(global.CONTROL.generic_info);
-  }
+    });
+
 
 
 });

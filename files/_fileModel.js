@@ -140,6 +140,13 @@ class File {
     }
 
     return new Promise((resolve, reject) => {
+
+      //If the file comes empty, we don't have to do nothing.
+      if (!file) {
+        resolve(true);
+      }
+
+
       if (_self._checkFileExtension(extensionsAllowed, PATH.parse(file.originalFilename).ext)) {
 
         newFilename = PATH.parse(file.originalFilename);

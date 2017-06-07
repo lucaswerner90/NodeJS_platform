@@ -1,14 +1,14 @@
 config:
   target: "http://localhost:5000"
   phases:
-    # -
-    #   duration: 10
-    #   arrivalRate: 5
-    #   name: "Warm-up"
     -
-      duration: 450
-      arrivalRate: 50
-      name: "High load phase"
+      duration: 10
+      arrivalRate: 5
+      name: "Warm-up"
+    # -
+    #   duration: 450
+    #   arrivalRate: 50
+    #   name: "High load phase"
 
   defaults:
     headers:

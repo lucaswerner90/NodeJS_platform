@@ -208,6 +208,9 @@ class FTPModel {
     const _self = this;
 
     return new Promise((resolve, reject) => {
+      if (!path) {
+        resolve(true);
+      }
       try {
         let unzip_pipe = unzip.Parse();
         unzip_pipe.once("error", (err) => {

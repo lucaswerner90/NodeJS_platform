@@ -5,6 +5,10 @@
   },
   "INSERT":{
     "content":"INSERT INTO catalogo_contenidos.contenidos (id_pais,id_proveedor,notas,titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado,id_tipo_desarrollo,responsive,licencia) VALUES ([id_pais],[id_proveedor],[notas],[titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado],[id_tipo_desarrollo],[responsive],[licencia]);",
+
+    "content_mooc":"INSERT INTO catalogo_contenidos.contenidos (id_pais,id_proveedor,notas,titulo, descripcion, rutaEjecucion, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado,id_tipo_desarrollo,responsive,licencia) VALUES ([id_pais],[id_proveedor],[notas],[titulo], [descripcion], [rutaEjecucion], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado],[id_tipo_desarrollo],[responsive],[licencia]);",
+
+
     "contentRelation":"",
     "tableOfCompatibilities":"INSERT INTO resultado_certificacion_contenido (id_contenido,id_usuario,id_punto_control,id_tc,valor) VALUES [multiple_insert_query];",
     "content_platform":"",
@@ -17,7 +21,14 @@
   "UPDATE":{
     "content_categorias_subcategorias":"",
     "content_recursos":"",
+
+    
     "content":"UPDATE contenidos SET notas=[notas],titulo=[titulo], descripcion=[descripcion], ruta_zip=[ruta_zip],id_tipo_contenido=[id_tipo_contenido],id_pais=[id_pais],duracion=[duracion], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado],id_tipo_desarrollo=[id_tipo_desarrollo],licencia=[licencia],responsive=[responsive] WHERE id_contenido=[id_contenido];",
+
+
+    "content_mooc":"UPDATE contenidos SET notas=[notas],titulo=[titulo], descripcion=[descripcion], rutaEjecucion=[rutaEjecucion],id_tipo_contenido=[id_tipo_contenido],id_pais=[id_pais],duracion=[duracion], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado],id_tipo_desarrollo=[id_tipo_desarrollo],licencia=[licencia],responsive=[responsive] WHERE id_contenido=[id_contenido];",
+
+
     "contentRelation":"",
     "rutaEjecucion":"UPDATE contenidos SET rutaEjecucion=[rutaEjecucion] WHERE id_contenido=[id_contenido];",
     "contentNoFile":"UPDATE contenidos SET notas=[notas],titulo=[titulo], descripcion=[descripcion],licencia=[licencia],id_tipo_contenido=[id_tipo_contenido],id_pais=[id_pais],duracion=[duracion], id_sistema_evaluacion=[id_sistema_evaluacion],id_estado=[id_estado],id_tipo_desarrollo=[id_tipo_desarrollo],responsive=[responsive] WHERE id_contenido=[id_contenido];",

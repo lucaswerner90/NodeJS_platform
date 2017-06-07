@@ -6,7 +6,6 @@ const DBCommonQueries=require('../../db/queries/user/_common.json');
 const ClientMicroservice=require('../../microservices/client');
 
 
-global.CONTROL=require('./control');
 /**
 @class
 */
@@ -203,7 +202,6 @@ class User{
       //Object.keys(global.CONTROL.users[_self._id_usuario]).length===0
       _self.get_user_info().then((result)=>{
         _self._microservice_client.send_query(_self._profile_queries.GET.contents_proveedor,result).then((data)=>{
-          global.CONTROL.proveedor[result.id_proveedor]=data;
           resolve(data);
         });
 
@@ -431,10 +429,8 @@ class User{
         form['carpeta_proveedor']=data[0].carpeta_proveedor;
         _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
           _self._db_connection.insert_new_content(form,_self._profile_queries).then(()=>{
-            global.CONTROL.proveedor[form['id_proveedor']]=undefined;
 
             _self._file._ftp.extractZIP(form['file_to_upload'],form['ruta_descompresion']).then((data)=>{
-
               if(data){
                 form['rutaEjecucion']=data;
 
@@ -444,7 +440,7 @@ class User{
                   id_contenido:form['id_contenido']
                 }).then(()=>{
                   _self._microservice_client.send_email({type:"new_course",datos_curso:form}).then(()=>{
-
+                    
                   });
 
                 });
@@ -489,7 +485,6 @@ class User{
         // Si le pasamos el fichero para subir, el proceso es el mismo que el de creacion, pero haciendo update en vez de insert en la base de datos
         _self.get_content_by_id(form["id_contenido"]).then((content)=>{
 
-          global.CONTROL.proveedor[form['id_proveedor']]=undefined;
 
           if(form['file_to_upload']){
             _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{

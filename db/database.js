@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const CONFIGURATION_DB = require('./config.json');
+const CONFIGURATION_DB = require('./config_dev.json');
 const LOG_QUERIES = require('./queries/log.json');
 
 
@@ -285,7 +285,10 @@ class Database {
 
     return new Promise((resolve, reject) => {
 
-      _self.sendQuery(user_queries.INSERT.content, camposFormulario).then((row) => {
+      _self.sendQuery(
+        (camposFormulario.id_tipo_contenido == "12") ? user_queries.INSERT.content_mooc : user_queries.INSERT.content,
+        camposFormulario
+      ).then((row) => {
 
         // After insert the basic info about the content we need to populate the relations
         camposFormulario["id_contenido"] = row.insertId;
@@ -408,8 +411,16 @@ class Database {
         }
       }
 
-
-      additional_queries.push(_self._replace_variables_on_query((update_file) ? user_queries.UPDATE.content : user_queries.UPDATE.contentNoFile, _self.modelContent));
+      //If the course is MOOC 
+      if (camposFormulario.id_tipo_contenido == "12") {
+        additional_queries.push(_self._replace_variables_on_query(
+          user_queries.UPDATE.content_mooc,
+          _self.modelContent)
+        );
+      } else {
+        additional_queries.push(_self._replace_variables_on_query((update_file) ? user_queries.UPDATE.content : user_queries.UPDATE.contentNoFile, _self.modelContent));
+      }
+      
 
       if (_self.modelContent.categorias && _self.modelContent.categorias.length > 0) {
         if (content.categorias && content.categorias.length > 0) {
