@@ -41,7 +41,6 @@
     "nyc": "^10.2.0",
     "preprocessor": "^1.4.0",
     "request": "^2.79.0",
-    "should": "^11.1.2",
     "supertest": "^2.0.1"
   }
 }
