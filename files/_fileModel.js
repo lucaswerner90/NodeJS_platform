@@ -93,7 +93,11 @@ class File {
       case "avatar":
         return `${uploadDirectory}/${formFields.id_usuario}/avatar ${filename.ext}`;
       case "zip":
-        return `${uploadDirectory}/${formFields.carpeta_proveedor}/${formFields.codigo_proyecto}/${filename.name}/${filename.name}${filename.ext}`;
+        if (formFields.codigo_proyecto) {
+          return `${uploadDirectory}/${formFields.carpeta_proveedor}/${formFields.codigo_proyecto}/${filename.name}/${filename.name}${filename.ext}`;
+        } else {
+          return `${uploadDirectory}/${formFields.carpeta_proveedor}/${filename.name}/${filename.name}${filename.ext}`;
+        }
     }
   }
 
@@ -108,7 +112,12 @@ class File {
    * @memberof File
    */
   _fileDecompresionRoute(formFields, uploadDirectory, filename) {
-    return uploadDirectory + "/" + formFields.carpeta_proveedor + "/" + formFields.codigo_proyecto+"/"+ filename.name + "/" + filename.name;
+    if (formFields.codigo_proyecto) {
+      return formFields.carpeta_proveedor + "/" + formFields.codigo_proyecto + "/" + filename.name + "/" + filename.name;
+    } else {
+      return formFields.carpeta_proveedor + "/" + filename.name + "/" + filename.name;
+    }
+
   }
 
   _parseRutaEjecucion(ruta) {
@@ -167,8 +176,8 @@ class File {
         } else {
 
           newFilename = PATH.parse(file.originalFilename);
-          
-          
+
+
           // Cuando el contenido es de los antiguos, no existe ruta de zip pero si ruta de ejecucion en la cual subir el nuevo zip
           if (formFields.rutaEjecucion !== null && formFields.rutaEjecucion !== undefined) {
             formFields["ruta_zip"] = _self._parseRutaEjecucion(formFields.rutaEjecucion) + "/" + file.originalFilename;
@@ -178,12 +187,12 @@ class File {
 
 
 
-          
-          
+
+
         }
         formFields["ruta_descompresion"] = _self._fileDecompresionRoute(formFields, uploadDirectory, newFilename);
         formFields["fecha_alta"] = _self._returnActualDate();
-        
+
         ruta_file = formFields['ruta_zip'];
 
         // Create the readableStream to upload the file physically

@@ -538,7 +538,7 @@ class Database {
       }
 
 
-      
+
       if (_self.modelContent.id_habilidad != -1) {
         additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_habilidades, {
           id_contenido: _self.modelContent.id_contenido,

@@ -2,10 +2,10 @@
   "ftpConnection":
   {
     "host":"10.102.224.11",
-    "user":"lucas",
+    "user":"0_contenidos",
     "port":21,
-    "password":"ted01",
-    "equivalent_url":"//certificacion.telefonicalearningservices.com/cursosamas/Educaterra/FACTORIA/lucas",
+    "password":"certificacion",
+    "equivalent_url":"//certificacion.telefonicalearningservices.com/cursosamas",
     "uploadsDirectory":"uploads/"
   },
   "screenshotsUpload":{
@@ -16,7 +16,7 @@
     ]
   },
   "fileUpload":{
-    "directory":".",
+    "directory":"",
     "extensionsAllowed":[
       "zip"
     ]
@@ -31,7 +31,6 @@
   "fileDownload":{
     "directory":"./downloads",
     "allowed_hosts":[
-
     ]
   }
 }

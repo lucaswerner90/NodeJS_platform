@@ -114,12 +114,12 @@ class FTPModel {
 
     const _self = this;
     return new Promise((resolve, reject) => {
-
       _self._ftp.put(path, remotePath, function (err) {
-        console.log("[!] Created file...." + remotePath);
+        
         if (err) {
           reject(err);
         } else {
+          console.log("[!] Created file...." + remotePath);
           resolve(true);
         }
 
