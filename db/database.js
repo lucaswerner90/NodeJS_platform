@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const CONFIGURATION_DB = require('./config_dev.json');
+const CONFIGURATION_DB = require('./config.json');
 const LOG_QUERIES = require('./queries/log.json');
 
 
@@ -535,9 +535,10 @@ class Database {
             id_nivel: _self.modelContent.id_nivel
           }));
         }
-
       }
 
+
+      
       if (_self.modelContent.id_habilidad != -1) {
         additional_queries.push(_self._replace_variables_on_query(user_queries.UPDATE.content_habilidades, {
           id_contenido: _self.modelContent.id_contenido,

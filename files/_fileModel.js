@@ -91,9 +91,9 @@ class File {
   _fileRoute(contentType, formFields, uploadDirectory, filename) {
     switch (contentType) {
       case "avatar":
-        return uploadDirectory + "/" + formFields["id_usuario"] + "/avatar" + filename.ext;
+        return `${uploadDirectory}/${formFields.id_usuario}/avatar ${filename.ext}`;
       case "zip":
-        return uploadDirectory + "/" + formFields["carpeta_proveedor"] + "/" + filename.name + "/" + filename.name + filename.ext;
+        return `${uploadDirectory}/${formFields.carpeta_proveedor}/${formFields.codigo_proyecto}/${filename.name}/${filename.name}${filename.ext}`;
     }
   }
 
@@ -108,10 +108,16 @@ class File {
    * @memberof File
    */
   _fileDecompresionRoute(formFields, uploadDirectory, filename) {
-    return uploadDirectory + "/" + formFields["carpeta_proveedor"] + "/" + filename.name + "/" + filename.name;
+    return uploadDirectory + "/" + formFields.carpeta_proveedor + "/" + formFields.codigo_proyecto+"/"+ filename.name + "/" + filename.name;
   }
 
+  _parseRutaEjecucion(ruta) {
+    let ruta_parseada = ruta.split("/");
+    ruta_parseada = ruta_parseada.splice(-1, 1);
+    ruta_parseada = ruta_parseada.join("/");
 
+    return ruta_parseada;
+  }
 
   /**
    * 
@@ -125,7 +131,7 @@ class File {
    * 
    * @memberof File
    */
-  uploadContentFile(file, formFields, uploadDirectory, extensionsAllowed, avatar = false) {
+  uploadContentFile(file, formFields, uploadDirectory, extensionsAllowed) {
 
     const _self = this;
 
@@ -146,32 +152,47 @@ class File {
         resolve(true);
       }
 
-
       if (_self._checkFileExtension(extensionsAllowed, PATH.parse(file.originalFilename).ext)) {
 
-        newFilename = PATH.parse(file.originalFilename);
 
 
-        // If the file is a content, we've to manage it in a different way that if it is an image or something else.
-        if (!avatar) {
+        if (formFields["ruta_zip"] !== undefined && formFields["ruta_zip"] !== null) {
 
-          formFields["fecha_alta"] = _self._returnActualDate();
-          formFields["ruta_descompresion"] = _self._fileDecompresionRoute(formFields, uploadDirectory, newFilename);
-          formFields["ruta_zip"] = _self._fileRoute("zip", formFields, uploadDirectory, newFilename);
-          ruta_file = formFields['ruta_zip'];
 
-          // If it's an avatar we have to set the route properly on it
+          let parsed_ruta_zip = formFields["ruta_zip"].split("/");
+          parsed_ruta_zip = parsed_ruta_zip[parsed_ruta_zip.length - 1];
+          newFilename = PATH.parse(parsed_ruta_zip);
+          formFields["ruta_zip"] = formFields["ruta_zip"].split(`${_self._config.ftpConnection.equivalent_url}/`)[1];
+
         } else {
-          formFields['urlAvatar'] = _self._fileRoute("avatar", formFields, uploadDirectory, newFilename);
-          ruta_file = formFields['urlAvatar'];
+
+          newFilename = PATH.parse(file.originalFilename);
+          
+          
+          // Cuando el contenido es de los antiguos, no existe ruta de zip pero si ruta de ejecucion en la cual subir el nuevo zip
+          if (formFields.rutaEjecucion !== null && formFields.rutaEjecucion !== undefined) {
+            formFields["ruta_zip"] = _self._parseRutaEjecucion(formFields.rutaEjecucion) + "/" + file.originalFilename;
+          } else {
+            formFields["ruta_zip"] = _self._fileRoute("zip", formFields, uploadDirectory, newFilename);
+          }
+
+
+
+          
+          
         }
+        formFields["ruta_descompresion"] = _self._fileDecompresionRoute(formFields, uploadDirectory, newFilename);
+        formFields["fecha_alta"] = _self._returnActualDate();
+        
+        ruta_file = formFields['ruta_zip'];
 
         // Create the readableStream to upload the file physically
         readableStream = fs.createReadStream(file.path);
+
+
         _self._ftp.uploadFile(readableStream, ruta_file).then(() => {
-            if (!avatar) {
-              formFields["ruta_zip"] = _self._fileRoute("zip", formFields, _self._ftp._configuration.ftpConnection.equivalent_url, newFilename);
-            }
+            formFields["ruta_zip"] = _self._fileRoute("zip", formFields, _self._ftp._configuration.ftpConnection.equivalent_url, newFilename);
+
             resolve(true);
           })
           .catch((err) => {

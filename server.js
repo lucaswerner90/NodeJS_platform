@@ -59,6 +59,7 @@ function multiClusterServer() {
     console.log(`${numCPUs} CORES AVAILABLE`);
     // Fork workers.
     for (let i = 0; i < numCPUs; i++) {
+    // for (let i = 0; i < 1; i++) {
       cluster.fork();
     }
 

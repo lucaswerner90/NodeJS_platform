@@ -486,7 +486,10 @@ class User{
         _self.get_content_by_id(form["id_contenido"]).then((content)=>{
 
 
-          if(form['file_to_upload']){
+          if (form['file_to_upload']) {
+
+            form.ruta_zip = content.ruta_zip;
+            
             _self._file.uploadContentFile(form['file_to_upload'],form,_self._file._config.fileUpload.directory,_self._file._config.fileUpload.extensionsAllowed).then(()=>{
               _self._db_connection.update_content(content,_self._profile_queries,form,true).then(()=>{
 

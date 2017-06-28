@@ -2,7 +2,7 @@
 const CONFIG = require('./config');
 const PATH = require('path');
 const FTP_CLIENT = require('ftp');
-const unzip = require('unzip');
+const unzip = require('unzip-stream');
 const fs = require('fs');
 
 
