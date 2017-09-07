@@ -116,7 +116,7 @@ class FTPModel {
     return new Promise((resolve, reject) => {
       _self._ftp.put(path, remotePath, function (err) {
         
-        if (err) {
+        if (err && err.code!==550) {
           reject(err);
         } else {
           console.log("[!] Created file...." + remotePath);
@@ -248,7 +248,7 @@ class FTPModel {
 
             if (regular_expression.test(filename) &&
               (index_file.length === 0 || index_file.length > filename.length)) {
-              index_file = _self._configuration.ftpConnection.equivalent_url + pathToFTP.slice(1) + filename;
+              index_file = _self._configuration.ftpConnection.equivalent_url+"/"+ pathToFTP + filename;
             }
 
             _self._readDataFile(entry).then((datos) => {

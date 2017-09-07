@@ -415,12 +415,11 @@ class Database {
       if (camposFormulario.id_tipo_contenido == "12") {
         additional_queries.push(_self._replace_variables_on_query(
           user_queries.UPDATE.content_mooc,
-          _self.modelContent)
-        );
+          _self.modelContent));
       } else {
         additional_queries.push(_self._replace_variables_on_query((update_file) ? user_queries.UPDATE.content : user_queries.UPDATE.contentNoFile, _self.modelContent));
       }
-      
+
 
       if (_self.modelContent.categorias && _self.modelContent.categorias.length > 0) {
         if (content.categorias && content.categorias.length > 0) {

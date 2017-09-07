@@ -178,18 +178,10 @@ class File {
           newFilename = PATH.parse(file.originalFilename);
 
 
-          // Cuando el contenido es de los antiguos, no existe ruta de zip pero si ruta de ejecucion en la cual subir el nuevo zip
-          if (formFields.rutaEjecucion !== null && formFields.rutaEjecucion !== undefined) {
-            formFields["ruta_zip"] = _self._parseRutaEjecucion(formFields.rutaEjecucion) + "/" + file.originalFilename;
-          } else {
-            formFields["ruta_zip"] = _self._fileRoute("zip", formFields, uploadDirectory, newFilename);
-          }
-
-
-
-
-
+          
+          formFields["ruta_zip"] = _self._fileRoute("zip", formFields, uploadDirectory, newFilename);
         }
+
         formFields["ruta_descompresion"] = _self._fileDecompresionRoute(formFields, uploadDirectory, newFilename);
         formFields["fecha_alta"] = _self._returnActualDate();
 
@@ -199,7 +191,8 @@ class File {
         readableStream = fs.createReadStream(file.path);
 
 
-        _self._ftp.uploadFile(readableStream, ruta_file).then(() => {
+        _self._ftp.uploadFile(readableStream, ruta_file)
+          .then(() => {
             formFields["ruta_zip"] = _self._fileRoute("zip", formFields, _self._ftp._configuration.ftpConnection.equivalent_url, newFilename);
 
             resolve(true);

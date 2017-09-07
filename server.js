@@ -4,8 +4,8 @@
 'use strict';
 // Declare of the express's app
 
-process.env.NODE_ENV = 'production';
-// process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+// process.env.NODE_ENV = 'dev';
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 
 
@@ -51,43 +51,51 @@ function multiClusterServer() {
 
   const cluster = require('cluster');
   const numCPUs = require('os').cpus().length;
-
-  if (cluster.isMaster) {
-    console.log(`Master ${process.pid} is running`);
-
-
-    console.log(`${numCPUs} CORES AVAILABLE`);
-    // Fork workers.
-    for (let i = 0; i < numCPUs; i++) {
-    // for (let i = 0; i < 1; i++) {
-      cluster.fork();
-    }
-
-    cluster.on('exit', function (worker, code, signal) {
-      console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
-      console.log('Starting a new worker');
-      cluster.fork();
-    });
-  } else {
-    // Workers can share any TCP connection
-    // In this case it is an HTTP server
-    //For test purposes
-    if (!module.parent) {
-      app.listen(PORT);
-    }
-
-    if (process.env.NODE_ENV === 'test') {
-      module.exports = app;
-    } else {
-      microservices.runAllServices();
-    }
-
-
-    process.on('uncaughtException', function (err) {
-      console.log("uncaughtException:  " + err);
-    });
-
+  if (!module.parent) {
+    app.listen(PORT);
   }
+
+  if (process.env.NODE_ENV === 'test') {
+    module.exports = app;
+  } else {
+    microservices.runAllServices();
+  }
+  // if (cluster.isMaster) {
+  //   console.log(`Master ${process.pid} is running`);
+
+
+  //   console.log(`${numCPUs} CORES AVAILABLE`);
+  //   // Fork workers.
+  //   //for (let i = 0; i < numCPUs; i++) {
+  //   for (let i = 0; i < 1; i++) {
+  //     cluster.fork();
+  //   }
+
+  //   cluster.on('exit', function (worker, code, signal) {
+  //     console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
+  //     console.log('Starting a new worker');
+  //     cluster.fork();
+  //   });
+  // } else {
+  //   // Workers can share any TCP connection
+  //   // In this case it is an HTTP server
+  //   //For test purposes
+  //   if (!module.parent) {
+  //     app.listen(PORT);
+  //   }
+
+  //   if (process.env.NODE_ENV === 'test') {
+  //     module.exports = app;
+  //   } else {
+  //     microservices.runAllServices();
+  //   }
+
+
+  //   process.on('uncaughtException', function (err) {
+  //     console.log("uncaughtException:  " + err);
+  //   });
+
+  // }
 
 }
 
@@ -100,7 +108,6 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
   next();
 });
 
