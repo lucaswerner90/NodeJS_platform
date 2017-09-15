@@ -39,7 +39,6 @@ router.get('/user_info/id_usuario=:id_usuario', (req, res) => {
 
 
 router.get('/catalogo', (req, res) => {
-  // if(global.CONTROL.catalogo.length===0){
   let user = new User();
   user.get_catalogo().then((data) => {
       user._close_connections();
@@ -51,9 +50,6 @@ router.get('/catalogo', (req, res) => {
         error: err
       });
     });
-  // }else{
-  //   res.send(global.CONTROL.catalogo);
-  // }
 
 
 });

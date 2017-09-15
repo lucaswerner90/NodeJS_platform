@@ -4,8 +4,8 @@
 'use strict';
 // Declare of the express's app
 
-// process.env.NODE_ENV = 'dev';
-process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+process.env.NODE_ENV = 'production';
+// process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 
 
@@ -43,61 +43,64 @@ const microservices = require('./microservices/index');
 
 
 
+
+
+
 /**
- * @desc Executes the NodeJS app on multiple cores
- * 
+ * @description Executes the NodeJS app on multiple cores
  */
 function multiClusterServer() {
 
   const cluster = require('cluster');
+
+  // const numCPUs = 1;
   const numCPUs = require('os').cpus().length;
-  if (!module.parent) {
-    app.listen(PORT);
-  }
 
-  if (process.env.NODE_ENV === 'test') {
-    module.exports = app;
+  if (cluster.isMaster) {
+    console.log(`Master ${process.pid} is running`);
+
+
+    console.log(`${numCPUs} CORES AVAILABLE`);
+    // Fork workers.
+    for (let i = 0; i < numCPUs; i++) {
+      // for (let i = 0; i < 1; i++) {
+      cluster.fork();
+    }
+
+    cluster.on('exit', function (worker, code, signal) {
+      console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
+      console.log('Starting a new worker');
+      cluster.fork();
+    });
   } else {
-    microservices.runAllServices();
+    // Workers can share any TCP connection
+    // In this case it is an HTTP server
+    //For test purposes
+    if (!module.parent) {
+      app.listen(PORT);
+    }
+
+    if (process.env.NODE_ENV === 'test') {
+      module.exports = app;
+    } else {
+      microservices.runAllServices();
+    }
+
+
+    process.on('uncaughtException', function (err) {
+      console.log("uncaughtException:  " + err);
+    });
+
   }
-  // if (cluster.isMaster) {
-  //   console.log(`Master ${process.pid} is running`);
-
-
-  //   console.log(`${numCPUs} CORES AVAILABLE`);
-  //   // Fork workers.
-  //   //for (let i = 0; i < numCPUs; i++) {
-  //   for (let i = 0; i < 1; i++) {
-  //     cluster.fork();
-  //   }
-
-  //   cluster.on('exit', function (worker, code, signal) {
-  //     console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
-  //     console.log('Starting a new worker');
-  //     cluster.fork();
-  //   });
-  // } else {
-  //   // Workers can share any TCP connection
-  //   // In this case it is an HTTP server
-  //   //For test purposes
-  //   if (!module.parent) {
-  //     app.listen(PORT);
-  //   }
-
-  //   if (process.env.NODE_ENV === 'test') {
-  //     module.exports = app;
-  //   } else {
-  //     microservices.runAllServices();
-  //   }
-
-
-  //   process.on('uncaughtException', function (err) {
-  //     console.log("uncaughtException:  " + err);
-  //   });
-
-  // }
 
 }
+
+
+
+
+
+
+
 
 
 app.use(compression({
@@ -108,6 +111,7 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
   next();
 });
 
@@ -124,9 +128,6 @@ app.use(BODY_PARSER.json({
 }));
 
 
-// app.use(express.static('public'));
-// maxAge defined by static files:
-// const maxage_cache=86400*24*7;
 const maxage_cache = 86400 * 24 * 7;
 
 for (let i = 0; i < CONFIG_SERVER.STATIC_ROUTES.length; i++) {

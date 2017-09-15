@@ -91,11 +91,12 @@ class FTPModel {
     const _self = this;
 
     return new Promise((resolve, reject) => {
-      _self._ftp.mkdir(path, true, (err) => {
+      _self._ftp.mkdir(path,true, (err) => {
+        console.info("[!] Created DIR..... " + path);
         if (err) {
+          console.log(err + "       "+ path);
           reject(err);
         }
-        console.info("[!] Created DIR..... " + path);
         resolve(true);
       });
     });
@@ -222,7 +223,7 @@ class FTPModel {
         let directory = "";
         let type = "";
         let filename = "";
-
+        let directories_array = [];
         const regular_expression = /.*index.*(\.html)$/;
         let index_file = "";
 
@@ -240,16 +241,26 @@ class FTPModel {
           filename = entry.path;
           filename.replace(" ", "\s");
 
-          if (type === 'Directory') {
+          if (type == 'Directory') {
             directory = pathToFTP + filename;
             directory.replace(" ", "\s");
+            directories_array.push(directory);
             arrayDirectories.push(_self._createDir(directory));
           } else {
 
             if (regular_expression.test(filename) &&
               (index_file.length === 0 || index_file.length > filename.length)) {
-              index_file = _self._configuration.ftpConnection.equivalent_url+"/"+ pathToFTP + filename;
+              index_file = _self._configuration.ftpConnection.equivalent_url + "/" + pathToFTP + filename;
             }
+
+
+            if (directories_array.indexOf(pathToFTP + PATH.dirname(filename)) === -1) {
+              arrayDirectories.push(_self._createDir(pathToFTP + PATH.dirname(filename)));
+              directories_array.push(pathToFTP + PATH.dirname(filename));
+            } 
+            
+
+
 
             _self._readDataFile(entry).then((datos) => {
               arrayFiles.push({

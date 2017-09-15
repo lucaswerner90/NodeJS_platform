@@ -395,7 +395,7 @@ class Database {
    * @param {boolean} [update_file=false] 
    * @return {} 
    * 
-   */
+   */ 
   update_content(content, user_queries, camposFormulario, update_file = false) {
 
     const _self = this;
@@ -403,7 +403,7 @@ class Database {
     return new Promise(function (resolve, reject) {
       let additional_queries = [];
 
-
+      
 
       for (let prop in camposFormulario) {
         if (camposFormulario[prop] !== null && camposFormulario[prop] !== undefined && camposFormulario[prop] !== "") {

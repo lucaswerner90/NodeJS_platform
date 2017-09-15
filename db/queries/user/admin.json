@@ -13,6 +13,9 @@
 
 
     "content":"INSERT INTO catalogo_contenidos.contenidos (participantes,notas_produccion,indice_contenidos,notas_contenidos,id_pais,id_proveedor,notas,titulo, descripcion, ruta_zip, id_tipo_contenido, duracion, id_sistema_evaluacion,id_estado,catalogo_ted,url_image,id_tipo_desarrollo,responsive,licencia) VALUES ([participantes],[notas_produccion],[indice_contenidos],[notas_contenidos],[id_pais],[id_proveedor],[notas],[titulo], [descripcion], [ruta_zip], [id_tipo_contenido], [duracion], [id_sistema_evaluacion],[id_estado],[catalogo_ted],[url_image],[id_tipo_desarrollo],[responsive],[licencia]);",
+
+
+    
     "contentRelation":"INSERT INTO relacion_contenidos_proyectos (id_contenido,id_proyecto) VALUES ([id_contenido], [id_proyecto]);",
     "tableOfCompatibilities":"INSERT INTO resultado_certificacion_contenido (id_contenido,id_usuario,id_punto_control,id_tc,valor) VALUES [multiple_insert_query];",
     "content_platform":"INSERT INTO relacion_contenido_plataforma (id_plataforma,id_contenido) VALUES [multiple_insert_query];",
